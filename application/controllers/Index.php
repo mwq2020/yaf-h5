@@ -19,6 +19,11 @@ class IndexController extends Controller_Abstract
         $logger->info('monolog test log write success');
         $logger->addWarning('Foo');
         $logger->addError('Bar');
+        
+        echo "<pre>--";
+        $config = \Yaf\Application::app()->getConfig();
+	//print_r($config);
+
 
     }
     
