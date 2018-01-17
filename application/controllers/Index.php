@@ -10,8 +10,9 @@ class IndexController extends Controller_Abstract
 
     public function indexAction()
     {
-        echo "this is index page";
+        echo "<pre>this is index page<br>";
 
+        //写日志模拟
         $logger = new Logger('my_logger');
         $logger->pushHandler(new StreamHandler('/tmp/yaf_test.log', Logger::DEBUG));
         $firephp = new FirePHPHandler();
@@ -20,15 +21,25 @@ class IndexController extends Controller_Abstract
         $logger->addWarning('Foo');
         $logger->addError('Bar');
         
-        echo "<pre>--";
-        $config = \Yaf\Application::app()->getConfig();
-	//print_r($config);
+        //\Yaf\Dispatcher::getInstance()->disableView(); 
 
+        //数据存取模拟
+        $mod = new UserModel(); 
+        // $data = $mod->find(1)->toArray(); 
+        // print_r($data);
+
+        $mod->getUserinfo();
 
     }
-    
 
+    public function testAction()
+    {
+        \Yaf\Dispatcher::getInstance()->disableView(); 
+        echo "this a index test page";
+    }
+    
 }
+
 
 
 
