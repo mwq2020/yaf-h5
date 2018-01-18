@@ -1,6 +1,6 @@
 <?php
 error_reporting(E_ALL & ~E_NOTICE);
-ini_set('display_errors', '1');
+ini_set('display_errors', 0);
 ini_set('date.timezone','Asia/Shanghai');
 ini_set('yaf.use_namespace',1);
 ini_set('yaf.use_spl_autoload','on');

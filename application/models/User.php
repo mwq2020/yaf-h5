@@ -14,7 +14,7 @@ class UserModel extends Mymodel
     {
         $test = new TestModel();
         $test->mwqTest(); 
-        throw new \Exception('mwq test');
+        //throw new \Exception('mwq test');
     }
 
 }
