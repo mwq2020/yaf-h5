@@ -29,8 +29,8 @@ db.test.prefix =
 
 [test]
 ;application.directory=APP_PATH "/application/"
-;
-;
+
+
 [common]
 ;自定义路由
 ;顺序很重要

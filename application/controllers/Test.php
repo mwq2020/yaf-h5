@@ -12,6 +12,9 @@ class TestController extends Controller_Abstract
         //$session->start();
         echo "<hr>";
         echo $session->mwq;
+
+        echo "<br>";
+        echo getmypid();
     }
 
     public function sessionAction()
