@@ -29,13 +29,17 @@ class IndexController extends Controller_Abstract
         // print_r($data);
 
         //$mod->getUserinfo();
-
     }
 
     public function testAction()
     {
         \Yaf\Dispatcher::getInstance()->disableView(); 
         echo "this a index test page";
+    }
+
+    public function loginAction()
+    {
+
     }
     
 }

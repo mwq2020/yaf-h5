@@ -1,0 +1,287 @@
+
+/*********** Signin form ***********/
+
+.signin-form {
+    display: block;
+    width: 100%;
+    background-color: #ffffff;
+    border-top: #e2e2e2 1px solid;
+    border-bottom: #e2e2e2 1px solid;
+    box-sizing: border-box;
+    overflow: hidden;
+    margin-top: 24px;
+}
+
+.signin-form .signin-field {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 44px;
+    padding-top: 6px;
+}
+
+.signin-form .signin-field .field-icon {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    display: block;
+    width: 24px;
+    height: 24px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.signin-form .signin-field .field-input {
+    display: block;
+    width: 100%;
+    height: 34px;
+    margin: 0 auto;
+    padding-left: 44px;
+    box-sizing: border-box;
+    border: none;
+    overflow: hidden;
+    color: #a2a6ad;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 34px;
+}
+
+.signin-form .signin-hline {
+    position: relative;
+    display: block;
+    height: 0px;
+    border-bottom: #e2e2e2 1px solid;
+    margin-left: 44px;
+}
+
+.signin-submit {
+    display: block;
+    height: 44px;
+    margin: 0 8px;
+    margin-top: 24px;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 4px;
+    overflow: hidden;
+    background-color: #D0021B;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 44px;
+    text-align: center;
+}
+
+.signin-submit:hover {
+    background-color: #D0021B;
+}
+
+.signin-other {
+    position: relative;
+    display: block;
+    height: 34px;
+    margin: 0 10px;
+    margin-top: 4px;
+    line-height: 34px;
+}
+
+.signin-other .other-item {
+    color: #404245;
+    font-size: 14px;
+    font-weight: normal;
+}
+
+.signin-other .other-item:hover {
+    color: #D0021B;
+}
+
+.signin-social {
+    display: block;
+    margin: 0 8px;
+    margin-top: 88px;
+    box-sizing: border-box;
+    border: none;
+    overflow: hidden;
+    text-align: center;
+}
+
+.signin-social .social-header {
+    position: relative;
+    display: block;
+    box-sizing: border-box;
+    border: none;
+    overflow: hidden;
+    text-align: center;
+    width: 100%;
+    height: 34px;
+}
+
+.signin-social .social-header .header-line {
+    position: absolute;
+    left: 5%;
+    top: 16px;
+    width: 90%;
+    height: 1px;
+    border-bottom: #dedede 1px solid;
+}
+
+.signin-social .social-header .header-label {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 100px;
+    height: 34px;
+    line-height: 34px;
+    margin-left: -50px;
+    background-color: #f6f6f6;
+    color: #404245;
+    font-size: 14px;
+    font-weight: normal;
+    text-align: center;
+}
+
+.signin-social .social-itemset {
+    margin-top: 44px;
+    display: block;
+    box-sizing: border-box;
+    border: none;
+    overflow: hidden;
+    text-align: center;
+}
+
+.signin-social .social-itemset .itemset-item {
+    display: inline-block;
+    margin-left: 20px;
+    margin-right: 20px;
+    width: 64px;
+    box-sizing: border-box;
+    border: none;
+    overflow: hidden;
+}
+
+.signin-social .social-itemset .itemset-item .item-icon {
+    display: block;
+    width: 64px;
+    height: 64px;
+    box-sizing: border-box;
+    border: none;
+    overflow: hidden;
+}
+
+.signin-social .social-itemset .itemset-item .item-text {
+    display: block;
+    width: 100%;
+    height: 32px;
+    line-height: 32px;
+    box-sizing: border-box;
+    border: none;
+    overflow: hidden;
+    color: #404245;
+    font-size: 14px;
+    font-weight: normal;
+    text-align: center;
+}
+
+
+
+.signin-form .signin-field .mobile-code {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    /*display: block;*/
+    box-sizing: border-box;
+    overflow: hidden;
+    display: inline-block;
+    width: 21%;
+    height: 34px;
+    border-radius: 12px;
+    background-color: #D0021B;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: normal;
+    line-height: 34px;
+    text-align: center;
+}
+
+.app-content .logo {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+    height: 5.2em;;
+    margin:3.1em auto;
+}
+
+.app-content .logo img {
+    height:70px;
+    width: 70px;
+}
+
+.app-content .logIn_tit {
+    margin-top:0.4em;
+}
+
+
+
+/*********** codesignin form ***********/
+
+.signin-form .signin-field-code {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 40px;
+    white-space: nowrap
+}
+
+.signin-form .signin-field-code .field-input {
+    display: inline-block;
+    width: 78%;
+    height: 40px;
+    /*
+    padding-left: 18px;
+    padding-right: 14px;
+    */
+    box-sizing: border-box;
+    border: none;
+    color: #a2a6ad;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 40px;
+}
+
+.signin-form .signin-field-code .mobile-code {
+    display: inline-block;
+    width: 21%;
+    height: 34px;
+    border-radius: 12px;
+    background-color: #D0021B;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: normal;
+    line-height: 34px;
+    text-align: center;
+}
+
+.signin-form .signin-field-code .not-mobile-code {
+    display: inline-block;
+    width: 21%;
+    height: 34px;
+    border-radius: 12px;
+    background-color: #E2E2E2;
+    color: #333333;
+    font-size: 12px;
+    font-weight: normal;
+    line-height: 34px;
+    text-align: center;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
