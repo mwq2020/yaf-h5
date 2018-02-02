@@ -1,66 +1,98 @@
 <!DOCTYPE html>
-
 <html lang="zh-cmn-Hans">
 <head>
-    <meta charset="utf-8" />
-    <title>福利商城-用户登录</title>
+  <meta charset="utf-8" />
+  <title>福利商城</title>
 
-    <meta name="description" content="福利商城" />
-    <meta name="keywords" content="福利商城" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
-    <meta content="yes" name="apple-mobile-web-app-capable">
-    <meta content="yes" name="apple-touch-fullscreen">
-    <meta content="telephone=no,email=no" name="format-detection">
+  <meta name="description" content="福利商城" />
+  <meta name="keywords" content="福利商城" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+  <meta content="yes" name="apple-mobile-web-app-capable">
+  <meta content="yes" name="apple-touch-fullscreen">
+  <meta content="telephone=no,email=no" name="format-detection">
 
-    <link rel="stylesheet" href="/static/css/common.css?v=1" type="text/css" />
-    <link rel="stylesheet" href="/static/css/login.css?v=1" type="text/css" />
+  <link rel="apple-touch-icon-precomposed" href="/static/image/apple-touch-icon.png">
+  <link rel="apple-touch-icon" href="/static/image/apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="57x57" href="/static/image/icon/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/static/image/icon/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/static/image/icon/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/static/image/icon/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/static/image/icon/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/static/image/icon/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/static/image/icon/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/static/image/icon/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/image/icon/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192"  href="/static/image/icon/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/image/icon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/static/image/icon/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/image/icon/favicon-16x16.png">
+  
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+  <meta name="theme-color" content="#ffffff">
+
+  <!-- build:css css/app.base.css -->
+  <link rel="stylesheet" href="/static/css/reset.css" type="text/css" />
+  <link rel="stylesheet" href="/static/css/common.css" type="text/css" />
+  <link rel="stylesheet" href="/static/css/login.css" type="text/css" />
+  <!-- <link rel="stylesheet" href="/static/css/app.css?v=12" type="text/css" /> -->
+  <!-- endbuild -->
+
 </head>
 
-<body id="ng-app" class="ng-scope is-browser">
+<body id="ng-app" ng-controller="AppController" >
 
-<div class="app-container with-navbar" ng-controller="SigninController">
+  <toast></toast>
 
-    <div class="navbar fixed-top">
-        <div class="navbar-left hide-weixin" ng-click="goHome()">
-            <img class="button-icon" src="/static/image/nav-left.png"/>
-            <div class="button-text">取消</div>
+  <div class="app" id="app">
+
+    <div class="app-container with-navbar" ng-controller="SigninController">
+
+        <div class="navbar fixed-top">
+            <div class="navbar-left hide-weixin" ng-click="goHome()">
+                <img class="button-icon" src="/static/image/nav-left.png"/>
+                <div class="button-text">取消</div>
+            </div>
+            <div class="navbar-title">
+              用户登录
+            </div>
         </div>
-        <div class="navbar-title">
-            用户登录
-        </div>
-    </div>
 
-    <div class="app-content">
+        <div class="app-content">
         <div class="logo">
-            <img class="field-icon" src="/static/image/company_logo_new.png?v=2" />
-            <p class="logIn_tit">企业员工登录</p>
+          <img class="field-icon" src="/static/image/company_logo_new.png?v=2" />
+          <p class="logIn_tit">企业员工登录</p>
         </div>
         <div class="signin-form">
-            <div class="signin-field">
-                <img class="field-icon" src="/static/image/ind-username.png"/>
-                <input class="field-input" placeholder="手机号" ng-model="telphone"/>
-            </div>
-            <div class="signin-hline"></div>
-            <div class="signin-field">
-                <img class="field-icon" src="/static/image/ind-password.png"/>
-                <input type="password" class="field-input" placeholder="请输入密码" ng-model="password"/>
-            </div>
+          <div class="signin-field">
+            <img class="field-icon" src="/static/image/ind-username.png"/>
+            <input class="field-input" placeholder="手机号" ng-model="telphone"/>
+          </div>
+          <div class="signin-hline"></div>
+          <div class="signin-field">
+            <img class="field-icon" src="/static/image/ind-password.png"/>
+            <input type="password" class="field-input" placeholder="请输入密码" ng-model="password"/>
+          </div>
         </div>
         <div class="signin-submit" ng-click="touchTelphoneSignin()">
-            登录
+          登录
         </div>
         <div class="signin-other">
-            <div class="other-item abs-left" ng-click="goCodeSignin()">验证码登录</div>
-            <div class="other-item abs-right" ng-click="touchForget()">忘记密码?</div>
+          <div class="other-item abs-left" ng-click="goCodeSignin()">验证码登录</div>
+          <div class="other-item abs-right" ng-click="touchForget()">忘记密码?</div>
         </div>
+
+      </div>
 
     </div>
 
-</div>
+  </div>
 
-
-
+  <!-- <div class="splash" id="splash">
+    <div class="inner">
+      <img src="/static/image/loading.png"/>
+    </div>
+  </div> -->
 
 </body>
-
 </html>
