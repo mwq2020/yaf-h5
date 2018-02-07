@@ -104,7 +104,7 @@ class TestController extends Controller_Abstract
         $run_list = DB::table('wechat_run_log','test')  
                 ->leftJoin('users','wechat_run_log.user_id','=','users.user_id')  
                 ->select(  
-                    'wechat_run_log.*',  
+                    'wechat_run_log.user_id',  
                     'users.user_name',  
                     'users.mobile'
                     )  
