@@ -137,6 +137,16 @@ class TestController extends Controller_Abstract
         }
         echo "事务结束<br>";
         return false;
+
+        //事务的闭包方式处理
+        DB::connection('test')->transaction(function(){
+                $article = DB::table('users','test')->insert([
+                    'user_name' => 'test name',
+                    'mobile' => 18211072316,
+                ]);
+                DB::table('users','test')->delete(6);//数据库中没有该表
+            }
+        );
     }
 
     public function sampleAction()

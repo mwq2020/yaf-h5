@@ -1,9 +1,14 @@
 [product]
 ;支持直接写PHP中的已定义常量
 application.directory=APP_PATH "/application/"
+application.modules = "Index,Wechatrun"
 ;application.dispatcher.catchException = 1
 ;application.dispatcher.throwException = 1
 ;yaf.use_spl_autoload = 1
+
+application.layout.directory=APP_PATH "/application/views/layout"
+application.layoutpath = APP_PATH "/application/views"
+application.document = "layout.phtml"
 
 db.shop.type=mysql 
 db.shop.host=localhost 
@@ -13,7 +18,7 @@ db.shop.password=123
 db.shop.charset = utf8 
 db.shop.log = false 
 db.shop.collation=utf8_unicode_ci 
-db.shop.prefix =
+db.shop.prefix = w_
 
 
 db.test.type=mysql 
@@ -24,7 +29,7 @@ db.test.password=123
 db.test.charset = utf8 
 db.test.log = false 
 db.test.collation=utf8_unicode_ci 
-db.test.prefix =
+db.test.prefix = w_
 
 
 [test]
