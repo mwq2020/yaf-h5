@@ -16,6 +16,7 @@ class TestController extends Controller_Abstract
 
         echo "<br>";
         echo getmypid();
+        return false;
     }
 
     public function sessionAction()
@@ -29,6 +30,7 @@ class TestController extends Controller_Abstract
         $session->mwq = 'mwq test session';
         echo "session success";
         // \Yaf\Session::getInstance()->set('name', "alex")->set('sex',"男")；
+        return false;
     }
 
     //获取一条记录
@@ -40,6 +42,7 @@ class TestController extends Controller_Abstract
 
         $user_info = DB::table('users','test')->where(['user_id'=>1])->first();
         print_r($user_info);
+        return false;
     }
 
     //获取多条记录
@@ -48,6 +51,7 @@ class TestController extends Controller_Abstract
         echo "<pre>";
         $user_list = DB::table('users','test')->get();
         print_r($user_list);
+        return false;
     }
 
     //插入操作
@@ -64,6 +68,7 @@ class TestController extends Controller_Abstract
         $id = DB::table('users','test')->insertGetId(['user_name' => 'mwqtest', 'mobile' => '18211072317', 'password' => '123456']);
         echo "插入记录结果id:".$id;
         echo "<br>";
+        return false;
     }
 
     //更新操作
@@ -77,6 +82,7 @@ class TestController extends Controller_Abstract
         echo "<br>";
         print_r($updateData);
         print_r($where);
+        return false;
     }
 
     //删除操作
@@ -88,6 +94,7 @@ class TestController extends Controller_Abstract
         echo "删除记录结果:".$flag;
         echo "<br>";
         print_r($where);
+        return false;
     }
 
     //表的关联操作
@@ -185,6 +192,8 @@ class TestController extends Controller_Abstract
                 ->whereIn('orders.object_state_id', array(2,3))  
                 ->where('orders.created_at', 'like', Input::get('year') . '-' . Input::get('month') . '-%')  
                 ->get();  
+
+        return false;
     }
 
 }
