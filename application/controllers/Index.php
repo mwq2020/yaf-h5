@@ -24,9 +24,22 @@ class IndexController extends Controller_Abstract
         //\Yaf\Dispatcher::getInstance()->disableView(); 
 
         //数据存取模拟
-        //$mod = new UserModel(); 
-        // $data = $mod->find(1)->toArray(); 
-        // print_r($data);
+        echo "<pre>";
+        $mod = new UserModel(); 
+        $data = $mod->find(2)->toArray(); 
+        print_r($data);
+
+
+        $list = $mod->all()->toArray();
+        print_r($list);
+        //exit;
+
+
+        $run_model = new WechatRunModel();
+        $list = $run_model->all()->toArray();
+        print_r($list);
+        exit;
+
 
         //$mod->getUserinfo();
     }

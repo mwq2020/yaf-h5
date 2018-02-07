@@ -84,6 +84,17 @@ class Bootstrap extends Bootstrap_Abstract
         $capsule->setAsGlobal(); 
         // 启动Eloquent 
         $capsule->bootEloquent();
+
+        // class_alias('Illuminate\Support\Facades\Auth', 'Auth');
+        // class_alias('Illuminate\Support\Facades\Cache', 'Cache');
+        // class_alias('Illuminate\Support\Facades\DB', 'DB');
+        // class_alias('Illuminate\Support\Facades\Event', 'Event');
+        // //class_alias('Illuminate\Support\Facades\Gate', 'Gate');
+        // class_alias('Illuminate\Support\Facades\Log', 'Log');
+        // class_alias('Illuminate\Support\Facades\Queue', 'Queue');
+        // class_alias('Illuminate\Support\Facades\Schema', 'Schema');
+        // class_alias('Illuminate\Support\Facades\URL', 'URL');
+        // class_alias('Illuminate\Support\Facades\Validator', 'Validator');
     }
 
 
