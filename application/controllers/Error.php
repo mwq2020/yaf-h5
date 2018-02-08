@@ -1,8 +1,34 @@
 <?php
-use Yaf\Controller_Abstract;
+
+/** 
+ * 　　　　　　　 ┏┓   ┏┓ 
+ * 　　　　　　　┏┛┻━━━┛┻┓ 
+ * 　　　　　　　┃　　　　　　　┃ 　 
+ * 　　　　　　　┃　　　━      ┃ 
+ * 　　　　　　　┃　＞　　　＜　┃ 
+ * 　　　　　　　┃　　　　　　　┃ 
+ * 　　　　　　　┃...　⌒　...　┃ 
+ * 　　　　　　　┃　　　　　　　┃ 
+ * 　　　　　　　┗━┓        ┏━┛ 
+ * 　　　　　　　　　┃　　　┃　Code is far away from bug with the animal protecting　　　　　　　　　　 
+ * 　　　　　　　　　┃　　　┃   神兽保佑,代码无bug 
+ * 　　　　　　　　　┃　　　┃　　　　　　　　　　　 
+ * 　　　　　　　　　┃　　　┃  　　　　　　 
+ * 　　　　　　　　　┃　　　┃ 
+ * 　　　　　　　　　┃　　　┃　　　　　　　　　　　 
+ * 　　　　　　　　　┃　　　┗━━━┓ 
+ * 　　　　　　　　　┃         ┣┓ 
+ * 　　　　　　　　　┃         ┏┛ 
+ * 　　　　　　　　　┗┓┓┏━┳┓  ┏┛ 
+ * 　　　　　　　　　　┃┫┫　┃┫┫ 
+ * 　　　　　　　　　　┗┻┛　┗┻┛ 
+ */ 
+
+
 /**
  * 当有未捕获的异常, 则控制流会流到这里
  */
+use Yaf\Controller_Abstract;
 class ErrorController extends Controller_Abstract {
 
     public function init() 

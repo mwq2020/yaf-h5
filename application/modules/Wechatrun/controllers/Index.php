@@ -4,7 +4,7 @@
 /****************************/
 
 use Yaf\Controller_Abstract;
-use Illuminate\Database\Capsule\Manager as DB;
+//use Illuminate\Database\Capsule\Manager as DB;
 class IndexController extends Controller_Abstract 
 {
 

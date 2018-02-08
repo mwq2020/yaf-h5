@@ -1,7 +1,31 @@
 <?php
+/** 
+ *　　　　　　　　┏┓　　　┏┓+ + 
+ *　　　　　　　┏┛┻━━━┛┻┓ + + 
+ *　　　　　　　┃　　　　　　　┃ 　 
+ *　　　　　　　┃　　　━　　　┃ ++ + + + 
+ *　　　　　　 ████━████ ┃+ 
+ *　　　　　　　┃　　　　　　　┃ + 
+ *　　　　　　　┃　　　┻　　　┃ 
+ *　　　　　　　┃　　　　　　　┃ + + 
+ *　　　　　　　┗━┓　　　┏━┛ 
+ *　　　　　　　　　┃　　　┃　　　　　　　　　　　 
+ *　　　　　　　　　┃　　　┃ + + + + 
+ *　　　　　　　　　┃　　　┃　　　　Code is far away from bug with the animal protecting　　　　　　　 
+ *　　　　　　　　　┃　　　┃ + 　　　　神兽保佑,代码无bug　　 
+ *　　　　　　　　　┃　　　┃ 
+ *　　　　　　　　　┃　　　┃　　+　　　　　　　　　 
+ *　　　　　　　　　┃　 　　┗━━━┓ + + 
+ *　　　　　　　　　┃ 　　　　　　　┣┓ 
+ *　　　　　　　　　┃ 　　　　　　　┏┛ 
+ *　　　　　　　　　┗┓┓┏━┳┓┏┛ + + + + 
+ *　　　　　　　　　　┃┫┫　┃┫┫ 
+ *　　　　　　　　　　┗┻┛　┗┻┛+ + + + 
+ */
 
 use Yaf\Controller_Abstract;
-use Illuminate\Database\Capsule\Manager as DB;
+use Monolog\Logger;
+//use Illuminate\Database\Capsule\Manager as DB;
 class TestController extends Controller_Abstract 
 {
 
@@ -33,6 +57,19 @@ class TestController extends Controller_Abstract
         return false;
     }
 
+    public function logAction()
+    {
+        Log::debug('debug------aaaaaaaaaa',['aaa'=>'ccccc','mwq'=>2020]);
+        Log::info('info------aaaaaaaaaa');
+        Log::notice('notice------aaaaaaaaaa');
+        Log::warn('debug------aaaaaaaaaa');
+        Log::err('err------aaaaaaaaaa');
+        Log::crit('crit------aaaaaaaaaa');
+        Log::alert('alert------aaaaaaaaaa');
+        Log::emerg('emerg------aaaaaaaaaa');
+        return false;
+    }
+
     //获取一条记录
     public function rowAction()
     {
@@ -42,6 +79,7 @@ class TestController extends Controller_Abstract
 
         $user_info = DB::table('users','test')->where(['user_id'=>1])->first();
         print_r($user_info);
+
         return false;
     }
 

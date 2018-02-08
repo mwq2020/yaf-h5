@@ -15,6 +15,35 @@ class Bootstrap extends Bootstrap_Abstract
     private $config;
 
     /**
+     * 加载vendor下的文件
+     */
+    public function _initLoader()
+    {
+        \Yaf\Loader::import(APP_PATH . '/vendor/autoload.php');
+    }
+
+    /**
+     * 配置
+     */
+    public function _initConfig()
+    {
+        $this->config = \Yaf\Application::app()->getConfig();//把配置保存起来
+        \Yaf\Registry::set('config', $this->config);
+    }
+
+    /**
+     * 系统日志初始化
+     */
+    public function _initLog()
+    {
+        $monolog = new Logger('system');
+        $monolog->pushHandler(new \Monolog\Handler\RotatingFileHandler('/tmp/mwqyaf.log'));
+        $monolog->pushProcessor(new WebProcessor());
+        YafLog::$mongolog = $monolog;
+        class_alias('YafLog', 'Log');
+    }
+
+    /**
      * 初始化系统错误日志处理
      */
     public function _initError()
@@ -36,28 +65,11 @@ class Bootstrap extends Bootstrap_Abstract
             return false;
         }
         
-        $log = new Logger('system');
-        $log->pushHandler(new StreamHandler('/tmp/yaf.log', Logger::WARNING));
-        $log->pushProcessor(new WebProcessor());
-        $log->err($error['message'].PHP_EOL."#".$error['line']." ".$error['file']);
-    }
-
-    /**
-     * 加载vendor下的文件
-     */
-    public function _initLoader()
-    {
-        \Yaf\Loader::import(APP_PATH . '/vendor/autoload.php');
-    }
-
-
-    /**
-     * 配置
-     */
-    public function _initConfig()
-    {
-        $this->config = \Yaf\Application::app()->getConfig();//把配置保存起来
-        \Yaf\Registry::set('config', $this->config);
+        //$log = new Logger('system');
+        //$log->pushHandler(new StreamHandler('/tmp/yaf.log', Logger::WARNING));
+        //$log->pushProcessor(new WebProcessor());
+        //$log->err($error['message'].PHP_EOL."#".$error['line']." ".$error['file']);
+        Log::err($error['message'].PHP_EOL."#".$error['line']." ".$error['file']);
     }
 
     /**
@@ -85,19 +97,39 @@ class Bootstrap extends Bootstrap_Abstract
         // 启动Eloquent 
         $capsule->bootEloquent();
 
-        // class_alias('Illuminate\Support\Facades\Auth', 'Auth');
-        // class_alias('Illuminate\Support\Facades\Cache', 'Cache');
-        // class_alias('Illuminate\Support\Facades\DB', 'DB');
-        // class_alias('Illuminate\Support\Facades\Event', 'Event');
-        // //class_alias('Illuminate\Support\Facades\Gate', 'Gate');
-        // class_alias('Illuminate\Support\Facades\Log', 'Log');
-        // class_alias('Illuminate\Support\Facades\Queue', 'Queue');
-        // class_alias('Illuminate\Support\Facades\Schema', 'Schema');
-        // class_alias('Illuminate\Support\Facades\URL', 'URL');
-        // class_alias('Illuminate\Support\Facades\Validator', 'Validator');
+        class_alias('Illuminate\Database\Capsule\Manager', 'DB');
     }
 
+}
 
+
+
+//框架日志处理类
+class YafLog
+{
+    public static $mongolog;
+    public static function __callStatic($method, $args)
+    {
+        $instance = static::$mongolog;
+        if (!$instance) {
+            throw new RuntimeException('A facade root has not been set.');
+        }
+
+        switch (count($args)) {
+            case 0:
+                return $instance->$method();
+            case 1:
+                return $instance->$method($args[0]);
+            case 2:
+                return $instance->$method($args[0], $args[1]);
+            case 3:
+                return $instance->$method($args[0], $args[1], $args[2]);
+            case 4:
+                return $instance->$method($args[0], $args[1], $args[2], $args[3]);
+            default:
+                return call_user_func_array([$instance, $method], $args);
+        }
+    }
 }
 
 
