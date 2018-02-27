@@ -9,6 +9,18 @@ application.modules = "Index,Wechatrun"
 application.layout.directory=APP_PATH "/application/views/layout"
 application.layoutpath = APP_PATH "/application/views"
 application.document = "layout.phtml"
+application.log = "/tmp/yaf.log"
+
+db.default.type=mysql
+db.default.host=127.0.0.1
+db.default.database=welfare
+db.default.username=root
+db.default.password=root
+db.default.charset = utf8
+db.default.log = false
+db.default.collation=utf8_unicode_ci
+db.default.prefix = 
+
 
 db.shop.type=mysql 
 db.shop.host=localhost 
@@ -18,7 +30,7 @@ db.shop.password=123
 db.shop.charset = utf8 
 db.shop.log = false 
 db.shop.collation=utf8_unicode_ci 
-db.shop.prefix = w_
+db.shop.prefix = 
 
 
 db.test.type=mysql 
@@ -31,6 +43,11 @@ db.test.log = false
 db.test.collation=utf8_unicode_ci 
 db.test.prefix = w_
 
+sms.OperID=xxx
+sms.OperPass=xxxxxxxxx
+
+wechat.APPID=aaaaa
+wechat.APPSECRET=bbbbb
 
 [test]
 ;application.directory=APP_PATH "/application/"

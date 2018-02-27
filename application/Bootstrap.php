@@ -36,8 +36,9 @@ class Bootstrap extends Bootstrap_Abstract
      */
     public function _initLog()
     {
+        $log_dir = isset($this->config->application->log) && !empty($this->config->application->log) ? $this->config->application->log : '/tmp/yaf.log';
         $monolog = new Logger('system');
-        $monolog->pushHandler(new \Monolog\Handler\RotatingFileHandler('/tmp/mwqyaf.log'));
+        $monolog->pushHandler(new \Monolog\Handler\RotatingFileHandler($log_dir));
         $monolog->pushProcessor(new WebProcessor());
         YafLog::$mongolog = $monolog;
         class_alias('YafLog', 'Log');
@@ -112,7 +113,7 @@ class YafLog
     {
         $instance = static::$mongolog;
         if (!$instance) {
-            throw new RuntimeException('A facade root has not been set.');
+            throw new \Exception('monolog 初始化失败');
         }
 
         switch (count($args)) {

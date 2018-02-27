@@ -21,8 +21,6 @@ class IndexController extends Controller_Abstract
         $list = $run_model->all()->toArray();
         print_r($list);
 
-
-
         //$users = DB::connection('test');
         $user_info = DB::table('users','test')->get();
         //print_r($user_info);
@@ -35,25 +33,68 @@ class IndexController extends Controller_Abstract
 
         //$id = DB::insertGetId();
         
-
         //table('users')->get()->toArray();
         // $prefix = DB::getFacadeAccessor();
         // $prefix = Query::getQueryLog();
         //DB::raw('integral * (cart.goods_number)');
-        
-
         exit;
     }
+
+
+    /**
+     * 小程序的微信登录
+     */
+    public function login()
+    {
+        $returnData = array();
+        try {
+            if(empty($_REQUEST['code'])){
+                throw new exception('参数错误');
+            }
+
+            //$appid  = WELFARE_WECHAT_APPID;
+            //$secret = WELFARE_WECHAT_APPSECRET;
+
+            $config = \Yaf\Registry::get('config');
+            $appid = $config->wechat->APPID;
+            $appsecret = $config->wechat->APPSECRET;
+
+            $code   = $_REQUEST['code'];
+            $auth_url = "https://api.weixin.qq.com/sns/jscode2session?appid={$appid}&secret={$appsecret}&js_code={$code}&grant_type=authorization_code";
+            $authInfoJson = file_get_contents($auth_url);
+            //Logs::debug('wechat auth data ',$authInfoJson);
+            if(empty($authInfoJson)){
+                throw new exception('微信授权失败');
+            }
+
+            $authInfo = json_decode($authInfoJson,true);
+            //Logs::debug('return data',$returnData);
+            if(isset($authInfo['errcode']) || empty($authInfo['openid'])){
+                throw new exception('微信登录失败');
+            }
+
+            $returnData['openid']       = $authInfo['openid'];
+            $returnData['unionid']      = isset($authInfo['unionid']) ? $authInfo['unionid'] : '';
+            $returnData['session_key']  = $authInfo['session_key'];
+        } catch (exception $e){
+            return $this->ajaxError($e->getMessage());
+        }
+        return  $this->ajaxSuccess($returnData);
+    }
+
 
     public function weRunDataAction()
     {
         $return_data = array('step_num'=>0);
 
-        $appid = WELFARE_WECHAT_APPID;
+        $config = \Yaf\Registry::get('config');
+        $appid = $config->wechat->APPID;
+        $appsecret = $config->wechat->APPSECRET;
+
         $sessionKey =  isset($_REQUEST['sessionKey']) ? $_REQUEST['sessionKey'] : '';
         $encryptedData = isset($_REQUEST['encryptedData']) ?  $_REQUEST['encryptedData'] : '';
         $iv = isset($_REQUEST['iv']) ?  $_REQUEST['iv'] : '';
-        $uid = isset($_REQUEST['uid']) ?  $_REQUEST['uid'] : '';
+        $user_id = isset($_REQUEST['user_id']) ?  $_REQUEST['user_id'] : '';
 
         if(empty($sessionKey) || empty($encryptedData) || empty($iv)){
             $return_data['km_txt']      = 0;
@@ -72,18 +113,50 @@ class IndexController extends Controller_Abstract
         $res = json_decode($res,true);
         if(isset($res['stepInfoList'])){
             //更新微信运动日志表
-            $this->updateStepLog($uid,$res['stepInfoList']);
+            $this->updateStepLog($user_id,$res['stepInfoList']);
             $return_data['werun_data'] = $res; // todo 上线隐藏即可
 
             $today_info = array_pop($res['stepInfoList']);
             $return_data['step_num'] = $today_info['step'];
         }
-        $return_data['km_txt'] = WebApi_Team_Card::instance()->getKmByStepnum($return_data['step_num']);
-        $return_data['joule_txt'] = WebApi_Team_Card::instance()->getJouleByStepnum($return_data['step_num']);
-        $return_data['food_txt'] = WebApi_Team_Card::instance()->getFoodByStepnum($return_data['step_num']);
+        $return_data['km_txt'] = SteplogModel::getKmByStepnum($return_data['step_num']);
+        $return_data['joule_txt'] = SteplogModel::getJouleByStepnum($return_data['step_num']);
+        $return_data['food_txt'] = SteplogModel::getFoodByStepnum($return_data['step_num']);
         $this->ajaxSuccess($return_data);
     }
 
+    /** 
+     * 更新微信运动返回的当月数据到数据库
+     */
+    private function updateStepLog($user_id,$stepInfoList)
+    {
+        if(empty($user_id) || empty($stepInfoList)){
+            return false;
+        }
+
+        foreach ($stepInfoList as $row) {
+            if($row['step'] <= 0){
+                continue;
+            }
+            $info = DB::table('w_step_log','shop')->where(['user_id'=>$user_id,'data_time' => $row['timestamp']])->first();
+            if (empty($info)) {
+                $insertData = array();
+                $insertData['user_id']      = $user_id;
+                $insertData['step_num']     = $row['step'];
+                $insertData['data_time']    = $row['timestamp'];
+                $insertData['add_time']     = time();
+                $insertData['update_time']  = time();
+                $flag = DB::table('w_step_log','shop')->insertGetId($insertData);
+            } else {
+                if($info['step_num'] < $row['step']){
+                    $updateData = array();
+                    $updateData['step_num']     = $row['step'];
+                    $updateData['update_time']  = time();
+                    $flag = DB::table('w_step_log','shop')->where(['id'=>$info['id']])->update($updateData);
+                }
+            }
+        }
+    }
 
 
 }
