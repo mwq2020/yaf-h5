@@ -1,5 +1,5 @@
 ﻿﻿<?php
-
+namespace Wechat\wxcrypt;
 /**
  * error code 说明.
  * <ul>

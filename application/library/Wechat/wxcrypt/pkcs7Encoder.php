@@ -1,5 +1,6 @@
 ﻿<?php
-include_once __DIR__."errorCode.php";
+namespace Wechat\wxcrypt;
+//include_once __DIR__."errorCode.php";
 
 /**
  * PKCS7Encoder class

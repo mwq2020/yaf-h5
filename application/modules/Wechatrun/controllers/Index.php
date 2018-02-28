@@ -105,7 +105,7 @@ class IndexController extends Core\Base
 
         //由于某些原因 引入微信官方的类库后输出了部分不明字符 导致返回结果的json格式错误，此处引用缓冲区 屏蔽到多余的输出
         ob_start();
-        $obj = new Wechat\Wxcrypt();
+        $obj = new Wechat\wxcrypt\Wxcrypt();
         $res = $obj->decodeCryptData($appid,$sessionKey,$encryptedData,$iv);
         ob_clean();
 
