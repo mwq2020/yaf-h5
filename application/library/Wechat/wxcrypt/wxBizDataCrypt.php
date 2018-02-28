@@ -1,5 +1,4 @@
 ﻿﻿<?php
-namespace Wechat;
 
 /**
  * 对微信小程序用户加密数据的解密示例代码.
@@ -7,8 +6,8 @@ namespace Wechat;
  * @copyright Copyright (c) 1998-2014 Tencent Inc.
  */
 
-include_once "pkcs7Encoder.php";
-include_once "errorCode.php";
+include_once __DIR__."pkcs7Encoder.php";
+include_once __DIR__."errorCode.php";
 
 class WXBizDataCrypt
 {
@@ -72,5 +71,4 @@ class WXBizDataCrypt
 
 }
 
-?>
 

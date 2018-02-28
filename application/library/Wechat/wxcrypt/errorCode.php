@@ -1,5 +1,4 @@
 ﻿﻿<?php
-namespace Wechat;
 
 /**
  * error code 说明.
@@ -22,4 +21,4 @@ class ErrorCode
 	public static $DecodeBase64Error = -41004;
 }
 
-?>
+

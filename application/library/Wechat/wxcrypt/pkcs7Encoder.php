@@ -1,7 +1,5 @@
 ﻿<?php
-namespace Wechat;
-
-include_once "errorCode.php";
+include_once __DIR__."errorCode.php";
 
 /**
  * PKCS7Encoder class
@@ -103,4 +101,3 @@ class Prpcrypt
 	}
 }
 
-?>
