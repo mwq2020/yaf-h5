@@ -6,8 +6,7 @@ namespace Wechat\wxcrypt;
  * @copyright Copyright (c) 1998-2014 Tencent Inc.
  */
 
-//include_once __DIR__."pkcs7Encoder.php";
-//include_once __DIR__."errorCode.php";
+include_once __DIR__."pkcs7Encoder.php";
 
 class wxBizDataCrypt
 {
@@ -37,13 +36,13 @@ class wxBizDataCrypt
 	public function decryptData( $encryptedData, $iv, &$data )
 	{
 		if (strlen($this->sessionKey) != 24) {
-			return ErrorCode::$IllegalAesKey;
+			return errorCode::$IllegalAesKey;
 		}
 		$aesKey=base64_decode($this->sessionKey);
 
         
 		if (strlen($iv) != 24) {
-			return ErrorCode::$IllegalIv;
+			return errorCode::$IllegalIv;
 		}
 		$aesIV=base64_decode($iv);
 
@@ -59,14 +58,14 @@ class wxBizDataCrypt
         $dataObj=json_decode( $result[1] );
         if( $dataObj  == NULL )
         {
-            return ErrorCode::$IllegalBuffer;
+            return errorCode::$IllegalBuffer;
         }
         if( $dataObj->watermark->appid != $this->appid )
         {
-            return ErrorCode::$IllegalBuffer;
+            return errorCode::$IllegalBuffer;
         }
 		$data = $result[1];
-		return ErrorCode::$OK;
+		return errorCode::$OK;
 	}
 
 }

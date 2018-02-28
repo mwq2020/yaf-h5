@@ -12,7 +12,7 @@ namespace Wechat\wxcrypt;
  */
 
 
-class ErrorCode
+class errorCode
 {
 	public static $OK = 0;
 	public static $IllegalAesKey = -41001;
