@@ -3,9 +3,9 @@
 /****** 健步走默认入口 ********/
 /****************************/
 
-use Yaf\Controller_Abstract;
+// use Yaf\Controller_Abstract;
 //use Illuminate\Database\Capsule\Manager as DB;
-class IndexController extends Controller_Abstract 
+class IndexController extends Core\Base 
 {
 
     public function indexAction() {
