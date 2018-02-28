@@ -1,4 +1,5 @@
 ﻿﻿<?php
+namespace Wechat;
 
 /**
  * error code 说明.
@@ -10,7 +11,7 @@
  *    <li>-41016: base64解密失败</li>
  * </ul>
  */
-namespace Wechat;
+
 
 class ErrorCode
 {
