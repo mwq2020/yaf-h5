@@ -9,7 +9,7 @@ namespace Wechat\wxcrypt;
 //include_once __DIR__."pkcs7Encoder.php";
 //include_once __DIR__."errorCode.php";
 
-class WXBizDataCrypt
+class wxBizDataCrypt
 {
     private $appid;
 	private $sessionKey;
@@ -19,7 +19,7 @@ class WXBizDataCrypt
 	 * @param $sessionKey string 用户在小程序登录后获取的会话密钥
 	 * @param $appid string 小程序的appid
 	 */
-	public function WXBizDataCrypt( $appid, $sessionKey)
+	public function wxBizDataCrypt( $appid, $sessionKey)
 	{
 		$this->sessionKey = $sessionKey;
 		$this->appid = $appid;
