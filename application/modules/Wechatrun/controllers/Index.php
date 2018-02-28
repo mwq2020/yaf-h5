@@ -77,9 +77,9 @@ class IndexController extends Controller_Abstract
             $returnData['unionid']      = isset($authInfo['unionid']) ? $authInfo['unionid'] : '';
             $returnData['session_key']  = $authInfo['session_key'];
         } catch (exception $e){
-            return $this->ajaxError($e->getMessage());
+            return $this->jsonError($e->getMessage());
         }
-        return  $this->ajaxSuccess($returnData);
+        return  $this->jsonSuccess($returnData);
     }
 
 
@@ -100,7 +100,7 @@ class IndexController extends Controller_Abstract
             $return_data['km_txt']      = 0;
             $return_data['joule_txt']   = 0;
             $return_data['food_txt']    = 0;
-            $this->ajaxSuccess($return_data);
+            $this->jsonSuccess($return_data);
         }
 
         //由于某些原因 引入微信官方的类库后输出了部分不明字符 导致返回结果的json格式错误，此处引用缓冲区 屏蔽到多余的输出
@@ -122,7 +122,7 @@ class IndexController extends Controller_Abstract
         $return_data['km_txt'] = SteplogModel::getKmByStepnum($return_data['step_num']);
         $return_data['joule_txt'] = SteplogModel::getJouleByStepnum($return_data['step_num']);
         $return_data['food_txt'] = SteplogModel::getFoodByStepnum($return_data['step_num']);
-        $this->ajaxSuccess($return_data);
+        $this->jsonSuccess($return_data);
     }
 
     /** 
