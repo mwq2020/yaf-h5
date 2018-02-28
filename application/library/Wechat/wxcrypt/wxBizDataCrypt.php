@@ -6,6 +6,8 @@
  * @copyright Copyright (c) 1998-2014 Tencent Inc.
  */
 
+namespace Wechat;
+
 include_once "pkcs7Encoder.php";
 include_once "errorCode.php";
 
