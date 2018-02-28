@@ -1,12 +1,5 @@
-﻿﻿<?php
+<?php
 namespace Wechat\wxcrypt;
-/**
- * 对微信小程序用户加密数据的解密示例代码.
- *
- * @copyright Copyright (c) 1998-2014 Tencent Inc.
- */
-
-include_once __DIR__."pkcs7Encoder.php";
 
 class wxBizDataCrypt
 {
@@ -48,7 +41,7 @@ class wxBizDataCrypt
 
 		$aesCipher=base64_decode($encryptedData);
 
-		$pc = new Prpcrypt($aesKey);
+		$pc = new prpcrypt($aesKey);
 		$result = $pc->decrypt($aesCipher,$aesIV);
         
 		if ($result[0] != 0) {
