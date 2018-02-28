@@ -44,7 +44,7 @@ class IndexController extends Controller_Abstract
     /**
      * 小程序的微信登录
      */
-    public function login()
+    public function loginAction()
     {
         $returnData = array();
         try {
