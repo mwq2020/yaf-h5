@@ -15,17 +15,17 @@ class UserController extends Core\Base
     {
         $account = isset($_REQUEST['account']) ? $_REQUEST['account'] : 0;
         if(empty($account)){
-            $this->jsonError('账号不能为空');
+            return $this->jsonError('账号不能为空');
         }
 
         $password = isset($_REQUEST['password']) ? $_REQUEST['password'] : '';
         if(empty($password)){
-            $this->jsonError('密码不能为空');
+            return $this->jsonError('密码不能为空');
         }
 
-        $userInfo = DB::table('w_users','shop')->where(['telphone'=>$account])->first();
+        $userInfo = DB::table('w_users')->select('user_id','telphone','password','ec_salt')->where(['telphone'=>$account])->first();
         if(empty($userInfo)){
-            $this->jsonError('用户不存在');
+            return $this->jsonError('用户不存在');
         }
 
         $make_password = '';
@@ -36,10 +36,24 @@ class UserController extends Core\Base
         }
         
         if($userInfo['password'] != $make_password) {
-            $this->jsonError('密码错误');
+            return $this->jsonError('密码错误');
         }
 
-        $this->jsonSuccess($userInfo);
+        $company_user = DB::table('w_company_user')->where(['user_id'=>$userInfo['user_id'],'status' => 1])
+                        ->orderBy('update_time','desc')->first();
+        if(empty($company_user)){
+            return $this->jsonError('数据错误！');
+        }
+
+        $return_data = [];
+        $return_data['user_id']         = $company_user['user_id'];
+        $return_data['company_id']      = $company_user['company_id'];
+        $return_data['telphone']        = $company_user['telphone'];
+        $return_data['real_name']       = $company_user['real_name'];
+        $return_data['department_id']   = $company_user['department_id'];
+        $return_data['department_name'] = $company_user['department_name'];
+
+        return $this->jsonSuccess($return_data);
     }
 
     /**
@@ -80,6 +94,20 @@ class UserController extends Core\Base
             $this->jsonError('用户不存在');
         }
 
+        $company_user = DB::table('w_company_user')->where(['user_id'=>$userInfo['user_id'],'status' => 1])
+                        ->orderBy('update_time','desc')->first();
+        if(empty($company_user)){
+            return $this->jsonError('数据错误！');
+        }
+
+        $return_data = [];
+        $return_data['user_id']         = $company_user['user_id'];
+        $return_data['company_id']      = $company_user['company_id'];
+        $return_data['telphone']        = $company_user['telphone'];
+        $return_data['real_name']       = $company_user['real_name'];
+        $return_data['department_id']   = $company_user['department_id'];
+        $return_data['department_name'] = $company_user['department_name'];
+
         $this->jsonSuccess($userInfo);
     }
 
@@ -90,7 +118,7 @@ class UserController extends Core\Base
     {
         $account = isset($_REQUEST['account']) ? $_REQUEST['account'] : 0;
         if(empty($account)){
-            $this->jsonError('账号不能为空');
+            return $this->jsonError('账号不能为空');
         }
 
         //todo 此处需要添加更多的校验 防止空刷短信
@@ -98,7 +126,7 @@ class UserController extends Core\Base
 
         $verification_code = rand(100000,999999);
         $valid_id = SmsModel::sendValidSms($account,$verification_code);
-        $this->jsonSuccess(['valid_id' => $valid_id]);
+        return $this->jsonSuccess(['valid_id' => $valid_id]);
     }
 
     /**
@@ -154,7 +182,6 @@ class UserController extends Core\Base
         }
         $return_data['dateList'] =  $dateList;
         $return_data['km_count'] = round($return_data['count']*0.7/1000,2);
-
 
         //print_r($ret);
         //print_r($return_data);

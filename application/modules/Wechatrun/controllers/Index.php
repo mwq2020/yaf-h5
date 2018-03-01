@@ -69,7 +69,7 @@ class IndexController extends Core\Base
 
             $authInfo = json_decode($authInfoJson,true);
             //Logs::debug('return data',$returnData);
-            if(isset($authInfo['errcode']) || empty($authInfo['openid'])){
+            if(isset($authInfo['errcode']) || empty($authInfo['openid'])) {
                 throw new exception('微信登录失败');
             }
 
