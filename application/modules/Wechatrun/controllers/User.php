@@ -61,8 +61,7 @@ class UserController extends Core\Base
      */ 
     public function codeloginAction() 
     {
-        Log::info('国都短信发送失败:');
-
+        
         $account = isset($_REQUEST['account']) ? $_REQUEST['account'] : 0;
         if(empty($account)){
             $this->jsonError('账号不能为空');
@@ -78,15 +77,23 @@ class UserController extends Core\Base
             $this->jsonError('验证码登录失败【1】');
         }
 
-        $smsInfo = DB::table('w_sms_log','shop')->where(['id'=>$valid_id])->first();
+        $smsInfo = DB::table('w_sms_log')->where(['id'=>$valid_id])->first();
         if(empty($smsInfo)){
             $this->jsonError('验证码登录失败【2】');
+        } elseif($smsInfo['is_validated'] == 1){
+            $this->jsonError('验证码已使用');
+        } elseif(time() - $smsInfo['add_time'] > 600){
+            $this->jsonError('验证码已过期');
         }
 
-        //todo 此处需要添加更多的校验  校验验证码发送的时间等
-
-        if($smsInfo['verification_code'] != $code){
+        if(empty($smsInfo['verification_code']) || $smsInfo['verification_code'] != $code){
             $this->jsonError('验证码登录失败【3】');
+        }
+
+        //更新验证码到已使用
+        $flag = DB::table('w_sms_log')->where(['id'=>$valid_id])->update(['is_validated' => 1,'update_time' => time()]);
+        if(empty($flag)){
+            $this->jsonError('验证码登录失败【4】');
         }
 
         $userInfo = DB::table('w_users','shop')->where(['telphone'=>$account])->first();
@@ -108,7 +115,7 @@ class UserController extends Core\Base
         $return_data['department_id']   = $company_user['department_id'];
         $return_data['department_name'] = $company_user['department_name'];
 
-        $this->jsonSuccess($userInfo);
+        $this->jsonSuccess($return_data);
     }
 
     /**
