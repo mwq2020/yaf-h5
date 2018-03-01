@@ -96,7 +96,7 @@ class UserController extends Core\Base
             $this->jsonError('验证码登录失败【4】');
         }
 
-        $userInfo = DB::table('w_users','shop')->where(['telphone'=>$account])->first();
+        $userInfo = DB::table('w_users')->where(['telphone'=>$account])->first();
         if(empty($userInfo)){
             $this->jsonError('用户不存在');
         }
@@ -151,7 +151,7 @@ class UserController extends Core\Base
         $date_step_list = array();//以日期为key的数组
         $target_num = 10000;
 
-        $ret = DB::table('w_step_log','shop')->where(['user_id'=>$user_id])->get();
+        $ret = DB::table('w_step_log')->where(['user_id'=>$user_id])->get();
 
         //echo "<pre>";
         if(!empty($ret)) {

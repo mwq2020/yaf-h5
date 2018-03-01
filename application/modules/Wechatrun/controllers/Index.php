@@ -138,7 +138,7 @@ class IndexController extends Core\Base
             if($row['step'] <= 0){
                 continue;
             }
-            $info = DB::table('w_step_log','shop')->where(['user_id'=>$user_id,'data_time' => $row['timestamp']])->first();
+            $info = DB::table('w_step_log')->where(['user_id'=>$user_id,'data_time' => $row['timestamp']])->first();
             if (empty($info)) {
                 $insertData = array();
                 $insertData['user_id']      = $user_id;
@@ -146,13 +146,13 @@ class IndexController extends Core\Base
                 $insertData['data_time']    = $row['timestamp'];
                 $insertData['add_time']     = time();
                 $insertData['update_time']  = time();
-                $flag = DB::table('w_step_log','shop')->insertGetId($insertData);
+                $flag = DB::table('w_step_log')->insertGetId($insertData);
             } else {
                 if($info['step_num'] < $row['step']){
                     $updateData = array();
                     $updateData['step_num']     = $row['step'];
                     $updateData['update_time']  = time();
-                    $flag = DB::table('w_step_log','shop')->where(['id'=>$info['id']])->update($updateData);
+                    $flag = DB::table('w_step_log')->where(['id'=>$info['id']])->update($updateData);
                 }
             }
         }

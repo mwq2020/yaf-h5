@@ -27,7 +27,7 @@ class ActivityController extends Core\Base
         if(empty($company_id)){
             $this->jsonError('企业id不能为空');
         }
-        $activity_list = DB::table('w_step_activity','shop')->where(['company_id'=>$company_id])->get();
+        $activity_list = DB::table('w_step_activity')->where(['company_id'=>$company_id])->get();
         $this->jsonSuccess($activity_list);
         // $this->jsonError($activity_list);
     
@@ -48,7 +48,7 @@ class ActivityController extends Core\Base
         if(empty($act_id)){
             $this->jsonError('活动id不能为空');
         }
-        $activity_info = DB::table('w_step_activity','shop')->where(['act_id'=>$act_id])->first();
+        $activity_info = DB::table('w_step_activity')->where(['act_id'=>$act_id])->first();
         $this->jsonSuccess($activity_info); 
     }
 
@@ -66,7 +66,7 @@ class ActivityController extends Core\Base
             $this->jsonError('活动id不能为空');
         }
 
-        $ret = DB::table('w_step_log','shop')  
+        $ret = DB::table('w_step_log')  
                 ->leftJoin('w_company_user','w_step_log.user_id','=','w_company_user.user_id')
                 ->select(
                      DB::raw('SUM(w_step_log.step_num) AS step_num_all'),
@@ -102,7 +102,7 @@ class ActivityController extends Core\Base
             $this->jsonError('活动id不能为空');
         }
 
-        $ret = DB::table('w_step_log','shop')  
+        $ret = DB::table('w_step_log')  
                 ->leftJoin('w_company_user','w_step_log.user_id','=','w_company_user.user_id')
                 ->select(
                      DB::raw('SUM(w_step_log.step_num) AS step_num_all'),
