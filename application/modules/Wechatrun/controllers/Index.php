@@ -8,28 +8,32 @@
 class IndexController extends Core\Base 
 {
 
-    public function indexAction() {
-        echo '我是登录接口';
+    public function indexAction() 
+    {
+        echo 'hello world!';
         return false;
     }
 
+    /**
+     * 测试接口
+     */
     public function testAction()
     {
         echo "<pre>";
         echo "this is wechatrun test page<br>";
-        $run_model = new WechatRunModel();
-        $list = $run_model->all()->toArray();
-        print_r($list);
+        //$run_model = new WechatRunModel();
+        //$list = $run_model->all()->toArray();
+        //print_r($list);
 
         //$users = DB::connection('test');
-        $user_info = DB::table('users','test')->get();
+        //$user_info = DB::table('users','test')->get();
         //print_r($user_info);
 
     
         //$flag = DB::connection('test')->insert('insert into w_users (user_name, mobile, password) values (?, ?, ?)', ['Laravel','18211072317','123456']);
         //var_dump($flag);
-        $id = DB::table('users','test')->insertGetId(['user_name' => 'mwqtest', 'mobile' => '18211072317', 'password' => '123456']);
-        print_r($id);
+        //$id = DB::table('users','test')->insertGetId(['user_name' => 'mwqtest', 'mobile' => '18211072317', 'password' => '123456']);
+        //print_r($id);
 
         //$id = DB::insertGetId();
         

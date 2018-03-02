@@ -82,7 +82,7 @@ class UserController extends Core\Base
             $this->jsonError('验证码登录失败【2】');
         } elseif($smsInfo['is_validated'] == 1){
             $this->jsonError('验证码已使用');
-        } elseif(time() - $smsInfo['add_time'] > 600){
+        } elseif(time() - $smsInfo['add_time'] > 1200){
             $this->jsonError('验证码已过期');
         }
 

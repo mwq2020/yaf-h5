@@ -63,7 +63,12 @@ class ActivityController extends Core\Base
         }
         $act_id = isset($_REQUEST['act_id']) ? intval($_REQUEST['act_id']) : 0;
         if(empty($act_id)){
-            $this->jsonError('活动id不能为空');
+            //$this->jsonError('活动id不能为空');
+        }
+
+        $user_id = isset($_REQUEST['user_id']) ? intval($_REQUEST['user_id']) : 0;
+        if(empty($user_id)){
+            $this->jsonError('用户id不能为空');
         }
 
         $ret = DB::table('w_step_log')  
@@ -81,7 +86,29 @@ class ActivityController extends Core\Base
                 ->orderBy('step_num_all','desc')
                 ->get();
 
-        $this->jsonSuccess($ret);
+        $ranking_list = ['info'=>[],'list' => []];
+        $ranking_num = 1;
+        foreach($ret as $row){
+            $row['ranking_num'] = $ranking_num;
+            $ranking_list['list'][$ranking_num] = $row;
+            $ranking_num++;
+            if($row['user_id'] == $user_id) {
+                $ranking_list['info'] = $row;
+            }
+        }
+
+        if(empty($ranking_list['info'])){
+            $user_info = DB::table('w_company_user')->where(['company_id' => $company_id,'user_id' => $user_id])->first();
+            $ranking_list['info']['step_num_all']   = 0;
+            $ranking_list['info']['real_name']      = $user_info['real_name'];
+            $ranking_list['info']['telphone']       = $user_info['telphone'];
+            $ranking_list['info']['department_id']  = $user_info['department_id'];
+            $ranking_list['info']['department_name'] = $user_info['department_name'];
+            $ranking_list['info']['user_id']        = $user_info['user_id'];
+            $ranking_list['info']['ranking_num']    = count($ret)+1;
+        }
+
+        $this->jsonSuccess($ranking_list);
     }
 
     /**
@@ -99,7 +126,11 @@ class ActivityController extends Core\Base
         }
         $act_id = isset($_REQUEST['act_id']) ? intval($_REQUEST['act_id']) : 0;
         if(empty($act_id)){
-            $this->jsonError('活动id不能为空');
+            //$this->jsonError('活动id不能为空');
+        }
+        $user_id = isset($_REQUEST['user_id']) ? intval($_REQUEST['user_id']) : 0;
+        if(empty($user_id)){
+            $this->jsonError('用户id不能为空');
         }
 
         $ret = DB::table('w_step_log')  
@@ -117,7 +148,29 @@ class ActivityController extends Core\Base
                 ->orderBy('step_num_all','desc')
                 ->get();
 
-        $this->jsonSuccess($ret);
+        $ranking_list = ['info'=>[],'list' => []];
+        $ranking_num = 1;
+        foreach($ret as $row){
+            $row['ranking_num'] = $ranking_num;
+            $ranking_list['list'][$ranking_num] = $row;
+            $ranking_num++;
+            if($row['user_id'] == $user_id) {
+                $ranking_list['info'] = $row;
+            }
+        }
+
+        if(empty($ranking_list['info'])){
+            $user_info = DB::table('w_company_user')->where(['company_id' => $company_id,'user_id' => $user_id])->first();
+            $ranking_list['info']['step_num_all']   = 0;
+            $ranking_list['info']['real_name']      = $user_info['real_name'];
+            $ranking_list['info']['telphone']       = $user_info['telphone'];
+            $ranking_list['info']['department_id']  = $user_info['department_id'];
+            $ranking_list['info']['department_name'] = $user_info['department_name'];
+            $ranking_list['info']['user_id']        = $user_info['user_id'];
+            $ranking_list['info']['ranking_num']    = count($ret)+1;
+        }
+
+        $this->jsonSuccess($ranking_list);
     }
 
 
