@@ -86,7 +86,7 @@ class ActivityController extends Core\Base
                 ->orderBy('step_num_all','desc')
                 ->get();
 
-        $ranking_list = ['info'=>[],'list' => []];
+        $ranking_list = ['info'=>[],'list' => [],'one'=>[],'two'=>[],'three'=>[]];
         $ranking_num = 1;
         foreach($ret as $row){
             $row['ranking_num'] = $ranking_num;
@@ -106,6 +106,19 @@ class ActivityController extends Core\Base
             $ranking_list['info']['department_name'] = $user_info['department_name'];
             $ranking_list['info']['user_id']        = $user_info['user_id'];
             $ranking_list['info']['ranking_num']    = count($ret)+1;
+        }
+
+        $list_count = count($ranking_list['list']);
+        if($list_count >= 1){
+            $ranking_list['one'] = $ranking_list['list'][1];
+        }
+
+        if($list_count >= 2){
+            $ranking_list['two'] = $ranking_list['list'][2];
+        }
+
+        if($list_count >= 3){
+            $ranking_list['three'] = $ranking_list['list'][3];
         }
 
         $this->jsonSuccess($ranking_list);
@@ -148,7 +161,7 @@ class ActivityController extends Core\Base
                 ->orderBy('step_num_all','desc')
                 ->get();
 
-        $ranking_list = ['info'=>[],'list' => []];
+        $ranking_list = ['info'=>[],'list' => [],'one'=>[],'two'=>[],'three'=>[]];
         $ranking_num = 1;
         foreach($ret as $row){
             $row['ranking_num'] = $ranking_num;
@@ -168,6 +181,20 @@ class ActivityController extends Core\Base
             $ranking_list['info']['department_name'] = $user_info['department_name'];
             $ranking_list['info']['user_id']        = $user_info['user_id'];
             $ranking_list['info']['ranking_num']    = count($ret)+1;
+        }
+
+
+        $list_count = count($ranking_list['list']);
+        if($list_count >= 1){
+            $ranking_list['one'] = $ranking_list['list'][1];
+        }
+
+        if($list_count >= 2){
+            $ranking_list['two'] = $ranking_list['list'][2];
+        }
+
+        if($list_count >= 3){
+            $ranking_list['three'] = $ranking_list['list'][3];
         }
 
         $this->jsonSuccess($ranking_list);
