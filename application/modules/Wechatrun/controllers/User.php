@@ -220,6 +220,7 @@ class UserController extends Core\Base
         if(empty($company_user)){
             return $this->jsonError('数据错误！');
         }
+        $user_info = DB::table('w_users')->where(['user_id'=>$user_id])->first();
 
     
         $return_data['user_info']['user_id']         = $company_user['user_id'];
@@ -228,6 +229,7 @@ class UserController extends Core\Base
         $return_data['user_info']['real_name']       = $company_user['real_name'];
         $return_data['user_info']['department_id']   = $company_user['department_id'];
         $return_data['user_info']['department_name'] = $company_user['department_name'];
+        $return_data['user_info']['avatar']          = $user_info['avatar'];//用户头像
 
         $this->jsonSuccess($return_data);
     }

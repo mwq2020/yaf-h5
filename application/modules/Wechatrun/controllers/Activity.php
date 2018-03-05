@@ -73,13 +73,15 @@ class ActivityController extends Core\Base
 
         $ret = DB::table('w_step_log')  
                 ->leftJoin('w_company_user','w_step_log.user_id','=','w_company_user.user_id')
+                ->leftJoin('w_users','w_users.user_id','=','w_company_user.user_id')
                 ->select(
                      DB::raw('SUM(w_step_log.step_num) AS step_num_all'),
                     'w_company_user.real_name',
                     'w_company_user.telphone',
                     'w_company_user.department_id',
                     'w_company_user.department_name',
-                    'w_company_user.user_id'
+                    'w_company_user.user_id',
+                    'w_users.avatar'
                     )  
                 ->groupBy('w_company_user.user_id')
                 ->where(['w_company_user.company_id' => $company_id])
@@ -100,13 +102,15 @@ class ActivityController extends Core\Base
         }
 
         if(empty($ranking_list['info'])){
-            $user_info = DB::table('w_company_user')->where(['company_id' => $company_id,'user_id' => $user_id])->first();
+            $company_user = DB::table('w_company_user')->where(['company_id' => $company_id,'user_id' => $user_id])->first();
+            $user_info = DB::table('w_users')->where(['user_id'=>$user_id])->first();
             $ranking_list['info']['step_num_all']   = 0;
-            $ranking_list['info']['real_name']      = $user_info['real_name'];
-            $ranking_list['info']['telphone']       = $user_info['telphone'];
-            $ranking_list['info']['department_id']  = $user_info['department_id'];
-            $ranking_list['info']['department_name'] = $user_info['department_name'];
-            $ranking_list['info']['user_id']        = $user_info['user_id'];
+            $ranking_list['info']['real_name']      = $company_user['real_name'];
+            $ranking_list['info']['telphone']       = $company_user['telphone'];
+            $ranking_list['info']['department_id']  = $company_user['department_id'];
+            $ranking_list['info']['department_name'] = $company_user['department_name'];
+            $ranking_list['info']['user_id']        = $company_user['user_id'];
+            $ranking_list['info']['avatar']          = $user_info['avatar'];//用户头像
             $ranking_list['info']['ranking_num']    = count($ret)+1;
         }
 
@@ -150,13 +154,15 @@ class ActivityController extends Core\Base
 
         $ret = DB::table('w_step_log')  
                 ->leftJoin('w_company_user','w_step_log.user_id','=','w_company_user.user_id')
+                ->leftJoin('w_users','w_users.user_id','=','w_company_user.user_id')
                 ->select(
                      DB::raw('SUM(w_step_log.step_num) AS step_num_all'),
                     'w_company_user.real_name',
                     'w_company_user.telphone',
                     'w_company_user.department_id',
                     'w_company_user.department_name',
-                    'w_company_user.user_id'
+                    'w_company_user.user_id',
+                    'w_users.avatar'
                     )  
                 ->groupBy('w_company_user.user_id')
                 ->where(['w_company_user.company_id' => $company_id,'w_company_user.department_id' => $department_id])
@@ -177,13 +183,15 @@ class ActivityController extends Core\Base
         }
 
         if(empty($ranking_list['info'])){
-            $user_info = DB::table('w_company_user')->where(['company_id' => $company_id,'user_id' => $user_id])->first();
+            $company_user = DB::table('w_company_user')->where(['company_id' => $company_id,'user_id' => $user_id])->first();
+            $user_info = DB::table('w_users')->where(['user_id'=>$user_id])->first();
             $ranking_list['info']['step_num_all']   = 0;
-            $ranking_list['info']['real_name']      = $user_info['real_name'];
-            $ranking_list['info']['telphone']       = $user_info['telphone'];
-            $ranking_list['info']['department_id']  = $user_info['department_id'];
-            $ranking_list['info']['department_name'] = $user_info['department_name'];
-            $ranking_list['info']['user_id']        = $user_info['user_id'];
+            $ranking_list['info']['real_name']      = $company_user['real_name'];
+            $ranking_list['info']['telphone']       = $company_user['telphone'];
+            $ranking_list['info']['department_id']  = $company_user['department_id'];
+            $ranking_list['info']['department_name'] = $company_user['department_name'];
+            $ranking_list['info']['user_id']        = $company_user['user_id'];
+            $ranking_list['info']['avatar']          = $user_info['avatar'];//用户头像
             $ranking_list['info']['ranking_num']    = count($ret)+1;
         }
 
