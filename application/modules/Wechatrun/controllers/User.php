@@ -234,4 +234,97 @@ class UserController extends Core\Base
         $this->jsonSuccess($return_data);
     }
 
+    //用户当前成绩
+    public function rankingAction()
+    {
+        $user_id = isset($_REQUEST['user_id']) ? $_REQUEST['user_id'] : 0;
+        if(empty($user_id)){
+            $this->jsonError('账号不能为空');
+        }
+        $company_id = isset($_REQUEST['company_id']) ? $_REQUEST['company_id'] : 0;
+        if(empty($company_id)){
+            $this->jsonError('企业id不能为空');
+        }
+        $department_id = isset($_REQUEST['department_id']) ? intval($_REQUEST['department_id']) : 0;
+        if(empty($department_id)){
+            $this->jsonError('部门id不能为空');
+        }
+
+        $return_data = [
+                        'personal' => ['step_count'=>0,'km_count'=>0,'ranking_num' => 0],
+                        'department' =>['step_count'=>0,'average_step'=>0,'department_ranking_num' => 0] 
+                       ];
+        
+
+        //个人成绩数据汇总
+        $all_ranking_list = DB::table('w_step_log')  
+                ->leftJoin('w_company_user','w_step_log.user_id','=','w_company_user.user_id')
+                ->leftJoin('w_users','w_users.user_id','=','w_company_user.user_id')
+                ->select(
+                     DB::raw('SUM(w_step_log.step_num) AS step_num_all'),
+                    'w_company_user.real_name',
+                    'w_company_user.telphone',
+                    'w_company_user.department_id',
+                    'w_company_user.department_name',
+                    'w_company_user.user_id',
+                    'w_users.avatar'
+                    )  
+                ->groupBy('w_company_user.user_id')
+                ->where(['w_company_user.company_id' => $company_id])
+                // ->where('w_step_log.data_time','>=',strtotime('2018-03-01'))
+                // ->where('w_step_log.data_time','<=',strtotime('2018-03-31'))
+                ->orderBy('step_num_all','desc')
+                ->get();
+
+        $i=1;
+        foreach($all_ranking_list as $row) {
+            if($row['user_id'] == $user_id){
+                $return_data['personal']['step_count'] = $row['step_num_all'];
+                $return_data['personal']['km_count'] = round($row['step_num_all']*0.7/1000);
+                $return_data['personal']['ranking_num'] = $i;
+            }
+            $i++;
+        }
+        if($return_data['personal']['ranking_num'] == 0){
+            $return_data['personal']['ranking_num'] == count($all_ranking_list)+1;
+        }
+
+
+        //部门成绩汇总
+        $department_ranking_list = DB::table('w_step_log')  
+                ->leftJoin('w_company_user','w_step_log.user_id','=','w_company_user.user_id')
+                ->select(
+                     DB::raw('SUM(w_step_log.step_num) AS step_num_all'),
+                    'w_company_user.department_id',
+                    'w_company_user.department_name'
+                    )  
+                ->groupBy('w_company_user.department_id')
+                ->where(['w_company_user.company_id' => $company_id])
+                // ->where('w_step_log.data_time','>=',strtotime('2018-03-01'))
+                // ->where('w_step_log.data_time','<=',strtotime('2018-03-31'))
+                ->orderBy('step_num_all','desc')
+                ->get();
+
+        $i=1;
+        foreach($department_ranking_list as $row) {
+            if($row['department_id'] == $department_id){
+                $return_data['department']['department_ranking_num'] = $i;
+                $return_data['department']['step_count'] = $row['step_num_all'];
+            }
+            $i++;
+        }
+        if($return_data['department']['department_ranking_num'] == 0){
+            $return_data['department']['department_ranking_num'] == count($department_ranking_list)+1;
+        }
+
+        $department_member_count = DB::table('w_company_user')
+                                   ->where(['company_id' => $company_id,'department_id' => $department_id])
+                                   ->count();
+        if($department_member_count > 0) {
+           $return_data['department']['average_step'] =  round($return_data['department']['step_count']/$department_member_count); 
+        }
+                           
+        $this->jsonSuccess($return_data);
+    }
+
 }
