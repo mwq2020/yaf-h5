@@ -45,6 +45,11 @@ class UserController extends Core\Base
             return $this->jsonError('数据错误！');
         }
 
+        $avatar = isset($_REQUEST['avatar']) ? $_REQUEST['avatar'] : '';
+        if(!empty($avatar)){
+            DB::table('w_users')->where(['user_id'=>$company_user['user_id']])->update(['avatar' => $avatar]);
+        }
+
         $return_data = [];
         $return_data['user_id']         = $company_user['user_id'];
         $return_data['company_id']      = $company_user['company_id'];
@@ -105,6 +110,11 @@ class UserController extends Core\Base
                         ->orderBy('update_time','desc')->first();
         if(empty($company_user)){
             return $this->jsonError('数据错误！');
+        }
+
+        $avatar = isset($_REQUEST['avatar']) ? $_REQUEST['avatar'] : '';
+        if(!empty($avatar)){
+            DB::table('w_users')->where(['user_id'=>$company_user['user_id']])->update(['avatar' => $avatar]);
         }
 
         $return_data = [];
