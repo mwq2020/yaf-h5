@@ -133,6 +133,9 @@ class UserController extends Core\Base
 
         $verification_code = rand(100000,999999);
         $valid_id = SmsModel::sendValidSms($account,$verification_code);
+        if($valid_id == false){
+            return $this->jsonError('验证码发送失败');
+        }
         return $this->jsonSuccess(['valid_id' => $valid_id]);
     }
 
@@ -146,10 +149,17 @@ class UserController extends Core\Base
         if(empty($user_id)){
             $this->jsonError('账号不能为空');
         }
+        $company_id = isset($_REQUEST['company_id']) ? $_REQUEST['company_id'] : 0;
+        if(empty($company_id)){
+            $this->jsonError('企业id不能为空');
+        }
 
-        $return_data = array('user_info'=>array(),'list'=>array(),'count'=>0,'km_count'=>0,'card_date_list'=>array());
+        $return_data = array('user_info'=>array(),'list'=>array(),'step_count'=>0,'km_count'=>0,'card_date_list'=>array(),'current_month'=>date('Y年m月'));
         $date_step_list = array();//以日期为key的数组
         $target_num = 10000;
+
+        $start_day = date('Y-m-01');
+        $end_day = date('Y-m-d', strtotime("$start_day +1 month -1 day"));
 
         $ret = DB::table('w_step_log')->where(['user_id'=>$user_id])->get();
 
@@ -160,40 +170,50 @@ class UserController extends Core\Base
                 $row['km']      = $row['step_num'] > 0  ? round($row['step_num']*0.7/1000,2) : 0;
                 $row['calorie'] = $row['step_num'] > 0  ? intval($row['step_num']/22) : 0;
                 $row['status'] = $row['step_num'] >= $target_num ? 1 : 2;
-                $return_data['count'] += $row['step_num'];
+                $return_data['step_count'] += $row['step_num'];
                 $temp_date = date('Y-m-d',$row['data_time']);
-                $return_data['card_date_list'][] = $temp_date;
-                $date_step_list[$temp_date] = $row;
+                //$return_data['card_date_list'][] = $temp_date;
+                //$date_step_list[$temp_date] = $row;
             }
             $return_data['list'] = $ret;
         }
 
         //日历日期及打卡标记
-        $start_timestamp = strtotime(date('Y-m-01',strtotime($month."-01")));
-        $end_timestamp = strtotime("+1 month",$start_timestamp);
-        $dateList = array();
-        $week_num = 1;
-        for($i= $start_timestamp;$i<$end_timestamp;$i+=24*3600){
-            $day = date('Y-m-d',$i);
-            $tmp_day = array('value'=>$day,'date'=>date('d',$i),'week'=>date('w',$i));
-            $tmp_day['is_card']  = in_array($tmp_day['value'], $return_data['card_date_list']) ? 1 :0;
-            if(isset($date_step_list[$day])){
-                $tmp_day['status'] = $date_step_list[$day]['step_num'] >= $target_num ? 1 : 2;
-            } else {
-                $tmp_day['status'] = 0;
-            }
-            $dateList[$week_num][] = $tmp_day;
-            if($tmp_day['week'] == 6){
-                $week_num++;
-            }
-        }
-        $return_data['dateList'] =  $dateList;
-        $return_data['km_count'] = round($return_data['count']*0.7/1000,2);
+        // $start_timestamp = strtotime(date('Y-m-01',strtotime($month."-01")));
+        // $end_timestamp = strtotime("+1 month",$start_timestamp);
+        // $dateList = array();
+        // $week_num = 1;
+        // for($i= $start_timestamp;$i<$end_timestamp;$i+=24*3600){
+        //     $day = date('Y-m-d',$i);
+        //     $tmp_day = array('value'=>$day,'date'=>date('d',$i),'week'=>date('w',$i));
+        //     $tmp_day['is_card']  = in_array($tmp_day['value'], $return_data['card_date_list']) ? 1 :0;
+        //     if(isset($date_step_list[$day])){
+        //         $tmp_day['status'] = $date_step_list[$day]['step_num'] >= $target_num ? 1 : 2;
+        //     } else {
+        //         $tmp_day['status'] = 0;
+        //     }
+        //     $dateList[$week_num][] = $tmp_day;
+        //     if($tmp_day['week'] == 6){
+        //         $week_num++;
+        //     }
+        // }
+        // $return_data['dateList'] =  $dateList;
+        $return_data['km_count'] = round($return_data['step_count']*0.7/1000,2);
 
-        //print_r($ret);
-        //print_r($return_data);
-        //print_r($date_step_list);
-        //exit;
+
+        $company_user = DB::table('w_company_user')->where(['user_id'=>$user_id,'company_id' => $company_id])
+                        ->orderBy('update_time','desc')->first();
+        if(empty($company_user)){
+            return $this->jsonError('数据错误！');
+        }
+
+    
+        $return_data['user_info']['user_id']         = $company_user['user_id'];
+        $return_data['user_info']['company_id']      = $company_user['company_id'];
+        $return_data['user_info']['telphone']        = $company_user['telphone'];
+        $return_data['user_info']['real_name']       = $company_user['real_name'];
+        $return_data['user_info']['department_id']   = $company_user['department_id'];
+        $return_data['user_info']['department_name'] = $company_user['department_name'];
 
         $this->jsonSuccess($return_data);
     }
