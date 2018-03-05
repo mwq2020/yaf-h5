@@ -13,8 +13,8 @@ class Sms
      */
     public static function send($mobile,$content,$signature='鑫福利')
     {
+        $content .= $signature;
         $config = \Yaf\Registry::get('config');
-        //Content=%D6%D0%CE%C4%B6%CC%D0%C5abc
         $OperID = $config->sms->OperID;
         $OperPass = $config->sms->OperPass;
         $code = mb_detect_encoding($content,array('UTF-8','ASCII','GB2312','GBK','BIG5'));
