@@ -161,7 +161,11 @@ class UserController extends Core\Base
         $start_day = date('Y-m-01');
         $end_day = date('Y-m-d', strtotime("$start_day +1 month -1 day"));
 
-        $ret = DB::table('w_step_log')->where(['user_id'=>$user_id])->get();
+        $ret = DB::table('w_step_log')
+               ->where(['user_id'=>$user_id])
+               ->where('data_time','>=',strtotime($start_day))
+               ->where('data_time','<=',strtotime($end_day))
+               ->get();
 
         //echo "<pre>";
         if(!empty($ret)) {
