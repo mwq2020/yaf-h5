@@ -175,6 +175,7 @@ class UserController extends Core\Base
                ->where(['user_id'=>$user_id])
                ->where('data_time','>=',strtotime($start_day))
                ->where('data_time','<=',strtotime($end_day))
+               ->orderBy('data_time','asc')
                ->get();
 
         //echo "<pre>";
