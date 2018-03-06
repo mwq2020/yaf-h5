@@ -11,7 +11,7 @@ class Sms
      * @param string $signature
      * @return mixed
      */
-    public static function send($mobile,$content,$signature='鑫福利')
+    public static function send($mobile,$content,$signature='【鑫福利】')
     {
         $content .= $signature;
         $config = \Yaf\Registry::get('config');
