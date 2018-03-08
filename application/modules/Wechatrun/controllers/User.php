@@ -166,7 +166,7 @@ class UserController extends Core\Base
 
         $return_data = array('user_info'=>array(),'list'=>array(),'step_count'=>0,'km_count'=>0,'card_date_list'=>array(),'current_month'=>date('Y年m月'));
         $date_step_list = array();//以日期为key的数组
-        $target_num = 10000;
+        $target_num = 6000;
 
         $start_day = date('Y-m-01');
         $end_day = date('Y-m-d', strtotime("$start_day +1 month -1 day"));
@@ -178,7 +178,6 @@ class UserController extends Core\Base
                ->orderBy('data_time','asc')
                ->get();
 
-        //echo "<pre>";
         if(!empty($ret)) {
             foreach($ret as &$row){
                 $row['day_name'] = date('d',$row['data_time']);
@@ -192,27 +191,6 @@ class UserController extends Core\Base
             }
             $return_data['list'] = $ret;
         }
-
-        //日历日期及打卡标记
-        // $start_timestamp = strtotime(date('Y-m-01',strtotime($month."-01")));
-        // $end_timestamp = strtotime("+1 month",$start_timestamp);
-        // $dateList = array();
-        // $week_num = 1;
-        // for($i= $start_timestamp;$i<$end_timestamp;$i+=24*3600){
-        //     $day = date('Y-m-d',$i);
-        //     $tmp_day = array('value'=>$day,'date'=>date('d',$i),'week'=>date('w',$i));
-        //     $tmp_day['is_card']  = in_array($tmp_day['value'], $return_data['card_date_list']) ? 1 :0;
-        //     if(isset($date_step_list[$day])){
-        //         $tmp_day['status'] = $date_step_list[$day]['step_num'] >= $target_num ? 1 : 2;
-        //     } else {
-        //         $tmp_day['status'] = 0;
-        //     }
-        //     $dateList[$week_num][] = $tmp_day;
-        //     if($tmp_day['week'] == 6){
-        //         $week_num++;
-        //     }
-        // }
-        // $return_data['dateList'] =  $dateList;
         $return_data['km_count'] = round($return_data['step_count']*0.7/1000,2);
 
 
@@ -222,8 +200,6 @@ class UserController extends Core\Base
             return $this->jsonError('数据错误！');
         }
         $user_info = DB::table('w_users')->where(['user_id'=>$user_id])->first();
-
-    
         $return_data['user_info']['user_id']         = $company_user['user_id'];
         $return_data['user_info']['company_id']      = $company_user['company_id'];
         $return_data['user_info']['telphone']        = $company_user['telphone'];

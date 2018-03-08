@@ -20,7 +20,70 @@ class IndexController extends Core\Base
     public function testAction()
     {
         echo "<pre>";
-        echo "this is wechatrun test page<br>";
+        //echo "this is wechatrun test page<br>";
+
+        $ranking_list = ['list'=>[]];
+        for($i=1;$i<=250;$i++){
+            $ranking_list['list'][$i] = $i."--aa";
+        }
+        
+        $current_user_rank_num = 190;
+
+        $min_display_num = 100;
+        $rank_list_new = [];
+        if(count($ranking_list['list']) >= $min_display_num){
+            if($current_user_rank_num == 0){
+                $rank_list_new = array_slice($ranking_list['list'], 0,$min_display_num);
+            } else {
+                $rank_list_new = array_slice($ranking_list['list'], 0,$min_display_num);
+                $min_ranking_num = $current_user_rank_num-5;
+                $max_ranking_num = $current_user_rank_num+5;
+
+                echo "<br><br>{$min_ranking_num}<br><br>{$max_ranking_num}<br>";
+                if($max_ranking_num >  $min_display_num){
+                    $min_ranking_num = $min_ranking_num > $min_display_num ? $min_ranking_num : $min_display_num;
+                    $temp = array_slice($ranking_list['list'], $min_ranking_num,$max_ranking_num-$min_ranking_num);
+                    if(!empty($temp)){
+                        $rank_list_new = array_merge($rank_list_new,$temp);
+                    }
+                }
+            }
+            $ranking_list['list'] = $rank_list_new;
+        }
+
+        print_r($ranking_list['list']);
+        exit;
+
+        
+
+        // $current_ranking_num = 107;
+        // $last_num = 100;
+        // $list_new = [];
+        // if(count($list) >= 100){
+        //     $list_new = array_slice($list, 0,$last_num);
+        //     $min_ranking_num = $current_ranking_num-5;
+        //     $max_ranking_num = $current_ranking_num+5;
+
+        //     if($max_ranking_num >  $last_num){
+        //         $min_ranking_num = $min_ranking_num > $last_num ? $min_ranking_num : $last_num;
+        //         echo "<br>{$min_ranking_num}<br>{$max_ranking_num}<br>";
+        //         //print_r($list);
+        //         echo "<hr>";
+        //         $temp = array_slice($list, $min_ranking_num,$max_ranking_num-$min_ranking_num);
+        //         print_r($temp);
+        //         $list_new = array_merge($list_new,$temp);
+        //     }
+        // }
+
+        // echo "<hr>";
+        // print_r($list_new);
+        // echo "<hr>";
+        // print_r($list);
+        exit;
+
+
+
+
         //$run_model = new WechatRunModel();
         //$list = $run_model->all()->toArray();
         //print_r($list);

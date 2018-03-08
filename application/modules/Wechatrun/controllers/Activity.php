@@ -3,7 +3,6 @@
 /****** 健步走活动入口 ********/
 /****************************/
 
-// use Yaf\Controller_Abstract;
 class ActivityController extends Core\Base
 {
     //初始化方法，每个控制器都会先执行这个
@@ -90,15 +89,17 @@ class ActivityController extends Core\Base
                 ->orderBy('step_num_all','desc')
                 ->get();
 
+        $current_user_rank_num = 0;
         $ranking_list = ['info'=>[],'list' => [],'one'=>[],'two'=>[],'three'=>[]];
         $ranking_num = 1;
         foreach($ret as $row){
             $row['ranking_num'] = $ranking_num;
             $ranking_list['list'][$ranking_num] = $row;
-            $ranking_num++;
             if($row['user_id'] == $user_id) {
                 $ranking_list['info'] = $row;
+                $current_user_rank_num = $ranking_num;
             }
+            $ranking_num++;
         }
 
         if(empty($ranking_list['info'])){
@@ -126,6 +127,29 @@ class ActivityController extends Core\Base
         if($list_count >= 3){
             $ranking_list['three'] = $ranking_list['list'][3];
         }
+
+
+        // 前100名 自己名字附近的前后5名
+        $min_display_num = 100;
+        $rank_list_new = [];
+        if(count($ranking_list['list']) >= $min_display_num){
+            if($current_user_rank_num == 0){
+                $rank_list_new = array_slice($ranking_list['list'], 0,$min_display_num);
+            } else {
+                $rank_list_new = array_slice($ranking_list['list'], 0,$min_display_num);
+                $min_ranking_num = $current_user_rank_num-5;
+                $max_ranking_num = $current_user_rank_num+5;
+                if($max_ranking_num >  $min_display_num){
+                    $min_ranking_num = $min_ranking_num > $min_display_num ? $min_ranking_num : $min_display_num;
+                    $temp = array_slice($ranking_list['list'], $min_ranking_num,$max_ranking_num-$min_ranking_num);
+                    if(!empty($temp)){
+                        $rank_list_new = array_merge($rank_list_new,$temp);
+                    }
+                }
+            }
+            $ranking_list['list'] = $rank_list_new;
+        }
+
 
         $this->jsonSuccess($ranking_list);
     }
@@ -171,15 +195,17 @@ class ActivityController extends Core\Base
                 ->orderBy('step_num_all','desc')
                 ->get();
 
+        $current_user_rank_num = 0;
         $ranking_list = ['info'=>[],'list' => [],'one'=>[],'two'=>[],'three'=>[]];
         $ranking_num = 1;
         foreach($ret as $row){
             $row['ranking_num'] = $ranking_num;
             $ranking_list['list'][$ranking_num] = $row;
-            $ranking_num++;
             if($row['user_id'] == $user_id) {
                 $ranking_list['info'] = $row;
+                $current_user_rank_num = $ranking_num;
             }
+            $ranking_num++;
         }
 
         if(empty($ranking_list['info'])){
@@ -207,6 +233,27 @@ class ActivityController extends Core\Base
 
         if($list_count >= 3){
             $ranking_list['three'] = $ranking_list['list'][3];
+        }
+
+        // 前100名 自己名字附近的前后5名
+        $min_display_num = 100;
+        $rank_list_new = [];
+        if(count($ranking_list['list']) >= $min_display_num){
+            if($current_user_rank_num == 0){
+                $rank_list_new = array_slice($ranking_list['list'], 0,$min_display_num);
+            } else {
+                $rank_list_new = array_slice($ranking_list['list'], 0,$min_display_num);
+                $min_ranking_num = $current_user_rank_num-5;
+                $max_ranking_num = $current_user_rank_num+5;
+                if($max_ranking_num >  $min_display_num){
+                    $min_ranking_num = $min_ranking_num > $min_display_num ? $min_ranking_num : $min_display_num;
+                    $temp = array_slice($ranking_list['list'], $min_ranking_num,$max_ranking_num-$min_ranking_num);
+                    if(!empty($temp)){
+                        $rank_list_new = array_merge($rank_list_new,$temp);
+                    }
+                }
+            }
+            $ranking_list['list'] = $rank_list_new;
         }
 
         $this->jsonSuccess($ranking_list);
