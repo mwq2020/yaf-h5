@@ -248,7 +248,7 @@ class UserController extends Core\Base
                     )  
                 ->groupBy('w_company_user.user_id')
                 ->where(['w_company_user.company_id' => $company_id])
-                ->where('w_step_log.data_time','>=',strtotime('2018-03-01'))
+                ->where('w_step_log.data_time','>=',strtotime('2018-03-08'))
                 ->where('w_step_log.data_time','<=',strtotime('2018-03-31'))
                 ->orderBy('step_num_all','desc')
                 ->get();
@@ -277,7 +277,7 @@ class UserController extends Core\Base
                     )  
                 ->groupBy('w_company_user.department_id')
                 ->where(['w_company_user.company_id' => $company_id])
-                ->where('w_step_log.data_time','>=',strtotime('2018-03-01'))
+                ->where('w_step_log.data_time','>=',strtotime('2018-03-08'))
                 ->where('w_step_log.data_time','<=',strtotime('2018-03-31'))
                 ->orderBy('step_num_all','desc')
                 ->get();
