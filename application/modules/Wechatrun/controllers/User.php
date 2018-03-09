@@ -321,8 +321,13 @@ class UserController extends Core\Base
         $company_user = DB::table('w_company_user')->where(['user_id'=>$userInfo['user_id'],'status' => 1])
                         ->orderBy('update_time','desc')->first();
         $company_info = DB::table('w_company')->where(['company_id'=>$company_user['company_id']])->first();
+        
+        $return_data = [];
+        $return_data['company_name'] = $company_info['company_name'];
+        $return_data['mobile'] = $account;
+        $return_data['department_name'] = $company_user['department_name'];
 
-        $this->jsonSuccess($company_info);
+        $this->jsonSuccess($return_data);
     }
 
 }
