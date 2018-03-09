@@ -304,4 +304,25 @@ class UserController extends Core\Base
         $this->jsonSuccess($return_data);
     }
 
+    /**
+     * 测试用户的企业
+     */
+    public function testAction()
+    {
+        $account = $_REQUEST['mobile'];
+        if(empty($account)){
+            $this->jsonError('手机号不能为空');
+        }
+         $userInfo = DB::table('w_users')->where(['telphone'=>$account])->first();
+        if(empty($userInfo)){
+            $this->jsonError('用户不存在');
+        }
+
+        $company_user = DB::table('w_company_user')->where(['user_id'=>$userInfo['user_id'],'status' => 1])
+                        ->orderBy('update_time','desc')->first();
+        $company_info = DB::table('w_company')->where(['company_id'=>$company_user['company_id']])->first();
+
+        $this->jsonSuccess($company_info);
+    }
+
 }
