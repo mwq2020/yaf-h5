@@ -330,4 +330,16 @@ class UserController extends Core\Base
         $this->jsonSuccess($return_data);
     }
 
+    public function sampleAction()
+    {
+        $return_data = [];
+        $return_data['user_id']         = 2074;
+        $return_data['company_id']      = 5;
+        $return_data['telphone']        = '13910423567';
+        $return_data['real_name']       = '关键';
+        $return_data['department_id']   = 115;
+        $return_data['department_name'] = '分行工会';
+        return $this->jsonSuccess($return_data);
+    }
+
 }
