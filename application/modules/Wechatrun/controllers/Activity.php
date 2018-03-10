@@ -143,7 +143,8 @@ class ActivityController extends Core\Base
                     $min_ranking_num = $min_ranking_num > $min_display_num ? $min_ranking_num : $min_display_num;
                     $temp = array_slice($ranking_list['list'], $min_ranking_num,$max_ranking_num-$min_ranking_num,true);
                     if(!empty($temp)){
-                        $rank_list_new = array_merge($rank_list_new,$temp);
+                        //$rank_list_new = array_merge($rank_list_new,$temp);
+                        $rank_list_new = $rank_list_new+$temp;
                     }
                 }
             }
@@ -249,7 +250,8 @@ class ActivityController extends Core\Base
                     $min_ranking_num = $min_ranking_num > $min_display_num ? $min_ranking_num : $min_display_num;
                     $temp = array_slice($ranking_list['list'], $min_ranking_num,$max_ranking_num-$min_ranking_num,true);
                     if(!empty($temp)){
-                        $rank_list_new = array_merge($rank_list_new,$temp);
+                        //$rank_list_new = array_merge($rank_list_new,$temp);
+                        $rank_list_new = $rank_list_new+$temp;
                     }
                 }
             }

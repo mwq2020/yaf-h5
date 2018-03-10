@@ -33,18 +33,23 @@ class IndexController extends Core\Base
         $rank_list_new = [];
         if(count($ranking_list['list']) >= $min_display_num){
             if($current_user_rank_num == 0){
-                $rank_list_new = array_slice($ranking_list['list'], 0,$min_display_num);
+                $rank_list_new = array_slice($ranking_list['list'], 0,$min_display_num,true);
             } else {
-                $rank_list_new = array_slice($ranking_list['list'], 0,$min_display_num);
+                $rank_list_new = array_slice($ranking_list['list'], 0,$min_display_num,true);
                 $min_ranking_num = $current_user_rank_num-5;
                 $max_ranking_num = $current_user_rank_num+5;
+
+                // echo "<pre>";
+                // print_r($rank_list_new);
+                // exit;
 
                 echo "<br><br>{$min_ranking_num}<br><br>{$max_ranking_num}<br>";
                 if($max_ranking_num >  $min_display_num){
                     $min_ranking_num = $min_ranking_num > $min_display_num ? $min_ranking_num : $min_display_num;
-                    $temp = array_slice($ranking_list['list'], $min_ranking_num,$max_ranking_num-$min_ranking_num);
+                    $temp = array_slice($ranking_list['list'], $min_ranking_num,$max_ranking_num-$min_ranking_num,true);
                     if(!empty($temp)){
-                        $rank_list_new = array_merge($rank_list_new,$temp);
+                        //$rank_list_new = array_merge($rank_list_new,$temp);
+                        $rank_list_new = $rank_list_new+$temp;
                     }
                 }
             }
