@@ -100,7 +100,7 @@ class ActivityController extends Core\Base
                 $current_user_rank_num = $ranking_num;
             }
             $ranking_list['list'][$ranking_num] = $row;
-            if($row['user_id'] == $user_id && in_array($user_id, $exclude_user_ids)){
+            if(in_array($row['user_id'], $exclude_user_ids)){
                 continue;
             }
             $ranking_num++;
@@ -210,7 +210,7 @@ class ActivityController extends Core\Base
                 $ranking_list['info'] = $row;
                 $current_user_rank_num = $ranking_num;
             }
-            if($row['user_id'] == $user_id && in_array($user_id, $exclude_user_ids)) {
+            if(in_array($row['user_id'], $exclude_user_ids)) {
                 continue;
             }
             $ranking_list['list'][$ranking_num] = $row;
