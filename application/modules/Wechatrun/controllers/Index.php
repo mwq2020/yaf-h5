@@ -19,6 +19,11 @@ class IndexController extends Core\Base
      */
     public function testAction()
     {
+        $today_info = ['mwq' => 20000000];
+        $user_id = 323333;
+        Log::info('用户上传步数user_id:'.$user_id."|".json_encode($today_info));
+        
+
         echo "<pre>";
         //echo "this is wechatrun test page<br>";
 
@@ -191,6 +196,9 @@ class IndexController extends Core\Base
             $today_info = array_pop($res['stepInfoList']);
             $return_data['step_num'] = $today_info['step'];
         }
+
+        Log::info('用户上传步数user_id:'.$user_id."|".json_encode($today_info));
+
         $return_data['km_txt'] = SteplogModel::getKmByStepnum($return_data['step_num']);
         $return_data['joule_txt'] = SteplogModel::getJouleByStepnum($return_data['step_num']);
         $return_data['food_txt'] = SteplogModel::getFoodByStepnum($return_data['step_num']);
