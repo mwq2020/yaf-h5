@@ -56,7 +56,7 @@ class ActivityController extends Core\Base
      */
     public function rankallAction()
     {
-        $exclude_user_ids = [2071];//排除用户的user_id
+        $exclude_user_ids = [4423];//排除用户的user_id
         $company_id = isset($_REQUEST['company_id']) ? intval($_REQUEST['company_id']) : 0;
         if(empty($company_id)){
             $this->jsonError('企业id不能为空');
@@ -210,9 +210,9 @@ class ActivityController extends Core\Base
                 $ranking_list['info'] = $row;
                 $current_user_rank_num = $ranking_num;
             }
-            if(in_array($row['user_id'], $exclude_user_ids)) {
-                continue;
-            }
+            //if(in_array($row['user_id'], $exclude_user_ids)) {
+            //    continue;
+            //}
             $ranking_list['list'][$ranking_num] = $row;
             $ranking_num++;
         }
