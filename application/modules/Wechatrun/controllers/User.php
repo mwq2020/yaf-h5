@@ -267,6 +267,22 @@ class UserController extends Core\Base
         }
 
 
+        //整理部门人数汇总
+        $department_member_ret = DB::table('w_company_user')
+                                   ->select(
+                                    DB::raw('count(user_id) as user_count'),
+                                    'department_id',
+                                    'department_name'
+                                    )
+                                   ->where(['company_id' => $company_id,'status'=>1])
+                                   ->groupBy('department_id')
+                                   ->get();
+        $department_member_list = [];
+        foreach($department_member_ret as $row){
+            $department_member_list[$row['department_id']] = $row;
+        }
+
+
         //部门成绩汇总
         $department_ranking_list = DB::table('w_step_log')  
                 ->leftJoin('w_company_user','w_step_log.user_id','=','w_company_user.user_id')
@@ -282,25 +298,31 @@ class UserController extends Core\Base
                 ->orderBy('step_num_all','desc')
                 ->get();
 
-        $i=1;
-        foreach($department_ranking_list as $row) {
-            if($row['department_id'] == $department_id){
+        //计算部门的平均值
+        foreach($department_ranking_list as &$row) {
+            $department_user_num = isset($department_member_list[$row['department_id']]) ? $department_member_list[$row['department_id']]['user_count'] : 1;
+            $row['department_user_num'] = $department_user_num;
+            $row['average_step'] = round($row['step_num_all']/$department_user_num);
+        }
+
+        //按照部门的平局值排序
+        $sort = array_column($department_ranking_list, 'average_step');
+        array_multisort($sort, SORT_DESC, $department_ranking_list);
+
+        $i = 1;
+        foreach($department_ranking_list as $rowNew) {
+            if($rowNew['department_id'] == $department_id){
                 $return_data['department']['department_ranking_num'] = $i;
-                $return_data['department']['step_count'] = $row['step_num_all'];
+                $return_data['department']['step_count'] = $rowNew['step_num_all'];
+                $return_data['department']['average_step'] = $rowNew['average_step'];
+                break;
             }
             $i++;
         }
-        if($return_data['department']['department_ranking_num'] == 0){
-            $return_data['department']['department_ranking_num'] == count($department_ranking_list)+1;
-        }
 
-        $department_member_count = DB::table('w_company_user')
-                                   ->where(['company_id' => $company_id,'department_id' => $department_id])
-                                   ->count();
-        if($department_member_count > 0) {
-           $return_data['department']['average_step'] =  round($return_data['department']['step_count']/$department_member_count); 
-        }
-                           
+        if($return_data['department']['department_ranking_num'] == 0) {
+            $return_data['department']['department_ranking_num'] == count($department_ranking_list)+1;
+        }      
         $this->jsonSuccess($return_data);
     }
 
