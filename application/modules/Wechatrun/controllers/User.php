@@ -227,6 +227,13 @@ class UserController extends Core\Base
             $this->jsonError('部门id不能为空');
         }
 
+        $activity_start_time = strtotime('2018-03-08');
+        $activity_end_time = strtotime('2018-03-31');
+        if($company_id == 10){
+            $activity_start_time = strtotime('2018-03-26');
+            $activity_end_time = strtotime('2018-04-15'); 
+        }
+
         $return_data = [
                         'personal' => ['step_count'=>0,'km_count'=>0,'ranking_num' => 0],
                         'department' =>['step_count'=>0,'average_step'=>0,'department_ranking_num' => 0] 
@@ -248,8 +255,8 @@ class UserController extends Core\Base
                     )  
                 ->groupBy('w_company_user.user_id')
                 ->where(['w_company_user.company_id' => $company_id,'w_company_user.status' => 1])
-                ->where('w_step_log.data_time','>=',strtotime('2018-03-08'))
-                ->where('w_step_log.data_time','<=',strtotime('2018-03-31'))
+                ->where('w_step_log.data_time','>=',$activity_start_time)
+                ->where('w_step_log.data_time','<=',$activity_end_time)
                 ->orderBy('step_num_all','desc')
                 ->get();
 
@@ -293,8 +300,8 @@ class UserController extends Core\Base
                     )  
                 ->groupBy('w_company_user.department_id')
                 ->where(['w_company_user.company_id' => $company_id,'w_company_user.status' => 1])
-                ->where('w_step_log.data_time','>=',strtotime('2018-03-08'))
-                ->where('w_step_log.data_time','<=',strtotime('2018-03-31'))
+                ->where('w_step_log.data_time','>=',$activity_start_time)
+                ->where('w_step_log.data_time','<=',$activity_end_time)
                 ->orderBy('step_num_all','desc')
                 ->get();
 
