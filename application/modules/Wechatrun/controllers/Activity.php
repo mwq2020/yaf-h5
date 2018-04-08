@@ -73,10 +73,14 @@ class ActivityController extends Core\Base
 
         $activity_start_time = strtotime('2018-03-08');
         $activity_end_time = strtotime('2018-03-31');
+        $statistics_end_time = strtotime('2018-04-03 23:59:59');//统计数据结束时间，之后上传的数据不算有效数据
         if($company_id == 10){
             $activity_start_time = strtotime('2018-03-26');
             $activity_end_time = strtotime('2018-04-15'); 
+            $statistics_end_time = $activity_end_time + (7*24*3600);
         }
+
+
 
         $ret = DB::table('w_step_log')  
                 ->leftJoin('w_company_user','w_step_log.user_id','=','w_company_user.user_id')
@@ -94,6 +98,7 @@ class ActivityController extends Core\Base
                 ->where(['w_company_user.company_id' => $company_id,'w_company_user.status' => 1])
                 ->where('w_step_log.data_time','>=',$activity_start_time)
                 ->where('w_step_log.data_time','<=',$activity_end_time)
+                ->where('w_step_log.add_time','>=',$statistics_end_time)
                 ->orderBy('step_num_all','desc')
                 ->get();
 
@@ -191,9 +196,11 @@ class ActivityController extends Core\Base
 
         $activity_start_time = strtotime('2018-03-08');
         $activity_end_time = strtotime('2018-03-31');
+        $statistics_end_time = strtotime('2018-04-03 23:59:59');//统计数据结束时间，之后上传的数据不算有效数据
         if($company_id == 10){
             $activity_start_time = strtotime('2018-03-26');
-            $activity_end_time = strtotime('2018-04-15'); 
+            $activity_end_time = strtotime('2018-04-15');
+            $statistics_end_time = $activity_end_time + (7*24*3600);
         }
 
         $ret = DB::table('w_step_log')  
@@ -212,6 +219,7 @@ class ActivityController extends Core\Base
                 ->where(['w_company_user.company_id' => $company_id,'w_company_user.department_id' => $department_id,'w_company_user.status' => 1])
                 ->where('w_step_log.data_time','>=',$activity_start_time)
                 ->where('w_step_log.data_time','<=',$activity_end_time)
+                ->where('w_step_log.add_time','>=',$statistics_end_time)
                 ->orderBy('step_num_all','desc')
                 ->get();
 
