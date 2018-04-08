@@ -98,7 +98,7 @@ class ActivityController extends Core\Base
                 ->where(['w_company_user.company_id' => $company_id,'w_company_user.status' => 1])
                 ->where('w_step_log.data_time','>=',$activity_start_time)
                 ->where('w_step_log.data_time','<=',$activity_end_time)
-                ->where('w_step_log.add_time','>=',$statistics_end_time)
+                ->where('w_step_log.add_time','<=',$statistics_end_time)
                 ->orderBy('step_num_all','desc')
                 ->get();
 
@@ -219,7 +219,7 @@ class ActivityController extends Core\Base
                 ->where(['w_company_user.company_id' => $company_id,'w_company_user.department_id' => $department_id,'w_company_user.status' => 1])
                 ->where('w_step_log.data_time','>=',$activity_start_time)
                 ->where('w_step_log.data_time','<=',$activity_end_time)
-                ->where('w_step_log.add_time','>=',$statistics_end_time)
+                ->where('w_step_log.add_time','<=',$statistics_end_time)
                 ->orderBy('step_num_all','desc')
                 ->get();
 
