@@ -1,6 +1,6 @@
 <?php
-
 namespace Core;
+
 class Sms
 {
 
@@ -22,7 +22,8 @@ class Sms
             $content = mb_convert_encoding($content,'gbk', $code);
         }
         $xml_data = "OperID={$OperID}&OperPass={$OperPass}&SendTime=&ValidTime=&AppendID=1234&DesMobile={$mobile}&Content={$content}&ContentType=8";
-        $url = "http://221.179.180.158:9007/QxtSms/QxtFirewall";
+        //$url = "http://221.179.180.158:9007/QxtSms/QxtFirewall";
+        $url = "http://qxtsms.guodulink.net:8000/QxtSms/QxtFirewall";
         //定义content-type为xml
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -31,8 +32,7 @@ class Sms
         curl_setopt($ch, CURLOPT_POSTFIELDS, $xml_data);
         $response = curl_exec($ch);
         if (curl_errno($ch)) {
-            //print curl_error($ch);
-            Log::info('国都短信发送失败:'.curl_error($ch));
+            Log::err('国都短信发送失败:'.curl_error($ch));
             return false;
         }
         curl_close($ch);
