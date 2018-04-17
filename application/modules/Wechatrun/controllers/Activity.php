@@ -77,7 +77,7 @@ class ActivityController extends Core\Base
         if($company_id == 10){
             $activity_start_time = strtotime('2018-03-26');
             $activity_end_time = strtotime('2018-04-15'); 
-            $statistics_end_time = $activity_end_time + (7*24*3600);
+            $statistics_end_time = $activity_end_time + (3*24*3600);
         }
 
 
@@ -200,7 +200,7 @@ class ActivityController extends Core\Base
         if($company_id == 10){
             $activity_start_time = strtotime('2018-03-26');
             $activity_end_time = strtotime('2018-04-15');
-            $statistics_end_time = $activity_end_time + (7*24*3600);
+            $statistics_end_time = $activity_end_time + (3*24*3600);
         }
 
         $ret = DB::table('w_step_log')  
