@@ -78,9 +78,15 @@ class ActivityController extends Core\Base
             $activity_start_time = strtotime('2018-03-26');
             $activity_end_time = strtotime('2018-04-15'); 
             $statistics_end_time = $activity_end_time + (3*24*3600);
+        } elseif($company_id == 11){
+            $activity_start_time = strtotime('2018-04-21');
+            $activity_end_time = strtotime('2018-04-30');
+            $statistics_end_time = $activity_end_time + (3*24*3600);
+        } elseif($company_id == 12){
+            $activity_start_time = strtotime('2018-04-18');
+            $activity_end_time = strtotime('2018-06-30');
+            $statistics_end_time = $activity_end_time + (3*24*3600);
         }
-
-
 
         $ret = DB::table('w_step_log')  
                 ->leftJoin('w_company_user','w_step_log.user_id','=','w_company_user.user_id')
@@ -200,6 +206,14 @@ class ActivityController extends Core\Base
         if($company_id == 10){
             $activity_start_time = strtotime('2018-03-26');
             $activity_end_time = strtotime('2018-04-15');
+            $statistics_end_time = $activity_end_time + (3*24*3600);
+        } elseif($company_id == 11){
+            $activity_start_time = strtotime('2018-04-21');
+            $activity_end_time = strtotime('2018-04-30');
+            $statistics_end_time = $activity_end_time + (3*24*3600);
+        } elseif($company_id == 12){
+            $activity_start_time = strtotime('2018-04-18');
+            $activity_end_time = strtotime('2018-06-30');
             $statistics_end_time = $activity_end_time + (3*24*3600);
         }
 
