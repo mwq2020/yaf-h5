@@ -252,7 +252,7 @@ class UserController extends Core\Base
             $statistics_end_time = $activity_end_time + (3*24*3600);
         } elseif($company_id == 16){
             $activity_start_time = strtotime('2018-09-01');
-            $activity_end_time = strtotime('2018-09-10');
+            $activity_end_time = strtotime('2018-09-13');
             $statistics_end_time = $activity_end_time + (3*24*3600);
         }
 
