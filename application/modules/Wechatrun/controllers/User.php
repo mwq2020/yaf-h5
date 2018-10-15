@@ -316,7 +316,7 @@ class UserController extends Core\Base
                     'w_users.avatar'
                     )  
                 ->groupBy('w_company_step_activity_user.user_id')
-                ->where(['w_company_step_activity_user.activity_id' => $activity_id,'w_company_step_activity_user.status' => 1,'w_company_user.status' => 1])
+                ->where(['w_company_step_activity_user.activity_id' => $activity_id,'w_company_user.company_id' => $company_id,'w_company_step_activity_user.status' => 1,'w_company_user.status' => 1])
                 ->where('w_step_log.data_time','>=',$activity_start_time)
                 ->where('w_step_log.data_time','<=',$activity_end_time)
                 ->where('w_step_log.add_time','<=',$statistics_end_time)
@@ -389,7 +389,7 @@ class UserController extends Core\Base
                     'w_company_user.department_name'
                     )  
                 ->groupBy('w_company_user.department_id')
-                ->where(['w_company_step_activity_user.activity_id' => $activity_id,'w_company_step_activity_user.status' => 1,'w_company_user.status' => 1])
+                ->where(['w_company_step_activity_user.activity_id' => $activity_id,'w_company_user.company_id' => $company_id,'w_company_step_activity_user.status' => 1,'w_company_user.status' => 1])
                 ->where('w_step_log.data_time','>=',$activity_start_time)
                 ->where('w_step_log.data_time','<=',$activity_end_time)
                 ->where('w_step_log.add_time','<=',$statistics_end_time)
