@@ -260,14 +260,71 @@ class UserController extends Core\Base
             $statistics_end_time = $activity_end_time + (3*24*3600);
         }
 
+        
+        //新的活动都按照表都数据走，覆盖前面写死的活动时间
+        $activity_member_info = DB::table('w_company_step_activity_user')
+        ->leftJoin('w_company_step_activity','w_company_step_activity_user.activity_id','=','w_company_step_activity.activity_id')
+        ->select(
+                    'w_company_step_activity_user.activity_id',
+                    'w_company_step_activity_user.user_id',
+                    'w_company_step_activity.company_id',
+                    'w_company_step_activity.activity_name',
+                    'w_company_step_activity.start_time',
+                    'w_company_step_activity.end_time'
+                    )  
+        ->where(['w_company_step_activity_user.user_id'=>$user_id,
+                 'w_company_step_activity_user.is_tested' => 0,
+                 'w_company_step_activity_user.status' => 1,
+                 'w_company_step_activity.status' => 1
+            ])
+        ->where('w_company_step_activity.start_time','<=',time())
+        ->orderBy('w_company_step_activity.start_time','desc')
+        ->first();
+        if($activity_member_info){
+            $activity_start_time    = $activity_member_info['start_time'];
+            $activity_end_time      = $activity_member_info['end_time'];
+            $statistics_end_time    = $activity_end_time + (3*24*3600);
+            $company_id             = $activity_member_info['company_id'];//活动的企业id
+            $activity_id             = $activity_member_info['activity_id'];//活动id
+            //获取用户的企业员工信息
+            $company_user_info = DB::table('w_company_user')->where(['company_id'=>$company_id,'user_id'=>$user_id])->orderBy('add_time','desc')->first();
+            if($company_user_info) {
+               $department_id =  $company_user_info['department_id'];
+            }
+        }
+
+
         $return_data = [
                         'personal' => ['step_count'=>0,'km_count'=>0,'ranking_num' => 0],
                         'department' =>['step_count'=>0,'average_step'=>0,'department_ranking_num' => 0] 
                        ];
         
-
         //个人成绩数据汇总
-        $all_ranking_list = DB::table('w_step_log')  
+        if($activity_member_info){
+
+            $all_ranking_list = DB::table('w_step_log')
+                ->leftJoin('w_company_step_activity_user','w_step_log.user_id','=','w_company_step_activity_user.user_id')
+                ->leftJoin('w_company_user','w_step_log.user_id','=','w_company_user.user_id')
+                ->leftJoin('w_users','w_users.user_id','=','w_company_user.user_id')
+                ->select(
+                     DB::raw('SUM(w_step_log.step_num) AS step_num_all'),
+                    'w_company_user.real_name',
+                    'w_company_user.telphone',
+                    'w_company_user.department_id',
+                    'w_company_user.department_name',
+                    'w_company_user.user_id',
+                    'w_users.avatar'
+                    )  
+                ->groupBy('w_company_step_activity_user.user_id')
+                ->where(['w_company_step_activity_user.activity_id' => $activity_id,'w_company_step_activity_user.status' => 1,'w_company_user.status' => 1])
+                ->where('w_step_log.data_time','>=',$activity_start_time)
+                ->where('w_step_log.data_time','<=',$activity_end_time)
+                ->where('w_step_log.add_time','<=',$statistics_end_time)
+                ->orderBy('step_num_all','desc')
+                ->get();
+
+        } else {
+            $all_ranking_list = DB::table('w_step_log')  
                 ->leftJoin('w_company_user','w_step_log.user_id','=','w_company_user.user_id')
                 ->leftJoin('w_users','w_users.user_id','=','w_company_user.user_id')
                 ->select(
@@ -286,6 +343,10 @@ class UserController extends Core\Base
                 ->where('w_step_log.add_time','<=',$statistics_end_time)
                 ->orderBy('step_num_all','desc')
                 ->get();
+        }
+
+        
+        
 
         $i=1;
         foreach($all_ranking_list as $row) {
@@ -318,7 +379,24 @@ class UserController extends Core\Base
 
 
         //部门成绩汇总
-        $department_ranking_list = DB::table('w_step_log')  
+        if($activity_member_info){
+            $department_ranking_list = DB::table('w_step_log')
+                ->leftJoin('w_company_step_activity_user','w_step_log.user_id','=','w_company_step_activity_user.user_id')
+                ->leftJoin('w_company_user','w_step_log.user_id','=','w_company_user.user_id')
+                ->select(
+                     DB::raw('SUM(w_step_log.step_num) AS step_num_all'),
+                    'w_company_user.department_id',
+                    'w_company_user.department_name'
+                    )  
+                ->groupBy('w_company_user.department_id')
+                ->where(['w_company_step_activity_user.activity_id' => $activity_id,'w_company_step_activity_user.status' => 1,'w_company_user.status' => 1])
+                ->where('w_step_log.data_time','>=',$activity_start_time)
+                ->where('w_step_log.data_time','<=',$activity_end_time)
+                ->where('w_step_log.add_time','<=',$statistics_end_time)
+                ->orderBy('step_num_all','desc')
+                ->get();
+        } else {
+            $department_ranking_list = DB::table('w_step_log')  
                 ->leftJoin('w_company_user','w_step_log.user_id','=','w_company_user.user_id')
                 ->select(
                      DB::raw('SUM(w_step_log.step_num) AS step_num_all'),
@@ -332,7 +410,8 @@ class UserController extends Core\Base
                 ->where('w_step_log.add_time','<=',$statistics_end_time)
                 ->orderBy('step_num_all','desc')
                 ->get();
-
+        }
+        
         //计算部门的平均值
         foreach($department_ranking_list as &$row) {
             $department_user_num = isset($department_member_list[$row['department_id']]) ? $department_member_list[$row['department_id']]['user_count'] : 1;
