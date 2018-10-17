@@ -26,6 +26,9 @@
 use Yaf\Controller_Abstract;
 use Monolog\Logger;
 //use Illuminate\Database\Capsule\Manager as DB;
+
+use Illuminate\Database\Capsule\Manager as Capsule;
+
 class TestController extends Controller_Abstract 
 {
 
@@ -73,12 +76,18 @@ class TestController extends Controller_Abstract
     //获取一条记录
     public function rowAction()
     {
-        echo "<pre>";
-        $user_info = DB::table('users','test')->where(['user_id'=>1])->get();
+
+
+        echo "<pre>----";
+        $user_info = DB::table('user','test')->where(['user_id'=>1])->get();
         print_r($user_info);
 
-        $user_info = DB::table('users','test')->where(['user_id'=>1])->first();
+        $user_info = DB::table('user','test')->where(['user_id'=>1])->first();
         print_r($user_info);
+
+
+        //
+
 
         return false;
     }

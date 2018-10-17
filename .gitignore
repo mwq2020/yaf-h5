@@ -1,12 +1,4 @@
 composer.lock
 vendor/
-
-
-
-
-
-
-
-
-
 conf/application.ini
+.idea/

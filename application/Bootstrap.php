@@ -1,7 +1,8 @@
 <?php
 
 use Yaf\Bootstrap_Abstract;
-use Illuminate\Container\Container; 
+use Illuminate\Container\Container;
+use Illuminate\Events\Dispatcher;
 use Illuminate\Database\Capsule\Manager as Capsule;
 
 use Monolog\Logger;
@@ -78,6 +79,11 @@ class Bootstrap extends Bootstrap_Abstract
      */
     public function _initDatabase()
     {
+
+        //$container = $app->getContainer();
+        //$container->register(new EloquentServiceProvider()); //注意你自己 EloquentServiceProvider() 文件位置
+
+
         $capsule = new Capsule; 
         foreach($this->config->db as $database_name => $database) {
             $database_info = array( 
@@ -91,14 +97,31 @@ class Bootstrap extends Bootstrap_Abstract
                 'prefix' => $database->prefix, 
             );
             // 创建链接 
-            $capsule->addConnection($database_info,$database_name); 
+            $capsule->addConnection($database_info,$database_name);
+            // Capsule::connection($database_name)->enableQueryLog();
+            //$capsule::connection($database_name)->enableQueryLog();
         }
+
+        $capsule->setEventDispatcher(new \Illuminate\Events\Dispatcher(new \Illuminate\Container\Container));
+
+        // Set the event dispatcher used by Eloquent models... (optional)
+        //se Illuminate\Events\Dispatcher;
+        //use Illuminate\Container\Container;
+        //$capsule->setEventDispatcher(new Dispatcher(new Container));
+
         // 设置全局静态可访问 
         $capsule->setAsGlobal(); 
         // 启动Eloquent 
         $capsule->bootEloquent();
 
+
+
         class_alias('Illuminate\Database\Capsule\Manager', 'DB');
+
+//        $capsule->enableQueryLog();
+//        $pimple['db'] = function () use ($capsule) {
+//            return $capsule;
+//        };
     }
 
 }
