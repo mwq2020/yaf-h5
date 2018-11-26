@@ -190,7 +190,7 @@ class IndexController extends Core\Base
             $return_data['km_txt']      = 0;
             $return_data['joule_txt']   = 0;
             $return_data['food_txt']    = 0;
-            $this->jsonError('授权失败或session_key失效',$return_data,301)
+            $this->jsonError('授权失败或session_key失效',$return_data,301);
         }
 
 
