@@ -186,12 +186,13 @@ class IndexController extends Core\Base
         $res = $obj->decodeCryptData($appid,$sessionKey,$encryptedData,$iv);
         ob_clean();
 
-        if($res === false) {
+        if($res === false || empty($res)) {
+            $return_data['step_num']    = 0;
             $return_data['km_txt']      = 0;
             $return_data['joule_txt']   = 0;
             $return_data['food_txt']    = 0;
-            $this->jsonSuccess($return_data);
-            // $this->jsonError('授权失败或session_key失效',$return_data,301);
+            // $this->jsonSuccess($return_data);
+            $this->jsonSuccess($return_data,301,'授权失败或session_key失效');
         }
 
 

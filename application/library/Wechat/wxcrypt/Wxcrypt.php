@@ -1,5 +1,6 @@
 <?php
 namespace Wechat\wxcrypt;
+use \Log;
 
 class Wxcrypt 
 {
@@ -14,6 +15,7 @@ class Wxcrypt
         if ($errCode == 0) {
             return $data;
         } else {
+            Log::info('用户上传步数解密失败:errCode='.$errCode."|".json_encode($_REQUEST));
             return false;
         }
     }
