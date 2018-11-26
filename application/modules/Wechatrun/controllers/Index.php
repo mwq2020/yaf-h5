@@ -186,6 +186,14 @@ class IndexController extends Core\Base
         $res = $obj->decodeCryptData($appid,$sessionKey,$encryptedData,$iv);
         ob_clean();
 
+        if($res === false) {
+            $return_data['km_txt']      = 0;
+            $return_data['joule_txt']   = 0;
+            $return_data['food_txt']    = 0;
+            $this->jsonError('授权失败或session_key失效',$return_data,301)
+        }
+
+
         //获取微信当日步数
         $res = json_decode($res,true);
         if(isset($res['stepInfoList'])){
