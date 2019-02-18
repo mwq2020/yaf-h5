@@ -172,6 +172,12 @@ class IndexController extends Core\Base
         $encryptedData = isset($_REQUEST['encryptedData']) ?  $_REQUEST['encryptedData'] : '';
         $iv = isset($_REQUEST['iv']) ?  $_REQUEST['iv'] : '';
         $user_id = isset($_REQUEST['user_id']) ?  $_REQUEST['user_id'] : '';
+        $is_encode = isset($_REQUEST['is_encode']) ?  $_REQUEST['is_encode'] : '';
+        if(!empty($is_encode)) {
+            $sessionKey = urldecode($sessionKey);
+            $encryptedData = urldecode($encryptedData);
+            $iv = urldecode($iv); 
+        }
 
         if(empty($sessionKey) || empty($encryptedData) || empty($iv)){
             $return_data['km_txt']      = 0;
