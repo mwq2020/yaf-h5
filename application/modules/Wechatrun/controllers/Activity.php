@@ -30,6 +30,32 @@ class ActivityController extends Core\Base
         $this->jsonSuccess($activity_list);
     }
 
+    public function activeActivityInfoAction()
+    {
+        $user_id = isset($_REQUEST['user_id']) ? intval($_REQUEST['user_id']) : 0;
+        $company_id = isset($_REQUEST['company_id']) ? intval($_REQUEST['company_id']) : 0;
+        $department_id = isset($_REQUEST['department_id']) ? intval($_REQUEST['department_id']) : 0;
+
+        $activity_info  = DB::table('w_company_step_activity')
+                          ->leftJoin('w_company_step_activity_user','w_company_step_activity.activity_id','=','w_company_step_activity_user.activity_id')
+                          ->select(
+                            'w_company_step_activity.company_id',
+                            'w_company_step_activity.activity_id',
+                            'w_company_step_activity.activity_name'
+                            )  
+                          ->where(['w_company_step_activity.company_id'=>$company_id,
+                                   'w_company_step_activity_user.user_id' => $user_id,
+                                   'w_company_step_activity_user.status' => 1,
+                                   ])
+                          ->orderBy('w_company_step_activity.start_time','desc')
+                          ->first();
+        if(!empty($activity_info) && $activity_info['company_id'] == 1) {
+            $activity_info['is_china_unicom'] = 1;
+        }
+
+        $this->jsonSuccess($activity_info);
+    }
+
     /**
      * 活动详情
      */
