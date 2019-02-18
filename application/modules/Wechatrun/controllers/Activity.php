@@ -28,10 +28,6 @@ class ActivityController extends Core\Base
         }
         $activity_list = DB::table('w_step_activity')->where(['company_id'=>$company_id])->get();
         $this->jsonSuccess($activity_list);
-        // $this->jsonError($activity_list);
-    
-        // return false;
-        // $this->getView()->display('User/index.phtml');
     }
 
     /**

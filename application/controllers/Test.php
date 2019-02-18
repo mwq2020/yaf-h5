@@ -44,6 +44,34 @@ class TestController extends Controller_Abstract
         echo "<br>";
         echo getmypid();
         return false;
+
+        //写日志模拟
+        // $logger = new Logger('my_logger');
+        // $logger->pushHandler(new StreamHandler('/tmp/yaf_test.log', Logger::DEBUG));
+        // $firephp = new FirePHPHandler();
+        // $logger->pushHandler($firephp);
+        // $logger->info('monolog test log write success');
+        // $logger->addWarning('Foo');
+        // $logger->addError('Bar');
+        
+        //\Yaf\Dispatcher::getInstance()->disableView(); 
+
+        //数据存取模拟
+        // echo "<pre>";
+        // $mod = new UserModel(); 
+        // $data = $mod->find(2)->toArray(); 
+        // print_r($data);
+
+
+        // $list = $mod->all()->toArray();
+        // print_r($list);
+        // //exit;
+
+
+        // $run_model = new WechatRunModel();
+        // $list = $run_model->all()->toArray();
+        // print_r($list);
+        // exit;
     }
 
     public function sessionAction()
