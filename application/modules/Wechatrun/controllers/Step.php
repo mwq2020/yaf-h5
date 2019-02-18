@@ -98,7 +98,6 @@ class StepController extends Core\Base
                 if(!empty($department_list)){
                     // $attend_percent_sort = [];
                     foreach($department_list as $department_key => &$department_row){
-                        
                         if(isset($attend_list[$department_row['department_id']])){
                             $department_row['attend_num'] = $attend_list[$department_row['department_id']]['attend_num'];
                             $department_row['attend_percent'] = ($department_row['attend_num'] > $department_row['user_num'] ? 1 : round($department_row['attend_num']/$department_row['user_num'],4)*100);
@@ -168,12 +167,21 @@ class StepController extends Core\Base
                     }
                 }
 
-                $return_data['user_ranking_num'] = isset($user_count_list[$user_id]) ? $user_count_list[$user_id]['ranking_num'] : count($user_count_list)+1; 
-                $return_data['user_step_num_count'] = isset($user_count_list[$user_id]) ? $user_count_list[$user_id]['step_num_count'] : 0; 
+                $user_info = DB::table('w_company_user')
+                            ->leftJoin('w_users','w_company_user.user_id','=','w_users.user_id')
+                            ->select(
+                                'w_company_user.real_name',
+                                'w_company_user.department_name',
+                                'w_users.avatar'
+                                )
+                            ->where(['w_company_user.user_id' => $user_id,'w_company_user.company_id' => $company_id])->first();
+                $user_info['user_ranking_num'] = isset($user_count_list[$user_id]) ? $user_count_list[$user_id]['ranking_num'] : count($user_count_list)+1; 
+                $user_info['user_step_num_count'] = isset($user_count_list[$user_id]) ? $user_count_list[$user_id]['step_num_count'] : 0; 
+                $return_data['user_info'] = $user_info;
             }
 
         } catch (\Exception $e) {
-            //echo $e->getMessage();
+            echo $e->getMessage();exit;
         }
         $this->jsonSuccess($return_data);
     }
