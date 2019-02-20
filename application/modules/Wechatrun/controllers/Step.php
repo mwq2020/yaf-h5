@@ -18,12 +18,9 @@ class StepController extends Core\Base
     }
 
 
-    //获取排行榜页面数据
+    //获取排行榜页面数据[中国联通专用]
     public function getRankingListAction() 
     {
-        // $activity_list = DB::table('w_step_activity')->where(['company_id'=>$company_id])->get();
-        // $activity_info = DB::table('w_step_activity')->where(['act_id'=>$act_id])->first();
-
         $activity_id = isset($_REQUEST['activity_id']) ? intval($_REQUEST['activity_id']) : 0;
         $company_id = isset($_REQUEST['company_id']) ? intval($_REQUEST['company_id']) : 0;
         $department_id = isset($_REQUEST['department_id']) ? intval($_REQUEST['department_id']) : 0;
@@ -36,12 +33,9 @@ class StepController extends Core\Base
                         'page_index' => $page_index,
                         'page_size' => $page_size ,
                         'ranking_type' => $ranking_type ,
-                        'ranking_list' => []
+                        'ranking_list' => [],
+                        'user_info' => []
                         ];
-
-        // echo "<pre>";
-        // print_r($_REQUEST);
-        //exit;
         try {
             $activity_info = DB::table('w_company_step_activity')->where(['activity_id'=>$activity_id])->first();
             if(empty($activity_info)) {
@@ -60,9 +54,41 @@ class StepController extends Core\Base
                                     'w_department.name as department_name'
                                     )
                                 ->where(['w_company_user.company_id' => $company_id])
+                                ->where('w_step_log.data_time','>=',$activity_start_time)
+                                ->where('w_step_log.data_time','<=',$activity_end_time)
                                 ->groupBy('w_company_user.department_id')
                                 ->orderBy('step_num_count','desc')
                                 ->get();
+
+                //部门的参与率排行 【部门下的人数/有步数的人数】
+                $department_user_list_res = DB::table('w_department')
+                                  ->leftJoin('w_company_user','w_department.department_id','=','w_company_user.department_id')
+                                    ->select(
+                                     DB::raw('count( distinct w_company_user.user_id) AS user_num'),
+                                    'w_department.name as department_name',
+                                    'w_department.department_id'
+                                    ) 
+                                  ->where(['w_company_user.company_id' => $company_id])
+                                  ->groupBy('w_department.department_id')
+                                  ->get();
+                $department_user_list = [];
+                if(!empty($department_user_list_res)){
+                    foreach($department_user_list_res as $row){
+                        $department_user_list[$row['department_id']] = $row;
+                    }
+                }
+
+                if(!empty($department_list)){
+                    foreach($department_list as &$department_row) {
+                        $department_row['user_num'] = isset($department_user_list[$department_row['department_id']]) ? $department_user_list[$department_row['department_id']]['user_num'] : 1;
+                        $department_row['average_step_num'] = intval($department_row['step_num_count']/$department_row['user_num']);
+                    }
+                }
+
+                //根据平均步数倒序排
+                $average_step_sort = array_column($department_list,'average_step_num');
+                array_multisort($average_step_sort, SORT_DESC,$department_list);
+
                 // todo 此处只列出来有步数的部门，没步数的部门没有加入进来 后期改造下
                 $return_data['ranking_list'] = $department_list;
             } elseif($ranking_type == 'attend_percent') {
@@ -85,6 +111,8 @@ class StepController extends Core\Base
                                     'w_company_user.department_id'
                                     )
                                 ->where(['w_company_user.company_id' => $company_id])
+                                ->where('w_step_log.data_time','>=',$activity_start_time)
+                                ->where('w_step_log.data_time','<=',$activity_end_time)
                                 ->groupBy('w_company_user.department_id')
                                 ->get();
 
@@ -96,31 +124,19 @@ class StepController extends Core\Base
                 }
 
                 if(!empty($department_list)){
-                    // $attend_percent_sort = [];
                     foreach($department_list as $department_key => &$department_row){
                         if(isset($attend_list[$department_row['department_id']])){
                             $department_row['attend_num'] = $attend_list[$department_row['department_id']]['attend_num'];
                             $department_row['attend_percent'] = ($department_row['attend_num'] > $department_row['user_num'] ? 1 : round($department_row['attend_num']/$department_row['user_num'],4)*100);
-                            // $attend_percent_sort[$department_key]  = substr($department_row['attend_percent'], -1);
                         } else {
                             $department_row['attend_num'] = 0;
                             $department_row['attend_percent'] = 0;
-                            // $attend_percent_sort[$department_key]  = 0;
                         }
                     }
-                    //echo "<pre>";
-                    //print_r($department_list);
                     $attend_percent_sort = array_column($department_list,'attend_percent');
-                    //echo "<hr>";
-                    //print_r($attend_percent_sort);
                     array_multisort($attend_percent_sort, SORT_DESC,$department_list);
-                    //$department_list = array_multisort($attend_percent_sort, SORT_DESC,$department_list);
-                    //echo "<hr>";
-                    //print_r($department_list);
-                    //exit;
                 }
                 // todo 根据参与率倒序排行
-
                 $return_data['ranking_list'] = $department_list;
             } else {
                 $offset = $page_index > 1 ? ($page_index-1)*$page_size : 0;
@@ -138,12 +154,13 @@ class StepController extends Core\Base
                                     'w_users.avatar'
                                     )
                                 ->where(['w_company_user.company_id' => $company_id])
+                                ->where('w_step_log.data_time','>=',$activity_start_time)
+                                ->where('w_step_log.data_time','<=',$activity_end_time)
                                 ->groupBy('w_step_log.user_id')
                                 ->orderBy('step_num_count','desc')
                                 ->offset($offset)
                                 ->limit($page_size)
                                 ->get();
-
                 $return_data['ranking_list'] = $user_list;
 
                 //查询并计算当前用户的排名
@@ -154,6 +171,8 @@ class StepController extends Core\Base
                                     'w_step_log.user_id'
                                     )
                                 ->where(['w_company_user.company_id' => $company_id])
+                                ->where('w_step_log.data_time','>=',$activity_start_time)
+                                ->where('w_step_log.data_time','<=',$activity_end_time)
                                 ->groupBy('w_step_log.user_id')
                                 ->orderBy('step_num_count','desc')
                                 ->get();
@@ -181,9 +200,9 @@ class StepController extends Core\Base
             }
 
         } catch (\Exception $e) {
-            echo $e->getMessage();exit;
+            return $this->jsonError($e->getMessage(),$return_data);
         }
-        $this->jsonSuccess($return_data);
+        return  $this->jsonSuccess($return_data);
     }
 
 
