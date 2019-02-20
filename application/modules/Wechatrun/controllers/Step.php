@@ -78,12 +78,12 @@ class StepController extends Core\Base
                                   ->groupBy('w_department.department_id')
                                   ->get();
                 if(!empty($department_list)){
-                    foreach($department_list as &$row){
+                    foreach($department_list as $department_key => &$row){
                         $row['step_num_count'] = isset($department_step_list[$row['department_id']]) ? $department_step_list[$row['department_id']]['step_num_count'] : 0;
-                        $row['average_step_num'] = intval($row['step_num_count']/$row['user_num']);
+                        $row['average_step_num'] = !empty($row['user_num']) ? intval($row['step_num_count']/$row['user_num']) : 0;
                     }
                 }
-
+                
                 //根据平均步数倒序排
                 $average_step_sort = array_column($department_list,'average_step_num');
                 array_multisort($average_step_sort, SORT_DESC,$department_list);
