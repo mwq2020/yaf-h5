@@ -49,7 +49,7 @@ class ActivityController extends Core\Base
                                    ])
                           ->orderBy('w_company_step_activity.start_time','desc')
                           ->first();
-        if(!empty($activity_info) && $activity_info['company_id'] == 1) {
+        if(!empty($activity_info) && in_array($activity_info['company_id'], [1,9])) {
             $activity_info['is_china_unicom'] = 1;
         }
 
