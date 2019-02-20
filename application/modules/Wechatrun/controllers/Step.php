@@ -45,7 +45,7 @@ class StepController extends Core\Base
             $activity_end_time = $activity_info['end_time'];
 
             if($ranking_type == 'department'){
-                $department_list = DB::table('w_step_log')
+                $department_step_list_res = DB::table('w_step_log')
                                 ->leftJoin('w_company_user','w_step_log.user_id','=','w_company_user.user_id')
                                 ->leftJoin('w_department','w_department.department_id','=','w_company_user.department_id')
                                 ->select(
@@ -59,9 +59,15 @@ class StepController extends Core\Base
                                 ->groupBy('w_company_user.department_id')
                                 ->orderBy('step_num_count','desc')
                                 ->get();
+                $department_step_list = [];
+                if(!empty($department_step_list_res)){
+                    foreach($department_step_list_res as $department_row) {
+                        $department_step_list[$department_row['department_id']] = $department_row;
+                    }
+                }
 
                 //部门的参与率排行 【部门下的人数/有步数的人数】
-                $department_user_list_res = DB::table('w_department')
+                $department_list = DB::table('w_department')
                                   ->leftJoin('w_company_user','w_department.department_id','=','w_company_user.department_id')
                                     ->select(
                                      DB::raw('count( distinct w_company_user.user_id) AS user_num'),
@@ -71,25 +77,16 @@ class StepController extends Core\Base
                                   ->where(['w_company_user.company_id' => $company_id])
                                   ->groupBy('w_department.department_id')
                                   ->get();
-                $department_user_list = [];
-                if(!empty($department_user_list_res)){
-                    foreach($department_user_list_res as $row){
-                        $department_user_list[$row['department_id']] = $row;
-                    }
-                }
-
                 if(!empty($department_list)){
-                    foreach($department_list as &$department_row) {
-                        $department_row['user_num'] = isset($department_user_list[$department_row['department_id']]) ? $department_user_list[$department_row['department_id']]['user_num'] : 1;
-                        $department_row['average_step_num'] = intval($department_row['step_num_count']/$department_row['user_num']);
+                    foreach($department_list as &$row){
+                        $row['step_num_count'] = isset($department_step_list[$row['department_id']]) ? $department_step_list[$row['department_id']]['step_num_count'] : 0;
+                        $row['average_step_num'] = intval($row['step_num_count']/$row['user_num']);
                     }
                 }
 
                 //根据平均步数倒序排
                 $average_step_sort = array_column($department_list,'average_step_num');
                 array_multisort($average_step_sort, SORT_DESC,$department_list);
-
-                // todo 此处只列出来有步数的部门，没步数的部门没有加入进来 后期改造下
                 $return_data['ranking_list'] = $department_list;
             } elseif($ranking_type == 'attend_percent') {
                 //部门的参与率排行 【部门下的人数/有步数的人数】
