@@ -53,7 +53,7 @@ class ActivityController extends Core\Base
             $activity_info = [];
             $activity_info['activity_id'] = 0;
             $activity_info['is_china_unicom'] = 0;
-        }elseif(in_array($activity_info['company_id'], [1,9,22])) {
+        }elseif(in_array($activity_info['company_id'], [22])) {
             $activity_info['is_china_unicom'] = 1;
         } else {
             $activity_info['is_china_unicom'] = 0;
