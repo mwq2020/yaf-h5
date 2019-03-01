@@ -271,10 +271,14 @@ class IndexController extends Core\Base
         $tmpStr = sha1( $tmpStr );
 
         if( $tmpStr == $signature ){
+            echo $_REQUEST['echostr'];
             return true;
         }else{
+            // echo "faile";
+            //echo $_REQUEST['echostr'];
             return false;
         }
+
     }
 
 
