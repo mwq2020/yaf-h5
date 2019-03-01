@@ -174,6 +174,7 @@ class StepController extends Core\Base
                                 ->where(['w_company_user.company_id' => $company_id,'w_company_user.is_tested' => 0])
                                 ->where('w_step_log.data_time','>=',$activity_start_time)
                                 ->where('w_step_log.data_time','<=',$activity_end_time)
+                                ->where('w_step_log.step_num','<=',80000)
                                 ->groupBy('w_step_log.user_id')
                                 ->orderBy('step_num_count','desc')
                                 ->offset($offset)
