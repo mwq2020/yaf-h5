@@ -255,4 +255,27 @@ class IndexController extends Core\Base
     }
 
 
+    /**
+     * 微信小程序推送的服务器检查校验方法。
+     */
+    public function checkSignatureAction()
+    {
+        $signature = $_GET["signature"];
+        $timestamp = $_GET["timestamp"];
+        $nonce = $_GET["nonce"];
+
+        $token = 'xindong';
+        $tmpArr = array($token, $timestamp, $nonce);
+        sort($tmpArr, SORT_STRING);
+        $tmpStr = implode( $tmpArr );
+        $tmpStr = sha1( $tmpStr );
+
+        if( $tmpStr == $signature ){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+
 }
