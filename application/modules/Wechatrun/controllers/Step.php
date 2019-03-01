@@ -53,7 +53,7 @@ class StepController extends Core\Base
                                     'w_company_user.department_id',
                                     'w_department.name as department_name'
                                     )
-                                ->where(['w_company_user.company_id' => $company_id])
+                                ->where(['w_company_user.company_id' => $company_id,'w_company_user.is_tested' => 0])
                                 ->where('w_step_log.data_time','>=',$activity_start_time)
                                 ->where('w_step_log.data_time','<=',$activity_end_time)
                                 ->groupBy('w_company_user.department_id')
@@ -74,7 +74,7 @@ class StepController extends Core\Base
                                     'w_department.name as department_name',
                                     'w_department.department_id'
                                     ) 
-                                  ->where(['w_company_user.company_id' => $company_id])
+                                  ->where(['w_company_user.company_id' => $company_id,'w_company_user.is_tested' => 0])
                                   ->groupBy('w_department.department_id')
                                   ->get();
                 if(!empty($department_list)){
@@ -97,7 +97,7 @@ class StepController extends Core\Base
                                     'w_department.name as department_name',
                                     'w_department.department_id'
                                     ) 
-                                  ->where(['w_company_user.company_id' => $company_id])
+                                  ->where(['w_company_user.company_id' => $company_id,'w_company_user.is_tested' => 0])
                                   ->groupBy('w_department.department_id')
                                   ->get();
                 
@@ -107,7 +107,7 @@ class StepController extends Core\Base
                                     DB::raw('count( distinct w_step_log.user_id) AS attend_num'),
                                     'w_company_user.department_id'
                                     )
-                                ->where(['w_company_user.company_id' => $company_id])
+                                ->where(['w_company_user.company_id' => $company_id,'w_company_user.is_tested' => 0])
                                 ->where('w_step_log.data_time','>=',$activity_start_time)
                                 ->where('w_step_log.data_time','<=',$activity_end_time)
                                 ->groupBy('w_company_user.department_id')
@@ -150,7 +150,7 @@ class StepController extends Core\Base
                                     'w_company_user.user_id',
                                     'w_users.avatar'
                                     )
-                                ->where(['w_company_user.company_id' => $company_id])
+                                ->where(['w_company_user.company_id' => $company_id,'w_company_user.is_tested' => 0])
                                 ->where('w_step_log.data_time','>=',$activity_start_time)
                                 ->where('w_step_log.data_time','<=',$activity_end_time)
                                 ->groupBy('w_step_log.user_id')
@@ -167,7 +167,7 @@ class StepController extends Core\Base
                                     DB::raw('sum(w_step_log.step_num) AS step_num_count'),
                                     'w_step_log.user_id'
                                     )
-                                ->where(['w_company_user.company_id' => $company_id])
+                                ->where(['w_company_user.company_id' => $company_id,'w_company_user.is_tested' => 0])
                                 ->where('w_step_log.data_time','>=',$activity_start_time)
                                 ->where('w_step_log.data_time','<=',$activity_end_time)
                                 ->groupBy('w_step_log.user_id')
