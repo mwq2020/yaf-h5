@@ -32,9 +32,11 @@ class Sms
         curl_setopt($ch, CURLOPT_POSTFIELDS, $xml_data);
         $response = curl_exec($ch);
         if (curl_errno($ch)) {
-            Log::err('国都短信发送失败:'.curl_error($ch));
+            \Log::info('error: 国都短信发送失败:'.curl_error($ch));
             return false;
-        }
+        } else {
+            \Log::info('success 国都短信发送成功:'.$response);
+        } 
         curl_close($ch);
         return self::xmlToArray($response);
     }
