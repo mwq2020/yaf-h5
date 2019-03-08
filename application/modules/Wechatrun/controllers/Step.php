@@ -105,12 +105,11 @@ class StepController extends Core\Base
                 $day_nums = 1;
                 if($activity_start_time > 0 && $activity_end_time > 0){
                     if(time() >= $activity_start_time && time() <= $activity_end_time){ //活动中
-                        $day_nums = intval((strtotime(time('Y-m-d')) - strtotime(date('Y-m-d',$activity_start_time)))/86400) +1;
+                        $day_nums = intval((strtotime(date('Y-m-d')) - strtotime(date('Y-m-d',$activity_start_time)))/86400) +1;
                     } elseif(time() > $activity_end_time){ //活动结束
                         $day_nums = intval((strtotime(date('Y-m-d',$activity_end_time)) - strtotime(date('Y-m-d',$activity_start_time)))/86400)+1;
                     }
                 }
-                $day_nums = 8;
                 $sql = 'select count(*) as attend_num,c.department_id,c.department_name from '.
                 '( select sum(a.step_num)/'.$day_nums.' as avage_step_num,b.department_id,b.department_name '.
                     'from w_step_log a left join w_company_user b on a.user_id = b.user_id '.
