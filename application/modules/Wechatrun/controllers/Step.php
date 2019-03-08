@@ -91,18 +91,17 @@ class StepController extends Core\Base
             } elseif($ranking_type == 'attend_percent') {
                 //部门的参与率排行 【部门下的人数/有步数的人数】
                 $department_list = DB::table('w_department')
-                                  ->leftJoin('w_company_user','w_department.department_id','=','w_company_user.department_id')
+                                  //->leftJoin('w_company_user','w_department.department_id','=','w_company_user.department_id')
                                     ->select(
-                                     DB::raw('count( distinct w_company_user.user_id) AS user_num'),
+                                    //DB::raw('count( distinct w_company_user.user_id) AS user_num'),
+                                    'w_department.member_num',
                                     'w_department.name as department_name',
                                     'w_department.department_id'
                                     ) 
-                                  ->where(['w_company_user.company_id' => $company_id,'w_company_user.is_tested' => 0])
+                                  ->where(['w_department.company_id' => $company_id,'w_department.status' => 1])
                                   ->groupBy('w_department.department_id')
                                   ->get();
 
-
-                /*
                 $day_nums = 1;
                 if($activity_start_time > 0 && $activity_end_time > 0){
                     if(time() >= $activity_start_time && time() <= $activity_end_time){ //活动中
@@ -119,9 +118,8 @@ class StepController extends Core\Base
                     ' group by a.user_id having avage_step_num >= 3000 '.
                 ') c group by c.department_id';
                 $attend_list_res = DB::select($sql);
-                */                       
-
-                
+                                       
+                /*
                 $attend_list_res = DB::table('w_step_log')
                                 ->leftJoin('w_company_user','w_step_log.user_id','=','w_company_user.user_id')
                                 ->select(
@@ -133,6 +131,7 @@ class StepController extends Core\Base
                                 ->where('w_step_log.data_time','<=',$activity_end_time)
                                 ->groupBy('w_company_user.department_id')
                                 ->get();
+                */
                 
                 if(!empty($attend_list_res)) {
                     $attend_list = [];
@@ -143,9 +142,10 @@ class StepController extends Core\Base
 
                 if(!empty($department_list)){
                     foreach($department_list as $department_key => &$department_row){
-                        if(isset($attend_list[$department_row['department_id']])){
+                        if(isset($attend_list[$department_row['department_id']]) && $department_row['member_num'] > 0){
                             $department_row['attend_num'] = $attend_list[$department_row['department_id']]['attend_num'];
-                            $department_row['attend_percent'] = ($department_row['attend_num'] > $department_row['user_num'] ? 1 : round($department_row['attend_num']/$department_row['user_num'],4)*100);
+                            //$department_row['member_num'] = $attend_list[$department_row['department_id']]['member_num'];
+                            $department_row['attend_percent'] = ($department_row['attend_num'] > $department_row['member_num'] ? 1 : round($department_row['attend_num']/$department_row['member_num'],4)*100);
                         } else {
                             $department_row['attend_num'] = 0;
                             $department_row['attend_percent'] = 0;
@@ -223,7 +223,5 @@ class StepController extends Core\Base
         }
         return  $this->jsonSuccess($return_data);
     }
-
-
 
 }
