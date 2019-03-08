@@ -142,6 +142,7 @@ class StepController extends Core\Base
 
                 $return_data['test_department_list'] = $department_list;
                 $return_data['test_attend_list'] = $attend_list;
+                $return_data['test_attend_sql'] = $sql;
 
                 if(!empty($department_list)){
                     foreach($department_list as $department_key => &$department_row){
