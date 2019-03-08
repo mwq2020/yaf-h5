@@ -133,12 +133,15 @@ class StepController extends Core\Base
                                 ->get();
                 */
                 
+                $attend_list = [];
                 if(!empty($attend_list_res)) {
-                    $attend_list = [];
                     foreach($attend_list_res as $row) {
                         $attend_list[$row['department_id']] = $row;
                     }
                 }
+
+                $return_data['test_department_list'] = $department_list;
+                $return_data['test_attend_list'] = $attend_list;
 
                 if(!empty($department_list)){
                     foreach($department_list as $department_key => &$department_row){
@@ -157,6 +160,7 @@ class StepController extends Core\Base
                 }
                 // todo 根据参与率倒序排行
                 $return_data['ranking_list'] = $department_list;
+
             } else {
                 $offset = $page_index > 1 ? ($page_index-1)*$page_size : 0;
                 //个人员工排名
