@@ -144,11 +144,12 @@ class StepController extends Core\Base
                     foreach($department_list as $department_key => &$department_row){
                         if(isset($attend_list[$department_row['department_id']])){
                             $department_row['attend_num'] = $attend_list[$department_row['department_id']]['attend_num'];
-                            //$department_row['member_num'] = $attend_list[$department_row['department_id']]['member_num'];
                             $department_row['attend_percent'] = ($department_row['attend_num'] > $department_row['member_num'] ? 100 : round($department_row['attend_num']/$department_row['member_num'],4)*100);
+                            $department_row['test_flag'] = 'b';
                         } else {
                             $department_row['attend_num'] = 0;
                             $department_row['attend_percent'] = 0;
+                            $department_row['test_flag'] = 'a';
                         }
                     }
                     $attend_percent_sort = array_column($department_list,'attend_percent');
