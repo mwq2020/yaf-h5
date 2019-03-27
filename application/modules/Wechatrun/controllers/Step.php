@@ -383,6 +383,7 @@ class StepController extends Core\Base
         $return_data = ['attend_num' => 0];  //is_selected 是否抽中  has_selected 当周是否已抽过
         $activity_id = $_REQUEST['activity_id'] ? $_REQUEST['activity_id'] : 0;
         $user_id = $_REQUEST['user_id'] ? $_REQUEST['user_id'] : 0;
+        $current_time = time();
         try {
             $activity_info = DB::table('w_company_step_activity')->where(['activity_id'=>$activity_id])->first();
             if(empty($activity_info)) {
