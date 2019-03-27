@@ -171,7 +171,7 @@ class StepController extends Core\Base
                                     'w_company_user.user_id',
                                     'w_users.avatar'
                                     )
-                                ->where(['w_company_user.company_id' => $company_id,'w_company_user.is_tested' => 0])
+                                ->where(['w_company_user.company_id' => $company_id,'w_company_user.is_tested' => 0,'w_company_user.department_id' => $department_id])
                                 ->where('w_step_log.data_time','>=',$activity_start_time)
                                 ->where('w_step_log.data_time','<=',$activity_end_time)
                                 ->where('w_step_log.step_num','<=',80000)
