@@ -375,4 +375,47 @@ class StepController extends Core\Base
         return $this->jsonSuccess($return_data);
     }
 
+    /**
+     * 获取抽奖详情
+     */
+    public function luckDrawInfoAction()
+    {
+        $return_data = ['attend_num' => 0];  //is_selected 是否抽中  has_selected 当周是否已抽过
+        $activity_id = $_REQUEST['activity_id'] ? $_REQUEST['activity_id'] : 0;
+        $user_id = $_REQUEST['user_id'] ? $_REQUEST['user_id'] : 0;
+        try {
+            $activity_info = DB::table('w_company_step_activity')->where(['activity_id'=>$activity_id])->first();
+            if(empty($activity_info)) {
+                throw new \Exception('活动详情为空',200);
+            }
+            $return_data['activity_name'] = $activity_info['activity_name'];
+            $return_data['activity_id'] = $activity_info['activity_id'];
+
+            $activity_start_time    = $activity_info['start_time'];
+            $activity_end_time      = $activity_info['end_time'];
+            if($current_time < $activity_start_time+7*24*3600) {
+                throw new \Exception('抽奖活动暂未开始',200);
+            }
+            if($current_time > $activity_end_time+7*24*3600) {
+                throw new \Exception('抽奖活动已结束',200);
+            }
+
+            $start_last_week    = mktime(0,0,0,date('m'),date('d')-date('w')+1-7,date('Y'))+7*24*3600;
+            $end_last_week      = mktime(23,59,59,date('m'),date('d')-date('w')+7-7,date('Y'))+7*24*3600;
+
+            $sql = "select count(*) as attend_num from w_company_step_luck_draw ".
+                   "where  activity_id= {$activity_id} ".
+                   " and add_time >= {$start_last_week} and add_time <= {$end_last_week} ";
+            $res = DB::selectOne($sql);
+            if(empty($res)){
+                throw new \Exception('获取统计数据失败',200);
+            }
+            $return_data['attend_num'] = $res['attend_num'];
+        } catch(\Exception $e) {
+            $code = $e->getCode() == 200 ? 200 : 500;
+            return $this->jsonError($e->getMessage(),$return_data,$code);
+        }
+        return $this->jsonSuccess($return_data);
+    }
+
 }
