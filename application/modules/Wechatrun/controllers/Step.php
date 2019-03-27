@@ -284,4 +284,95 @@ class StepController extends Core\Base
         return  $this->jsonSuccess($return_data);
     }
 
+
+    /**
+     * 肩部走抽奖
+     */
+    public function luckDrawAction()
+    {
+        $return_data = ['is_selected' => 0,'has_selected' => 0];  //is_selected 是否抽中  has_selected 当周是否已抽过
+        $activity_id = $_REQUEST['activity_id'] ? $_REQUEST['activity_id'] : 0;
+        $user_id = $_REQUEST['user_id'] ? $_REQUEST['user_id'] : 0;
+        $current_time = time();
+        try {
+            if(empty($user_id)) {
+                throw new \Exception('入参错误');
+            }
+
+            $activity_info = DB::table('w_company_step_activity')->where(['activity_id'=>$activity_id])->first();
+            if(empty($activity_info)) {
+                throw new \Exception('活动详情为空');
+            }
+
+            $activity_start_time    = $activity_info['start_time'];
+            $activity_end_time      = $activity_info['end_time'];
+            if($current_time < $activity_start_time+7*24*3600) {
+                throw new \Exception('抽奖活动暂未开始');
+            }
+            if($current_time > $activity_end_time+7*24*3600) {
+                //throw new \Exception('抽奖活动已结束');
+            }
+
+            $start_last_week    = mktime(0,0,0,date('m'),date('d')-date('w')+1-7,date('Y'));
+            $end_last_week      = mktime(23,59,59,date('m'),date('d')-date('w')+7-7,date('Y'));
+
+            //查询到当周是否抽过的记录
+            $luck_draw_info = DB::table('w_company_step_luck_draw')
+                                ->select('*')
+                                ->where(['user_id' => $user_id,'activity_id' => $activity_id])
+                                ->where('add_time','>=',$start_last_week+7*24*3600)
+                                ->where('add_time','<=',$end_last_week+7*24*3600)
+                                ->first();
+            if(!empty($luck_draw_info)){
+                $return_data['has_selected'] = 1;
+                throw new \Exception('当周您已抽过奖了',400);
+            }
+
+            $start_last_week    = strtotime('2018-01-01');
+            $end_last_week      = strtotime('2019-10-01');
+
+            $sql = "select count(step_num) as step_day_count,user_id ".
+                   "from w_step_log ".
+                   "where user_id = {$user_id} and ".
+                   "data_time >= {$start_last_week} and ".
+                   "data_time <= {$end_last_week} and ".
+                   "step_num >= 6000 ".
+                   "group by user_id ";
+            $step_count_info = DB::selectOne($sql);
+            if(empty($step_count_info)){
+                throw new \Exception('暂时没有符合条件的步数记录');
+            } elseif($step_count_info['step_day_count'] < 5) {
+                throw new \Exception('暂时步数还不够抽奖条件');
+            }
+
+            $probability = 0.1;//概率值
+            $rand_list = range(1, 100);//随机数的数组
+            $rand_key = array_rand($rand_list,1);//随机取出随机值里面的key
+            $current_rand_num = $rand_list[$rand_key];//获取抽到随机数
+            if($current_rand_num <= $probability*100){
+                $return_data['is_selected'] = 1;
+            } else {
+                $return_data['is_selected'] = 0;
+            }
+            Log::info('健步走抽奖：用户id:'.$user_id.",活动id:".$activity_id.",抽中状态:".$return_data['is_selected']);
+
+            $insertData = array();
+            $insertData['user_id']      = $user_id;
+            $insertData['activity_id']  = $activity_id;
+            $insertData['is_selected']  = $return_data['is_selected'] >= 1 ? 1 : 0;
+            $insertData['add_time']     = $current_time;
+            $draw_log_id = DB::table('w_company_step_luck_draw')->insertGetId($insertData);
+            if(empty($draw_log_id)) {
+                throw new \Exception('插入抽奖记录失败');
+            }
+            Log::info('健步走抽奖：用户id:'.$user_id.",活动id:".$activity_id.",插入数据id:".$draw_log_id);
+
+        } catch(\Exception $e) {
+            $return_data['is_selected'] = 0;
+            $code = $e->getCode() == 400 ? 400 : 500;
+            return $this->jsonError($e->getMessage(),$return_data,$code);
+        }
+        return $this->jsonSuccess($return_data);
+    }
+
 }
