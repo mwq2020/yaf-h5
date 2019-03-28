@@ -335,13 +335,13 @@ class StepController extends Core\Base
                    "where user_id = {$user_id} and ".
                    "data_time >= {$start_last_week} and ".
                    "data_time <= {$end_last_week} and ".
-                   "step_num >= 6000 ".
+                   "step_num >= 12000 ".
                    "group by user_id ";
             $step_count_info = DB::selectOne($sql);
             if(empty($step_count_info)){
-                throw new \Exception('暂时没有符合条件的步数记录');
+                throw new \Exception('您未完成达标步数，谢谢您的参与，请继续努力！');
             } elseif($step_count_info['step_day_count'] < 5) {
-                throw new \Exception('暂时步数还不够抽奖条件');
+                throw new \Exception('您未完成达标步数，谢谢您的参与，请继续努力！');
             }
 
             $probability = 0.8;//概率值
