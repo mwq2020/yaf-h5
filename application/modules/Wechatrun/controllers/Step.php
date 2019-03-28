@@ -422,6 +422,8 @@ class StepController extends Core\Base
             //$return_data['day_num'] = 2;//标距离抽奖开始的天数
             //$return_data['hour_num'] = 1;//标距离抽奖开始的小时
 
+            $start_last_week += 7*24*3600;
+            $end_last_week += 7*24*3600;
             $sql = "select count(*) as attend_num from w_company_step_luck_draw ".
                    "where  activity_id= {$activity_id} ".
                    " and add_time >= {$start_last_week} and add_time <= {$end_last_week} ";
