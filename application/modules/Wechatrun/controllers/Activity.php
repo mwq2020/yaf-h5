@@ -43,7 +43,7 @@ class ActivityController extends Core\Base
                             'w_company_step_activity.activity_id',
                             'w_company_step_activity.activity_name'
                             )  
-                          ->where(['w_company_step_activity.company_id'=>$company_id,
+                          ->where([
                                    'w_company_step_activity_user.user_id' => $user_id,
                                    'w_company_step_activity_user.status' => 1,
                                    ])
