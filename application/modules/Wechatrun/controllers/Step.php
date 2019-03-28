@@ -344,7 +344,7 @@ class StepController extends Core\Base
                 throw new \Exception('暂时步数还不够抽奖条件');
             }
 
-            $probability = 0.1;//概率值
+            $probability = 0.8;//概率值
             $rand_list = range(1, 100);//随机数的数组
             $rand_key = array_rand($rand_list,1);//随机取出随机值里面的key
             $current_rand_num = $rand_list[$rand_key];//获取抽到随机数
@@ -395,12 +395,15 @@ class StepController extends Core\Base
             $activity_end_time      = $activity_info['end_time'];
             if($current_time < $activity_start_time+7*24*3600) {
                 $return_data['notice_txt'] = '抽奖活动暂未开始';
+                $return_data['draw_status'] = 0;
                 throw new \Exception('抽奖活动暂未开始',200);
             }
             if($current_time > $activity_end_time+7*24*3600) {
+                $return_data['draw_status'] = 2;
                 $return_data['notice_txt'] = '抽奖活动已结束';
                 throw new \Exception('抽奖活动已结束',200);
             }
+            $return_data['draw_status'] = 1;//标记活动已经开始
             
             $start_last_week    = mktime(0,0,0,date('m'),date('d')-date('w')+1-7,date('Y'));
             $end_last_week      = mktime(23,59,59,date('m'),date('d')-date('w')+7-7,date('Y'));
@@ -417,10 +420,6 @@ class StepController extends Core\Base
                 $return_data['day_num'] = intval(($start_last_week+2*7*24*3600 - $current_time)/86400);
                 $return_data['hour_num'] = ceil((($start_last_week+2*7*24*3600 - $current_time)%86400)/3600);
             }
-
-            $return_data['draw_status'] = 1;//标记活动已经开始
-            //$return_data['day_num'] = 2;//标距离抽奖开始的天数
-            //$return_data['hour_num'] = 1;//标距离抽奖开始的小时
 
             $start_last_week += 7*24*3600;
             $end_last_week += 7*24*3600;
