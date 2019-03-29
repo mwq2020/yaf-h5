@@ -313,7 +313,7 @@ class StepController extends Core\Base
 
             $activity_start_time    = $activity_info['start_time'];
             $activity_end_time      = $activity_info['end_time'];
-            if($current_time < strtotime('2019-03-29 08:00:00')) { //2019-04-08 08:00:00
+            if($current_time < strtotime('2019-04-08 08:00:00')) {
                 throw new \Exception('抽奖活动暂未开始');
             }
             if($current_time > strtotime('2019-05-06 20:00:00')) {
@@ -342,24 +342,13 @@ class StepController extends Core\Base
                 throw new \Exception('当周您已抽过奖了',400);
             }
 
-            //查询到当周是否抽过的记录 todo 时间点需要再准确点或者再考虑下是否周全
-            $count_draw_info = DB::table('w_company_step_luck_draw')
-                                ->select(DB::raw('count(id) AS attend_num'))
-                                ->where(['activity_id' => $activity_id,'is_selected' => 1])
-                                ->where('add_time','>=',$start_last_week+7*24*3600)
-                                ->where('add_time','<=',$end_last_week+7*24*3600)
-                                ->first();
-            if(!empty($count_draw_info) && $count_draw_info['attend_num'] >= 100) {
-                //throw new \Exception('抽奖人数已满',400);
-            }
-
             //检查用户是否达标
             $sql = "select count(step_num) as step_day_count,user_id ".
                    "from w_step_log ".
                    "where user_id = {$user_id} and ".
                    "data_time >= {$start_last_week} and ".
                    "data_time <= {$end_last_week} and ".
-                   "step_num >= 2000 ".
+                   "step_num >= 6000 ".
                    "group by user_id ";
             $step_count_info = DB::selectOne($sql);
             if(empty($step_count_info)){
@@ -368,6 +357,13 @@ class StepController extends Core\Base
                 throw new \Exception('您未完成达标步数，谢谢您的参与，请继续努力！');
             }
 
+            //查询到当周是否抽过的记录 todo 时间点需要再准确点或者再考虑下是否周全
+            $count_draw_info = DB::table('w_company_step_luck_draw')
+                                ->select(DB::raw('count(id) AS attend_num'))
+                                ->where(['activity_id' => $activity_id,'is_selected' => 1])
+                                ->where('add_time','>=',$start_last_week+7*24*3600)
+                                ->where('add_time','<=',$end_last_week+7*24*3600)
+                                ->first();
             if(!empty($count_draw_info) && $count_draw_info['attend_num'] >= 100) {
                 $return_data['is_selected'] = 0;
             } else {
@@ -422,7 +418,7 @@ class StepController extends Core\Base
             $activity_end_time      = $activity_info['end_time'];
 
             $date_list = [
-                '一' => strtotime('2019-03-29 08:00:00'), //'一' => strtotime('2019-04-08 08:00:00'),
+                '一' => strtotime('2019-04-08 08:00:00'),
                 '二' => strtotime('2019-04-15 08:00:00'),
                 '三' => strtotime('2019-04-22 08:00:00'),
                 '四' => strtotime('2019-04-29 08:00:00'),
@@ -484,7 +480,7 @@ class StepController extends Core\Base
                    "where user_id = {$user_id} and ".
                    "data_time >= {$start_last_week} and ".
                    "data_time <= {$end_last_week} and ".
-                   "step_num >= 2000 ".
+                   "step_num >= 6000 ".
                    "group by user_id ";
             $step_count_info = DB::selectOne($sql);
             if(empty($step_count_info)){
