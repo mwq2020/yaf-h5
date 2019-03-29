@@ -321,7 +321,7 @@ class StepController extends Core\Base
             }
 
             //8点到24点之间才能抽奖
-            if(date('H') < 8 && ) {
+            if(date('H') < 8) {
                 throw new \Exception('抽奖开始时间还没到');
             } elseif(date('H') >= 20){
                 throw new \Exception('抽奖时间已过');
