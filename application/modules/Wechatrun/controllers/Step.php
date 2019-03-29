@@ -335,7 +335,7 @@ class StepController extends Core\Base
                 throw new \Exception('当周您已抽过奖了',400);
             }
 
-            //查询到当周是否抽过的记录
+            //查询到当周是否抽过的记录 todo 时间点需要再准确点或者再考虑下是否周全
             $count_draw_info = DB::table('w_company_step_luck_draw')
                                 ->select(DB::raw('count(id) AS attend_num'))
                                 ->where(['activity_id' => $activity_id,'is_selected' => 1])
@@ -429,6 +429,7 @@ class StepController extends Core\Base
                 if($current_time <= $row){
                     $target_timestamp = $row;
                     $target_draw_num = $key;
+                    break;
                 }
             }
             //计算时间当前节点
@@ -439,7 +440,6 @@ class StepController extends Core\Base
             }
             //判断活动状态
             if($current_time < strtotime('2019-04-08 08:00:00')) {
-
                 $return_data['notice_txt'] = '抽奖活动暂未开始';
                 $return_data['draw_status'] = 0;
                 throw new \Exception('抽奖活动暂未开始',200);
@@ -477,6 +477,7 @@ class StepController extends Core\Base
             //     throw new \Exception('抽奖人数已满',400);
             // }
 
+            //时间条件可以在修改的精确点 ？？？？ todo 
             $start_last_week += 7*24*3600;
             $end_last_week += 7*24*3600;
             $sql = "select count(*) as attend_num from w_company_step_luck_draw ".
@@ -555,20 +556,7 @@ class StepController extends Core\Base
                 $return_data['day_num'] = intval(($start_last_week+2*7*24*3600 - $current_time)/86400);
                 $return_data['hour_num'] = ceil((($start_last_week+2*7*24*3600 - $current_time)%86400)/3600);
             }
-
             $return_data['draw_status'] = 1;//标记活动已经开始
-            // $return_data['day_num'] = 2;//标距离抽奖开始的天数
-            // $return_data['hour_num'] = 1;//标距离抽奖开始的小时
-
-            // echo "<pre>";
-            // echo '当前时间'.date('Y-m-d H:i:s',$current_time)."<br>";
-            // echo '活动开始时间'.date('Y-m-d H:i:s',$activity_start_time)."<br>";
-            // echo '活动结束时间'.date('Y-m-d H:i:s',$activity_end_time)."<br>";
-            // echo '获取步数开始时间'.date('Y-m-d H:i:s',$start_last_week)."<br>";
-            // echo '获取步数结束时间'.date('Y-m-d H:i:s',$end_last_week)."<br>";
-            // print_r($luck_draw_info);
-            // print_r($return_data);
-            // exit;
 
             $sql = "select count(*) as attend_num from w_company_step_luck_draw ".
                    "where  activity_id= {$activity_id} ".
@@ -578,8 +566,6 @@ class StepController extends Core\Base
                 $return_data['attend_num'] = $res['attend_num'];
             }
             
-
-
         } catch(\Exception $e) {
             $code = $e->getCode() == 200 ? 200 : 500;
             return $this->jsonError($e->getMessage(),$return_data,$code);
