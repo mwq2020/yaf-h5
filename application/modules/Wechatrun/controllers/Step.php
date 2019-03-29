@@ -313,7 +313,7 @@ class StepController extends Core\Base
 
             $activity_start_time    = $activity_info['start_time'];
             $activity_end_time      = $activity_info['end_time'];
-            if($current_time < strtotime('2019-04-08 08:00:00')) {
+            if($current_time < strtotime('2019-03-29 08:00:00')) {
                 throw new \Exception('抽奖活动暂未开始');
             }
             if($current_time > strtotime('2019-05-06 20:00:00')) {
@@ -348,7 +348,7 @@ class StepController extends Core\Base
                    "where user_id = {$user_id} and ".
                    "data_time >= {$start_last_week} and ".
                    "data_time <= {$end_last_week} and ".
-                   "step_num >= 6000 ".
+                   "step_num >= 3000 ".
                    "group by user_id ";
             $step_count_info = DB::selectOne($sql);
             if(empty($step_count_info)){
@@ -418,7 +418,7 @@ class StepController extends Core\Base
             $activity_end_time      = $activity_info['end_time'];
 
             $date_list = [
-                '一' => strtotime('2019-04-08 08:00:00'),
+                '一' => strtotime('2019-03-29 08:00:00'), //2019-04-08 08:00:00
                 '二' => strtotime('2019-04-15 08:00:00'),
                 '三' => strtotime('2019-04-22 08:00:00'),
                 '四' => strtotime('2019-04-29 08:00:00'),
@@ -480,7 +480,7 @@ class StepController extends Core\Base
                    "where user_id = {$user_id} and ".
                    "data_time >= {$start_last_week} and ".
                    "data_time <= {$end_last_week} and ".
-                   "step_num >= 6000 ".
+                   "step_num >= 3000 ".
                    "group by user_id ";
             $step_count_info = DB::selectOne($sql);
             if(empty($step_count_info)){
