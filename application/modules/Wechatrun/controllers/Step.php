@@ -313,7 +313,7 @@ class StepController extends Core\Base
 
             $activity_start_time    = $activity_info['start_time'];
             $activity_end_time      = $activity_info['end_time'];
-            if($current_time < strtotime('2019-03-29 08:00:00')) {
+            if($current_time < strtotime('2019-04-08 08:00:00')) {
                 throw new \Exception('抽奖活动暂未开始');
             }
             if($current_time > strtotime('2019-05-06 20:00:00')) {
@@ -348,7 +348,7 @@ class StepController extends Core\Base
                    "where user_id = {$user_id} and ".
                    "data_time >= {$start_last_week} and ".
                    "data_time <= {$end_last_week} and ".
-                   "step_num >= 3000 ".
+                   "step_num >= 6000 ".
                    "group by user_id ";
             $step_count_info = DB::selectOne($sql);
             if(empty($step_count_info)){
@@ -369,6 +369,7 @@ class StepController extends Core\Base
             } else {
                 $probability = 0.3;//概率值
                 $rand_list = range(1, 100);//随机数的数组
+                shuffle($rand_list);
                 $rand_key = array_rand($rand_list,1);//随机取出随机值里面的key
                 $current_rand_num = $rand_list[$rand_key];//获取抽到随机数
                 if($current_rand_num <= $probability*100){
@@ -443,7 +444,7 @@ class StepController extends Core\Base
                 $return_data['hour_num'] = ceil((($target_timestamp - $current_time)%86400)/3600);
             }
             //判断活动状态
-            if($current_time < strtotime('2019-03-29 08:00:00')) { //2019-04-08 08:00:00
+            if($current_time < strtotime('2019-04-08 08:00:00')) { //
                 $return_data['notice_txt'] = '抽奖活动暂未开始';
                 $return_data['draw_status'] = 0;
                 throw new \Exception('抽奖活动暂未开始',200);
@@ -480,7 +481,7 @@ class StepController extends Core\Base
                    "where user_id = {$user_id} and ".
                    "data_time >= {$start_last_week} and ".
                    "data_time <= {$end_last_week} and ".
-                   "step_num >= 3000 ".
+                   "step_num >= 6000 ".
                    "group by user_id ";
             $step_count_info = DB::selectOne($sql);
             if(empty($step_count_info)){
