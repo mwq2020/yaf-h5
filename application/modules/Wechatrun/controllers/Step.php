@@ -313,11 +313,18 @@ class StepController extends Core\Base
 
             $activity_start_time    = $activity_info['start_time'];
             $activity_end_time      = $activity_info['end_time'];
-            if($current_time < strtotime('2019-04-08 08:00:00')) {
+            if($current_time < strtotime('2019-03-29 08:00:00')) { //2019-04-08 08:00:00
                 throw new \Exception('抽奖活动暂未开始');
             }
             if($current_time > strtotime('2019-05-06 20:00:00')) {
                 throw new \Exception('抽奖活动已结束');
+            }
+
+            //8点到24点之间才能抽奖
+            if(date('H') < 8 && ) {
+                throw new \Exception('抽奖开始时间还没到');
+            } elseif(date('H') >= 20){
+                throw new \Exception('抽奖时间已过');
             }
 
             $start_last_week    = mktime(0,0,0,date('m'),date('d')-date('w')+1-7,date('Y'));
@@ -415,7 +422,7 @@ class StepController extends Core\Base
             $activity_end_time      = $activity_info['end_time'];
 
             $date_list = [
-                '一' => strtotime('2019-04-08 08:00:00'),
+                '一' => strtotime('2019-03-29 08:00:00'), //'一' => strtotime('2019-04-08 08:00:00'),
                 '二' => strtotime('2019-04-15 08:00:00'),
                 '三' => strtotime('2019-04-22 08:00:00'),
                 '四' => strtotime('2019-04-29 08:00:00'),
@@ -432,6 +439,7 @@ class StepController extends Core\Base
                     break;
                 }
             }
+
             //计算时间当前节点
             if($target_timestamp > 0) {
                 $return_data['target_draw_num'] = $target_draw_num;
@@ -439,7 +447,7 @@ class StepController extends Core\Base
                 $return_data['hour_num'] = ceil((($target_timestamp - $current_time)%86400)/3600);
             }
             //判断活动状态
-            if($current_time < strtotime('2019-04-08 08:00:00')) {
+            if($current_time < strtotime('2019-03-29 08:00:00')) { //2019-04-08 08:00:00
                 $return_data['notice_txt'] = '抽奖活动暂未开始';
                 $return_data['draw_status'] = 0;
                 throw new \Exception('抽奖活动暂未开始',200);
@@ -449,7 +457,11 @@ class StepController extends Core\Base
                 $return_data['notice_txt'] = '抽奖活动已结束';
                 throw new \Exception('抽奖活动已结束',200);
             }
-            $return_data['draw_status'] = 1;//标记活动已经开始
+
+            //8点到24点之间才能抽奖
+            if(date('H') >= 8 && date('H') <= 20) {
+                $return_data['draw_status'] = 1;//标记活动已经开始
+            }
             
             $start_last_week    = mktime(0,0,0,date('m'),date('d')-date('w')+1-7,date('Y'));
             $end_last_week      = mktime(23,59,59,date('m'),date('d')-date('w')+7-7,date('Y'));
@@ -465,17 +477,6 @@ class StepController extends Core\Base
                 $return_data['is_selected'] = $luck_draw_info['is_selected'];//用户的抽奖状态设置 
                 $return_data['user_draw_status'] = 1;//用户的抽奖状态设置 
             }
-
-            //查询当周是否抽满人
-            // $count_draw_info = DB::table('w_company_step_luck_draw')
-            //                     ->select(DB::raw('count(id) AS attend_num'))
-            //                     ->where(['activity_id' => $activity_id,'is_selected' => 1])
-            //                     ->where('add_time','>=',$start_last_week+7*24*3600)
-            //                     ->where('add_time','<=',$end_last_week+7*24*3600)
-            //                     ->first();
-            // if(!empty($count_draw_info) && $count_draw_info['attend_num'] >= 100) {
-            //     throw new \Exception('抽奖人数已满',400);
-            // }
 
             //检查用户达标情况
             $sql = "select count(step_num) as step_day_count,user_id ".
