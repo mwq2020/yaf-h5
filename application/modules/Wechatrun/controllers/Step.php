@@ -346,7 +346,7 @@ class StepController extends Core\Base
                 //throw new \Exception('抽奖人数已满',400);
             }
 
-            //每期满100人抽奖检查
+            //检查用户是否达标
             $sql = "select count(step_num) as step_day_count,user_id ".
                    "from w_step_log ".
                    "where user_id = {$user_id} and ".
@@ -466,7 +466,7 @@ class StepController extends Core\Base
                 $return_data['user_draw_status'] = 1;//用户的抽奖状态设置 
             }
 
-            //查询到当周是否抽过的记录
+            //查询当周是否抽满人
             // $count_draw_info = DB::table('w_company_step_luck_draw')
             //                     ->select(DB::raw('count(id) AS attend_num'))
             //                     ->where(['activity_id' => $activity_id,'is_selected' => 1])
@@ -476,6 +476,23 @@ class StepController extends Core\Base
             // if(!empty($count_draw_info) && $count_draw_info['attend_num'] >= 100) {
             //     throw new \Exception('抽奖人数已满',400);
             // }
+
+            //检查用户达标情况
+            $sql = "select count(step_num) as step_day_count,user_id ".
+                   "from w_step_log ".
+                   "where user_id = {$user_id} and ".
+                   "data_time >= {$start_last_week} and ".
+                   "data_time <= {$end_last_week} and ".
+                   "step_num >= 12000 ".
+                   "group by user_id ";
+            $step_count_info = DB::selectOne($sql);
+            if(empty($step_count_info)){
+                $return_data['user_draw_status'] = 2;//用户未达标标示
+                //throw new \Exception('您未完成达标步数，谢谢参与，请继续努力！');
+            } elseif($step_count_info['step_day_count'] < 5) {
+                //throw new \Exception('您未完成达标步数，谢谢您的参与，请继续努力！');
+                $return_data['user_draw_status'] = 2;//用户未达标标示
+            }
 
             //时间条件可以在修改的精确点 ？？？？ todo 
             $start_last_week += 7*24*3600;
