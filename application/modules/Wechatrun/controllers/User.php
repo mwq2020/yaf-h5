@@ -181,10 +181,10 @@ class UserController extends Core\Base
         if(!empty($ret)) {
             foreach($ret as &$row){
                 $row['day_name'] = date('d',$row['data_time']);
-                $row['km']      = $row['step_num'] > 0  ? round($row['step_num']*0.7/1000,2) : 0;
-                $row['calorie'] = $row['step_num'] > 0  ? intval($row['step_num']/22) : 0;
-                $row['status'] = $row['step_num'] >= $target_num ? 1 : 2;
-                $return_data['step_count'] += $row['step_num'];
+                $row['km']      = $row['real_step_num'] > 0  ? round($row['real_step_num']*0.7/1000,2) : 0;
+                $row['calorie'] = $row['real_step_num'] > 0  ? intval($row['real_step_num']/22) : 0;
+                $row['status'] = $row['real_step_num'] >= $target_num ? 1 : 2;
+                $return_data['step_count'] += $row['real_step_num'];
                 $temp_date = date('Y-m-d',$row['data_time']);
                 //$return_data['card_date_list'][] = $temp_date;
                 //$date_step_list[$temp_date] = $row;

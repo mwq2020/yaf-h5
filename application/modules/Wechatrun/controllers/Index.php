@@ -173,6 +173,9 @@ class IndexController extends Core\Base
         $iv = isset($_REQUEST['iv']) ?  $_REQUEST['iv'] : '';
         $user_id = isset($_REQUEST['user_id']) ?  $_REQUEST['user_id'] : '';
         $is_encode = isset($_REQUEST['is_encode']) ?  $_REQUEST['is_encode'] : '';
+        $activity_id = isset($_REQUEST['activity_id']) ?  $_REQUEST['activity_id'] : 0;//活动id
+        //工行的活动要求每天步数不能超过25000步
+
         if(!empty($is_encode)) {
             $sessionKey = urldecode($sessionKey);
             $encryptedData = urldecode($encryptedData);
@@ -229,27 +232,67 @@ class IndexController extends Core\Base
         if(empty($user_id) || empty($stepInfoList)){
             return false;
         }
+        $activity_id = isset($_REQUEST['activity_id']) ?  $_REQUEST['activity_id'] : 0;//活动id
+
+        //取出现在已经报错的最近一个月的数据
+        $end_timestamp = strtotime(date('Y-m-d 00:00:00'))+2; //结束时间
+        $start_timestamp = $end_timestamp - 31*24*3600;//开始时间
+        $step_res = DB::table('w_step_log')
+                    ->select(
+                    'id',
+                    'data_time',
+                    'step_num',
+                    'real_step_num'
+                    )  
+                    ->where(['user_id'=>$user_id])
+                    ->where('data_time','>=',$start_timestamp)
+                    ->where('data_time','<=',$end_timestamp)
+                    ->get();
+        $current_step_list = [];
+        if(!empty($step_res)){
+            foreach($step_res as $step_row){
+                $current_step_list[$step_row['data_time']] = $step_row;
+            }
+        }
 
         foreach ($stepInfoList as $row) {
             if($row['step'] <= 0){
                 continue;
             }
-            $info = DB::table('w_step_log')->where(['user_id'=>$user_id,'data_time' => $row['timestamp']])->first();
-            if (empty($info)) {
+
+            if(isset($current_step_list[$row['timestamp']])){
+                $temp_step_info = $current_step_list[$row['timestamp']];
+
+                $updateData = array();
+                if($activity_id == 8){
+                    $updateData['step_num']     = $row['step'] >= 25000 ? 25000 : $row['step'];
+                } else {
+                    $updateData['step_num']     = $row['step'];
+                }
+                $updateData['real_step_num'] = $row['step'];
+                $updateData['update_time']  = time();
+                if ( 
+                    $updateData['real_step_num'] > $temp_step_info['real_step_num'] ||
+                    $updateData['step_num'] > $temp_step_info['step_num']
+                    ) {
+                    $flag = DB::table('w_step_log')->where(['id'=>$temp_step_info['id']])->update($updateData);
+                }
+            } else {
                 $insertData = array();
                 $insertData['user_id']      = $user_id;
-                $insertData['step_num']     = $row['step'];
+            
+                if($activity_id == 8){
+                    $insertData['step_num']     = $row['step'] >= 25000 ? 25000 : $row['step'];
+                } else {
+                    $insertData['step_num']     = $row['step'];
+                }
+
+                $insertData['real_step_num'] = $row['step'];
                 $insertData['data_time']    = $row['timestamp'];
                 $insertData['add_time']     = time();
                 $insertData['update_time']  = time();
+
                 $flag = DB::table('w_step_log')->insertGetId($insertData);
-            } else {
-                if($info['step_num'] < $row['step']){
-                    $updateData = array();
-                    $updateData['step_num']     = $row['step'];
-                    $updateData['update_time']  = time();
-                    $flag = DB::table('w_step_log')->where(['id'=>$info['id']])->update($updateData);
-                }
             }
         }
     }
@@ -278,8 +321,6 @@ class IndexController extends Core\Base
             //echo $_REQUEST['echostr'];
             return false;
         }
-
     }
-
 
 }
