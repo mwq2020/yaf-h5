@@ -419,7 +419,7 @@ class StepController extends Core\Base
             $activity_end_time      = $activity_info['end_time'];
 
             $date_list = [
-                '一' => strtotime('2019-03-29 08:00:00'), //2019-04-08 08:00:00
+                '一' => strtotime('2019-04-08 08:00:00'), //2019-04-08 08:00:00
                 '二' => strtotime('2019-04-15 08:00:00'),
                 '三' => strtotime('2019-04-22 08:00:00'),
                 '四' => strtotime('2019-04-29 08:00:00'),
