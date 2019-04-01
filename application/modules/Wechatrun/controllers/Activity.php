@@ -151,8 +151,7 @@ class ActivityController extends Core\Base
         ->where('w_company_step_activity.start_time','<=',time())
         ->orderBy('w_company_step_activity.start_time','desc')
         ->first();
-        $ranking_list['test_member_info'] = $activity_member_info;
-
+        
         if($activity_member_info){
             $activity_start_time    = $activity_member_info['start_time'];
             $activity_end_time      = $activity_member_info['end_time'];
@@ -269,7 +268,7 @@ class ActivityController extends Core\Base
             $ranking_list['list'] = $rank_list_new;
         }
 
-
+        $ranking_list['test_member_info'] = $activity_member_info;
         $this->jsonSuccess($ranking_list);
     }
 
