@@ -99,21 +99,6 @@ class ActivityController extends Core\Base
             $this->jsonError('用户id不能为空');
         }
 
-        $activity_info  = DB::table('w_company_step_activity')
-                          ->leftJoin('w_company_step_activity_user','w_company_step_activity.activity_id','=','w_company_step_activity_user.activity_id')
-                          ->select(
-                            'w_company_step_activity.company_id',
-                            'w_company_step_activity.activity_id',
-                            'w_company_step_activity.activity_name'
-                            )  
-                          ->where([
-                                   'w_company_step_activity_user.user_id' => $user_id,
-                                   'w_company_step_activity_user.status' => 1,
-                                   ])
-                          ->orderBy('w_company_step_activity.start_time','desc')
-                          ->first();
-
-
         $activity_start_time = strtotime('2018-03-08');
         $activity_end_time = strtotime('2018-03-31');
         $statistics_end_time = strtotime('2018-04-03 23:59:59');//统计数据结束时间，之后上传的数据不算有效数据
@@ -146,13 +131,6 @@ class ActivityController extends Core\Base
             $activity_end_time = strtotime('2018-10-19');
             $statistics_end_time = $activity_end_time + (3*24*3600);
         }
-
-        if(!empty($activity_info)){
-            $activity_start_time = $activity_info['start_time'];
-            $activity_end_time = $activity_info['end_time'];
-            $statistics_end_time = $activity_end_time + (3*24*3600);
-        }
-
 
         //新的活动都按照表都数据走，覆盖前面写死的活动时间
         $activity_member_info = DB::table('w_company_step_activity_user')
@@ -316,20 +294,6 @@ class ActivityController extends Core\Base
             $this->jsonError('用户id不能为空');
         }
 
-        $activity_info  = DB::table('w_company_step_activity')
-                          ->leftJoin('w_company_step_activity_user','w_company_step_activity.activity_id','=','w_company_step_activity_user.activity_id')
-                          ->select(
-                            'w_company_step_activity.company_id',
-                            'w_company_step_activity.activity_id',
-                            'w_company_step_activity.activity_name'
-                            )  
-                          ->where([
-                                   'w_company_step_activity_user.user_id' => $user_id,
-                                   'w_company_step_activity_user.status' => 1,
-                                   ])
-                          ->orderBy('w_company_step_activity.start_time','desc')
-                          ->first();
-
         $activity_start_time = strtotime('2018-03-08');
         $activity_end_time = strtotime('2018-03-31');
         $statistics_end_time = strtotime('2018-04-03 23:59:59');//统计数据结束时间，之后上传的数据不算有效数据
@@ -360,12 +324,6 @@ class ActivityController extends Core\Base
         } elseif($company_id == 17){
             $activity_start_time = strtotime('2018-09-20');
             $activity_end_time = strtotime('2018-10-19');
-            $statistics_end_time = $activity_end_time + (3*24*3600);
-        }
-
-        if(!empty($activity_info)){
-            $activity_start_time = $activity_info['start_time'];
-            $activity_end_time = $activity_info['end_time'];
             $statistics_end_time = $activity_end_time + (3*24*3600);
         }
 
