@@ -21,6 +21,8 @@ class StepController extends Core\Base
     //获取排行榜页面数据[中国联通专用]
     public function getRankingListAction() 
     {
+        $exclude_user_ids = [4423];//排除用户的user_id
+
         $activity_id = isset($_REQUEST['activity_id']) ? intval($_REQUEST['activity_id']) : 0;
         $company_id = isset($_REQUEST['company_id']) ? intval($_REQUEST['company_id']) : 0;
         $department_id = isset($_REQUEST['department_id']) ? intval($_REQUEST['department_id']) : 0;
@@ -182,12 +184,14 @@ class StepController extends Core\Base
                                 ->where('w_step_log.data_time','>=',$activity_start_time)
                                 ->where('w_step_log.data_time','<=',$activity_end_time)
                                 ->where('w_step_log.step_num','<=',80000)
+                                ->where('w_step_log.user_id','!=',4423) //排除工行的王建红
                                 ->groupBy('w_step_log.user_id')
                                 ->orderBy('step_num_count','desc')
                                 ->offset($offset)
                                 ->limit($page_size)
                                 ->get();
                 $return_data['ranking_list'] = $user_list;
+
 
                 //查询并计算当前用户的排名
                 $user_count_list_res = DB::table('w_step_log')
@@ -242,6 +246,7 @@ class StepController extends Core\Base
                                 ->where('w_step_log.data_time','>=',$activity_start_time)
                                 ->where('w_step_log.data_time','<=',$activity_end_time)
                                 ->where('w_step_log.step_num','<=',80000)
+                                ->where('w_step_log.user_id','!=',4423) //排除工行的王建红
                                 ->groupBy('w_step_log.user_id')
                                 ->orderBy('step_num_count','desc')
                                 ->offset($offset)
