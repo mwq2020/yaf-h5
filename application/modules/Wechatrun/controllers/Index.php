@@ -255,6 +255,24 @@ class IndexController extends Core\Base
             }
         }
 
+
+        $activity_info  = DB::table('w_company_step_activity')
+                          ->leftJoin('w_company_step_activity_user','w_company_step_activity.activity_id','=','w_company_step_activity_user.activity_id')
+                          ->select(
+                            'w_company_step_activity.company_id',
+                            'w_company_step_activity.activity_id',
+                            'w_company_step_activity.activity_name'
+                            )  
+                          ->where([
+                                   'w_company_step_activity_user.user_id' => $user_id,
+                                   'w_company_step_activity_user.status' => 1,
+                                   ])
+                          ->orderBy('w_company_step_activity.start_time','desc')
+                          ->first();
+        if(!empty($activity_info)) {
+            $activity_id = $activity_info['activity_id'];
+        }
+
         foreach ($stepInfoList as $row) {
             if($row['step'] <= 0){
                 continue;
