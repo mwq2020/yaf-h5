@@ -266,8 +266,7 @@ class ActivityController extends Core\Base
             }
             $ranking_list['list'] = $rank_list_new;
         }
-
-        $ranking_list['test_member_info'] = $activity_member_info;
+        
         $this->jsonSuccess($ranking_list);
     }
 
@@ -467,7 +466,6 @@ class ActivityController extends Core\Base
             $ranking_list['list'] = $rank_list_new;
         }
 
-        $ranking_list['test_member_info'] = $activity_member_info;
         $this->jsonSuccess($ranking_list);
     }
 
