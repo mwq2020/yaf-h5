@@ -162,6 +162,21 @@ class StepController extends Core\Base
                     $attend_percent_sort = array_column($department_list,'attend_percent');
                     array_multisort($attend_percent_sort, SORT_DESC,$department_list);
                 }
+
+                $temp_ranking_num = 1;
+                foreach($department_list as &$department_row) {
+                    if(isset($temp_attend_percent)){
+                        if($department_row['attend_percent'] < $temp_attend_percent){
+                            $temp_ranking_num++;
+                        }
+                        $department_row['ranking_num'] = $temp_ranking_num;
+                        $temp_attend_percent = $department_row['attend_percent'];
+                    } else {
+                        $department_row['ranking_num'] = $temp_ranking_num;
+                        $temp_attend_percent = $department_row['attend_percent'];
+                    }
+                }
+
                 // todo 根据参与率倒序排行
                 $return_data['ranking_list'] = $department_list;
 
