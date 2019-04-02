@@ -164,22 +164,19 @@ class StepController extends Core\Base
                 }
 
                 $temp_ranking_num = 1;
-                foreach($department_list as &$department_row) {
+                foreach($department_list as &$department_info) {
                     if(isset($temp_attend_percent)){
-                        if($department_row['attend_percent'] < $temp_attend_percent){
+                        if($department_info['attend_percent'] < $temp_attend_percent){
                             $temp_ranking_num++;
                         }
-                        $department_row['ranking_num'] = $temp_ranking_num;
-                        $temp_attend_percent = $department_row['attend_percent'];
+                        $department_info['ranking_num'] = $temp_ranking_num;
+                        $temp_attend_percent = $department_info['attend_percent'];
                     } else {
-                        $department_row['ranking_num'] = $temp_ranking_num;
-                        $temp_attend_percent = $department_row['attend_percent'];
+                        $department_info['ranking_num'] = $temp_ranking_num;
+                        $temp_attend_percent = $department_info['attend_percent'];
                     }
                 }
-
-                // todo 根据参与率倒序排行
                 $return_data['ranking_list'] = $department_list;
-
             } elseif($ranking_type == 'department_member'){
                 $offset = $page_index > 1 ? ($page_index-1)*$page_size : 0;
                 //个人员工排名
