@@ -91,11 +91,25 @@ class StepController extends Core\Base
                         $row['step_num_count'] = isset($department_step_list[$row['department_id']]) ? $department_step_list[$row['department_id']]['step_num_count'] : 0;
                         $row['average_step_num'] = !empty($row['user_num']) ? intval($row['step_num_count']/$row['user_num']) : 0;
                     }
+
+                    //根据平均步数倒序排
+                    $average_step_sort = array_column($department_list,'average_step_num');
+                    array_multisort($average_step_sort, SORT_DESC,$department_list);
+                    $temp_ranking_num = 1;
+                    foreach($department_list as $key => $department_info) {
+                        if(isset($temp_average_step_num)){
+                            if($department_info['average_step_num'] < $temp_average_step_num){
+                                $temp_ranking_num++;
+                            }
+                            $department_list[$key]['ranking_num'] = $temp_ranking_num;
+                            $temp_average_step_num = $department_info['average_step_num'];
+                        } else {
+                            $department_list[$key]['ranking_num'] = $temp_ranking_num;
+                            $temp_average_step_num = $department_info['average_step_num'];
+                        }
+                    }
                 }
                 
-                //根据平均步数倒序排
-                $average_step_sort = array_column($department_list,'average_step_num');
-                array_multisort($average_step_sort, SORT_DESC,$department_list);
                 $return_data['ranking_list'] = $department_list;
             } elseif($ranking_type == 'attend_percent') {
                 //部门的参与率排行 【部门下的人数/有步数的人数】
