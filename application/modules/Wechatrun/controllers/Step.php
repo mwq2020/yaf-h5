@@ -161,22 +161,24 @@ class StepController extends Core\Base
                     }
                     $attend_percent_sort = array_column($department_list,'attend_percent');
                     array_multisort($attend_percent_sort, SORT_DESC,$department_list);
-                }
 
-                $temp_ranking_num = 1;
-                foreach($department_list as &$department_info) {
-                    if(isset($temp_attend_percent)){
-                        if($department_info['attend_percent'] < $temp_attend_percent){
-                            $temp_ranking_num++;
+                    $temp_ranking_num = 1;
+                    foreach($department_list as $key => $department_info) {
+                        if(isset($temp_attend_percent)){
+                            if($department_info['attend_percent'] < $temp_attend_percent){
+                                $temp_ranking_num++;
+                            }
+                            $department_list[$key]['ranking_num'] = $temp_ranking_num;
+                            $temp_attend_percent = $department_info['attend_percent'];
+                        } else {
+                            $department_list[$key]['ranking_num'] = $temp_ranking_num;
+                            $temp_attend_percent = $department_info['attend_percent'];
                         }
-                        $department_info['ranking_num'] = $temp_ranking_num;
-                        $temp_attend_percent = $department_info['attend_percent'];
-                    } else {
-                        $department_info['ranking_num'] = $temp_ranking_num;
-                        $temp_attend_percent = $department_info['attend_percent'];
                     }
+
                 }
                 $return_data['ranking_list'] = $department_list;
+
             } elseif($ranking_type == 'department_member'){
                 $offset = $page_index > 1 ? ($page_index-1)*$page_size : 0;
                 //个人员工排名
