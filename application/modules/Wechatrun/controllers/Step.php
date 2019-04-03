@@ -277,6 +277,7 @@ class StepController extends Core\Base
                                 ->where('w_step_log.user_id','!=',4423) //排除工行的王建红
                                 ->groupBy('w_step_log.user_id')
                                 ->orderBy('step_num_count','desc')
+                                ->orderBy('w_company_user.user_id','desc')
                                 ->offset($offset)
                                 ->limit($page_size)
                                 ->get();
@@ -285,9 +286,10 @@ class StepController extends Core\Base
                 //获取全部人员的步数及顺序用于计算个人排名
                 $sql =  "select sum(a.step_num) as step_num_count,a.user_id ".
                         "from w_step_log a left join w_company_user b on a.user_id = b.user_id ".
-                        "where b.company_id = {$company_id} and (b.is_tested = 0 or a.user_id={$user_id}) ".
+                        "where b.company_id = {$company_id} and (b.is_tested = 0 or b.user_id={$user_id}) ".
                         "and a.data_time >= {$activity_start_time} and a.data_time <= {$activity_end_time} ".
-                        " group by a.user_id order by step_num_count desc ";
+                        "and a.step_num <= 80000 ".
+                        "group by a.user_id order by step_num_count desc,a.user_id desc";
                 $user_count_list_res = DB::select($sql);
 
                 /*
