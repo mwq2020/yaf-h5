@@ -277,7 +277,7 @@ class StepController extends Core\Base
                                 ->where('w_step_log.user_id','!=',4423) //排除工行的王建红
                                 ->groupBy('w_step_log.user_id')
                                 ->orderBy('step_num_count','desc')
-                                ->orderBy('w_company_user.user_id','desc')
+                                //->orderBy('w_company_user.user_id','desc')
                                 ->offset($offset)
                                 ->limit($page_size)
                                 ->get();
@@ -289,7 +289,8 @@ class StepController extends Core\Base
                         "where b.company_id = {$company_id} and (b.is_tested = 0 or b.user_id={$user_id}) ".
                         "and a.data_time >= {$activity_start_time} and a.data_time <= {$activity_end_time} ".
                         "and a.step_num <= 80000 ".
-                        "group by a.user_id order by step_num_count desc,a.user_id desc";
+                        "group by a.user_id order by step_num_count desc";
+                        //"group by a.user_id order by step_num_count desc,a.user_id desc";
                 $user_count_list_res = DB::select($sql);
 
                 /*
