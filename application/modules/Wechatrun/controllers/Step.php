@@ -282,6 +282,15 @@ class StepController extends Core\Base
                                 ->get();
                 $return_data['ranking_list'] = $user_list;
 
+                //获取全部人员的步数及顺序用于计算个人排名
+                $sql =  "select sum(a.step_num) as step_num_count,a.user_id ".
+                        "from w_step_log a left join w_company_user b on a.user_id = b.user_id ".
+                        "where b.company_id = {$company_id} and (b.is_tested = 0 or a.user_id={$user_id}) ".
+                        "and a.data_time >= {$activity_start_time} and a.data_time <= {$activity_end_time} ".
+                        " group by a.user_id order by step_num_count desc ";
+                $user_count_list_res = DB::select($sql);
+
+                /*
                 //查询并计算当前用户的排名
                 $user_count_list_res = DB::table('w_step_log')
                                 ->leftJoin('w_company_user','w_step_log.user_id','=','w_company_user.user_id')
@@ -295,6 +304,7 @@ class StepController extends Core\Base
                                 ->groupBy('w_step_log.user_id')
                                 ->orderBy('step_num_count','desc')
                                 ->get();
+                */
                 $user_count_list = [];
                 if(!empty($user_count_list_res)){
                     $ranking_num = 1;
@@ -310,9 +320,12 @@ class StepController extends Core\Base
                             ->select(
                                 'w_company_user.real_name',
                                 'w_company_user.department_name',
+                                'w_company_user.is_tested',
                                 'w_users.avatar'
                                 )
-                            ->where(['w_company_user.user_id' => $user_id,'w_company_user.company_id' => $company_id])->first();
+                            ->where(['w_company_user.user_id' => $user_id,'w_company_user.company_id' => $company_id])
+                            ->first();
+
                 $user_info['user_ranking_num'] = isset($user_count_list[$user_id]) ? $user_count_list[$user_id]['ranking_num'] : count($user_count_list)+1; 
                 $user_info['user_step_num_count'] = isset($user_count_list[$user_id]) ? $user_count_list[$user_id]['step_num_count'] : 0; 
                 $return_data['user_info'] = $user_info;
