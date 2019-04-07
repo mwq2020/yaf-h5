@@ -1,0 +1,37 @@
+<html>
+<head>
+    <title>抽奖测试界面</title>
+    <script src="/static/js/jquery-2.0.3.min.js" type="application/javascript"></script>
+</head>
+<body>
+    <form method="post">
+        抽奖的个数<input name="draw_num" type="text" value="<?php echo $draw_num; ?>" /><br/>
+        假定当前时间<input name="current_time" type="text" value="<?php echo $current_time; ?>" /><br/>
+        中奖的概率<input name="probability" type="text" value="<?php echo $probability; ?>" /><br/>
+        步数达标条件<input name="target_step_num" type="text" value="<?php echo $target_step_num; ?>" /><br/>
+    </form>
+
+
+    <table>
+        <tr>
+            <th>uid</th>
+            <th>满足抽奖条件天数</th>
+            <th>是否中奖</th>
+            <th>操作</th>
+        </tr>
+        <?php foreach($attend_user_list as $row): ?>
+        <tr>
+            <td><?php echo $row['user_id']; ?></td>
+            <td><?php echo $row['step_day_count']; ?></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <?php endforeach; ?>
+    </table>
+</body>
+</html>
+<script>
+    $(function () {
+        //alert($("input[name=draw_num]").val())
+    })
+</script>

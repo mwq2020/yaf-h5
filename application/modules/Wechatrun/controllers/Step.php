@@ -342,7 +342,7 @@ class StepController extends Core\Base
 
 
     /**
-     * 肩部走抽奖
+     * 健步走抽奖
      */
     public function luckDrawAction()
     {
@@ -575,6 +575,44 @@ class StepController extends Core\Base
         }
     }
 
+    /**
+     * 抽奖测试
+     */
+    public function drawTestAction()
+    {
+        $draw_num       = isset($_REQUEST['draw_num']) ? $_REQUEST['draw_num'] : 20;  //抽多少个奖品
+        $current_time   = isset($_REQUEST['current_time']) ? $_REQUEST['current_time'] : date('Y-m-d H:i:s');  //抽多少个奖品
+        $probability    = isset($_REQUEST['probability']) ? $_REQUEST['probability'] : 0.1;//概率值
+        $target_step_num  = isset($_REQUEST['target_step_num']) ? $_REQUEST['target_step_num'] : 2000;//达标步数
+//        if(empty($_POST)){
+//            $this->getView()->assign("draw_num", $draw_num);
+//            $this->getView()->assign("current_time", $current_time);
+//            $this->getView()->assign("probability", $probability);
+//            $this->getView()->assign("target_step_num", $target_step_num);
+//            return $this->display("drawtest", []);
+//        }
+
+        $start_last_week    = mktime(0,0,0,date('m'),date('d')-date('w')+1-7,date('Y'));
+        $end_last_week      = mktime(23,59,59,date('m'),date('d')-date('w')+7-7,date('Y'));
+
+        //检查用户达标情况
+        $sql = "select count(step_num) as step_day_count,user_id ".
+            "from w_step_log ".
+            "where ".
+            "data_time >= {$start_last_week} and ".
+            "data_time <= {$end_last_week} and ".
+            "step_num >= {$target_step_num} ".
+            "group by user_id ";
+        $attend_user_list = DB::select($sql);
+
+        $this->getView()->assign("draw_num", $draw_num);
+        $this->getView()->assign("current_time", $current_time);
+        $this->getView()->assign("probability", $probability);
+        $this->getView()->assign("target_step_num", $target_step_num);
+        $this->getView()->assign("attend_user_list", $attend_user_list);
+        return $this->display("drawtest", []);
+    }
+
     //测试活动数据
     public function testAction() 
     {
@@ -583,7 +621,6 @@ class StepController extends Core\Base
         $activity_id = $_REQUEST['activity_id'] ? $_REQUEST['activity_id'] : 0;
         $user_id = $_REQUEST['user_id'] ? $_REQUEST['user_id'] : 0;
         $current_time = time();
-        //$current_time = strtotime('2019-03-08 12:00:00');
         try {
             $activity_info = [];
             $activity_info['activity_name'] = '测试活动';
