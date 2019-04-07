@@ -201,6 +201,9 @@ class TestController extends Core\Base
                 $return_data['user_draw_status'] = 1;//用户的抽奖状态设置 
             }
 
+            $return_data['start_last_week'] = $start_last_week;//用户未达标标示
+            $return_data['end_last_week'] = $end_last_week;//用户未达标标示
+
             //检查用户达标情况
             $sql = "select count(step_num) as step_day_count,user_id ".
                 "from w_step_log ".
