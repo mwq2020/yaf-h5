@@ -49,7 +49,7 @@ class TestController extends Core\Base
             //8点到24点之间才能抽奖
             if(date('H') < 8) {
                 throw new \Exception('抽奖开始时间还没到');
-            } elseif(date('H') >= 20){
+            } elseif(date('H') >= 23){
                 throw new \Exception('抽奖时间已过');
             }
 
@@ -182,7 +182,7 @@ class TestController extends Core\Base
             }
 
             //8点到24点之间才能抽奖
-            if(date('H') >= 8 && date('H') <= 20) {
+            if(date('H') >= 8 && date('H') <= 23) {
                 $return_data['draw_status'] = 1;//标记活动已经开始
             }
 
