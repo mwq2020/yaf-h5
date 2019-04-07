@@ -74,7 +74,7 @@ class TestController extends Core\Base
                 "where user_id = {$user_id} and ".
                 "data_time >= {$start_last_week} and ".
                 "data_time <= {$end_last_week} and ".
-                "step_num >= 2000 ".
+                "step_num >= 500 ".
                 "group by user_id ";
             $step_count_info = DB::selectOne($sql);
             if(empty($step_count_info)){
@@ -210,7 +210,7 @@ class TestController extends Core\Base
                 "where user_id = {$user_id} and ".
                 "data_time >= {$start_last_week} and ".
                 "data_time <= {$end_last_week} and ".
-                "step_num >= 2000 ".
+                "step_num >= 500 ".
                 "group by user_id ";
             $step_count_info = DB::selectOne($sql);
             if(empty($step_count_info)){
