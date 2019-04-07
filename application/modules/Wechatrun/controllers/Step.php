@@ -376,8 +376,8 @@ class StepController extends Core\Base
                 throw new \Exception('抽奖时间已过');
             }
 
-            $start_last_week    = mktime(0,0,0,date('m'),date('d')-date('w')+1-7,date('Y'));
-            $end_last_week      = mktime(23,59,59,date('m'),date('d')-date('w')+7-7,date('Y'));
+            $start_last_week    = mktime(0,0,0,date('m'),date('d')-date('w')+1-7,date('Y')) - 7*24*3600;//上周一时间戳
+            $end_last_week      = mktime(23,59,59,date('m'),date('d')-date('w')+7-7,date('Y')) - 7*24*3600;//上周日时间戳
 
             //查询到当周是否抽过的记录
             $luck_draw_info = DB::table('w_company_step_luck_draw')
@@ -509,8 +509,8 @@ class StepController extends Core\Base
                 $return_data['draw_status'] = 1;//标记活动已经开始
             }
             
-            $start_last_week    = mktime(0,0,0,date('m'),date('d')-date('w')+1-7,date('Y'));
-            $end_last_week      = mktime(23,59,59,date('m'),date('d')-date('w')+7-7,date('Y'));
+            $start_last_week    = mktime(0,0,0,date('m'),date('d')-date('w')+1-7,date('Y'))-7*24*3600; //上周一时间戳
+            $end_last_week      = mktime(23,59,59,date('m'),date('d')-date('w')+7-7,date('Y'))-7*24*3600;//上周日时间戳
 
             //查询到当周是否抽过的记录
             $luck_draw_info = DB::table('w_company_step_luck_draw')
@@ -542,11 +542,11 @@ class StepController extends Core\Base
             }
 
             //时间条件可以在修改的精确点 ？？？？ todo 
-            $start_last_week += 7*24*3600;
-            $end_last_week += 7*24*3600;
+            $temp_start_last_week = $start_last_week+7*24*3600;
+            $temp_end_last_week = $end_last_week + 7*24*3600;
             $sql = "select count(*) as attend_num from w_company_step_luck_draw ".
                    "where  activity_id= {$activity_id} ".
-                   " and add_time >= {$start_last_week} and add_time <= {$end_last_week} ";
+                   " and add_time >= {$temp_start_last_week} and add_time <= {$temp_end_last_week} ";
             $res = DB::selectOne($sql);
             if(!empty($res)){
                 $return_data['attend_num'] = $res['attend_num'];
