@@ -551,7 +551,7 @@ class StepController extends Core\Base
             $temp_end_last_week = $end_last_week + 7*24*3600;
             $sql = "select count(*) as attend_num from w_company_step_luck_draw ".
                    "where  activity_id= {$activity_id} ".
-                   " and add_time >= {$temp_start_last_week} and add_time <= {$temp_end_last_week} ";
+                   " and add_time >= {$temp_start_last_week} and add_time <= {$temp_end_last_week} group by user_id ";
             $res = DB::selectOne($sql);
             if(!empty($res)){
                 $return_data['attend_num'] = $res['attend_num'];
