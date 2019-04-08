@@ -370,7 +370,7 @@ class StepController extends Core\Base
             }
 
             //8点到24点之间才能抽奖
-            if(date('H') < 8) {
+            if(date('H') < 10) {
                 throw new \Exception('抽奖开始时间还没到');
             } elseif(date('H') >= 20){
                 throw new \Exception('抽奖时间已过');
@@ -505,7 +505,7 @@ class StepController extends Core\Base
             }
 
             //8点到24点之间才能抽奖
-            if(date('H') >= 8 && date('H') <= 20) {
+            if(date('H') >= 10 && date('H') <= 20) {
                 $return_data['draw_status'] = 1;//标记活动已经开始
             }
             
@@ -611,67 +611,6 @@ class StepController extends Core\Base
         $this->getView()->assign("target_step_num", $target_step_num);
         $this->getView()->assign("attend_user_list", $attend_user_list);
         return $this->display("drawtest", []);
-    }
-
-    //测试活动数据
-    public function testAction() 
-    {
-        
-        $return_data = ['attend_num' => 0, 'user_draw_status' => 0 ,'draw_status' => 0, 'notice_txt' => '', 'day_num'=>0, 'hour_num' => 0];  //is_selected 是否抽中  has_selected 当周是否已抽过
-        $activity_id = $_REQUEST['activity_id'] ? $_REQUEST['activity_id'] : 0;
-        $user_id = $_REQUEST['user_id'] ? $_REQUEST['user_id'] : 0;
-        $current_time = time();
-        try {
-            $activity_info = [];
-            $activity_info['activity_name'] = '测试活动';
-            $activity_info['activity_id'] = 1;
-            $activity_info['start_time'] = strtotime('2019-03-01');
-            $activity_info['end_time'] = strtotime('2020-01-01');
-            
-            $return_data['activity_name'] = $activity_info['activity_name'];
-            $return_data['activity_id'] = $activity_info['activity_id'];
-
-            $activity_start_time    = $activity_info['start_time'];
-            $activity_end_time      = $activity_info['end_time'];
-            if($current_time < $activity_start_time+7*24*3600) {
-                $return_data['notice_txt'] = '抽奖活动暂未开始';
-                throw new \Exception('抽奖活动暂未开始',200);
-            }
-            if($current_time > $activity_end_time+7*24*3600) {
-                $return_data['notice_txt'] = '抽奖活动已结束';
-                throw new \Exception('抽奖活动已结束',200);
-            }
-            
-            $start_last_week    = mktime(0,0,0,date('m'),date('d')-date('w')+1-7,date('Y'));
-            $end_last_week      = mktime(23,59,59,date('m'),date('d')-date('w')+7-7,date('Y'));
-
-            //查询到当周是否抽过的记录
-            $luck_draw_info = DB::table('w_company_step_luck_draw')
-                                ->select('*')
-                                ->where(['user_id' => $user_id,'activity_id' => $activity_id])
-                                ->where('add_time','>=',$start_last_week+7*24*3600)
-                                ->where('add_time','<=',$end_last_week+7*24*3600)
-                                ->first();
-            if(!empty($luck_draw_info)){
-                $return_data['user_draw_status'] = 1;//用户的抽奖状态设置
-                $return_data['day_num'] = intval(($start_last_week+2*7*24*3600 - $current_time)/86400);
-                $return_data['hour_num'] = ceil((($start_last_week+2*7*24*3600 - $current_time)%86400)/3600);
-            }
-            $return_data['draw_status'] = 1;//标记活动已经开始
-
-            $sql = "select count(*) as attend_num from w_company_step_luck_draw ".
-                   "where  activity_id= {$activity_id} ".
-                   " and add_time >= {$start_last_week} and add_time <= {$end_last_week} ";
-            $res = DB::selectOne($sql);
-            if(!empty($res)){
-                $return_data['attend_num'] = $res['attend_num'];
-            }
-            
-        } catch(\Exception $e) {
-            $code = $e->getCode() == 200 ? 200 : 500;
-            return $this->jsonError($e->getMessage(),$return_data,$code);
-        }
-        return $this->jsonSuccess($return_data);
     }
 
 }
