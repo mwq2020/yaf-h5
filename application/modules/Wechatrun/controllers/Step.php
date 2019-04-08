@@ -370,14 +370,16 @@ class StepController extends Core\Base
             }
 
             //8点到24点之间才能抽奖
-            if(date('H') < 10) {
+            if(date('H') < 8) {
                 throw new \Exception('抽奖开始时间还没到');
-            } elseif(date('H') >= 20){
+            } elseif(date('H') >= 20) {
                 throw new \Exception('抽奖时间已过');
             }
 
-            $start_last_week    = mktime(0,0,0,date('m'),date('d')-date('w')+1-7,date('Y')) - 7*24*3600;//上周一时间戳
-            $end_last_week      = mktime(23,59,59,date('m'),date('d')-date('w')+7-7,date('Y')) - 7*24*3600;//上周日时间戳
+            //$start_last_week    = mktime(0,0,0,date('m'),date('d')-date('w')+1-7,date('Y')) - 7*24*3600;//上周一时间戳
+            //$end_last_week      = mktime(23,59,59,date('m'),date('d')-date('w')+7-7,date('Y')) - 7*24*3600;//上周日时间戳
+            $start_last_week    = strtotime('2019-04-01 00:00:00'); //上周一时间戳
+            $end_last_week    = strtotime('2019-04-07 23:59:59'); //上周一时间戳
 
             //查询到当周是否抽过的记录
             $luck_draw_info = DB::table('w_company_step_luck_draw')
@@ -505,12 +507,15 @@ class StepController extends Core\Base
             }
 
             //8点到24点之间才能抽奖
-            if(date('H') >= 10 && date('H') <= 20) {
+            if(date('H') >= 8 && date('H') < 20) {
                 $return_data['draw_status'] = 1;//标记活动已经开始
             }
             
-            $start_last_week    = mktime(0,0,0,date('m'),date('d')-date('w')+1-7,date('Y'))-7*24*3600; //上周一时间戳
-            $end_last_week      = mktime(23,59,59,date('m'),date('d')-date('w')+7-7,date('Y'))-7*24*3600;//上周日时间戳
+            //$start_last_week    = mktime(0,0,0,date('m'),date('d')-date('w')+1-7,date('Y'))-7*24*3600; //上周一时间戳
+            //$end_last_week      = mktime(23,59,59,date('m'),date('d')-date('w')+7-7,date('Y'))-7*24*3600;//上周日时间戳
+
+            $start_last_week    = strtotime('2019-04-01 00:00:00'); //上周一时间戳
+            $end_last_week    = strtotime('2019-04-07 23:59:59'); //上周一时间戳
 
             //查询到当周是否抽过的记录
             $luck_draw_info = DB::table('w_company_step_luck_draw')
