@@ -549,9 +549,9 @@ class StepController extends Core\Base
             //时间条件可以在修改的精确点 ？？？？ todo 
             $temp_start_last_week = $start_last_week+7*24*3600;
             $temp_end_last_week = $end_last_week + 7*24*3600;
-            $sql = "select count(*) as attend_num from w_company_step_luck_draw ".
+            $sql = "select count(DISTINCT user_id) as attend_num from w_company_step_luck_draw ".
                    "where  activity_id= {$activity_id} ".
-                   " and add_time >= {$temp_start_last_week} and add_time <= {$temp_end_last_week} group by user_id ";
+                   " and add_time >= {$temp_start_last_week} and add_time <= {$temp_end_last_week} ";
             $res = DB::selectOne($sql);
             if(!empty($res)){
                 $return_data['attend_num'] = $res['attend_num'];
