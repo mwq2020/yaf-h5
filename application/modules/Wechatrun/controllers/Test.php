@@ -170,7 +170,7 @@ class TestController extends Core\Base
                 $return_data['hour_num'] = ceil((($target_timestamp - $current_time)%86400)/3600);
             }
             //判断活动状态
-            if($current_time < strtotime('2019-04-07 08:00:00')) { //
+            if($current_time < strtotime('2019-04-08 08:00:00')) { //
                 $return_data['notice_txt'] = '抽奖活动暂未开始';
                 $return_data['draw_status'] = 0;
                 throw new \Exception('抽奖活动暂未开始',200);
@@ -188,6 +188,7 @@ class TestController extends Core\Base
 
             $start_last_week    = mktime(0,0,0,date('m'),date('d')-date('w')+1-7,date('Y'))-7*24*3600;
             $end_last_week      = mktime(23,59,59,date('m'),date('d')-date('w')+7-7,date('Y'))-7*24*3600;
+
 
             //查询到当周是否抽过的记录
             $luck_draw_info = DB::table('w_company_step_luck_draw')
@@ -291,6 +292,36 @@ class TestController extends Core\Base
         $this->getView()->assign("target_step_num", $target_step_num);
         $this->getView()->assign("attend_user_list", $attend_user_list);
         return $this->display("drawtest", []);
+    }
+
+
+    public function testtimeAction() 
+    {
+        echo date('N',time());
+        echo "<hr>";
+
+        echo date('N',strtotime('2019-04-09'));
+        echo "<hr>";
+
+        echo date('N',strtotime('2019-04-10'));
+        echo "<hr>";
+        echo date('N',strtotime('2019-04-11'));
+        echo "<hr>";
+        echo date('N',strtotime('2019-04-12'));
+        echo "<hr>";
+        echo date('N',strtotime('2019-04-13'));
+        echo "<hr>";
+        echo date('N',strtotime('2019-04-14'));
+        echo "<hr>";
+        echo date('N',strtotime('2019-04-15'));
+        echo "<hr>";
+
+
+        $current_week_start = strtotime(date('Y-m-d'))-(date('N') - 1)*86400;
+        $current_week_end = $current_week_start + 7*86400 - 1;
+        echo date('Y-m-d H:i:s',$current_week_start);
+        echo "<hr>";
+        echo date('Y-m-d H:i:s',$current_week_end);
     }
 
 }

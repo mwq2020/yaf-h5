@@ -378,6 +378,9 @@ class StepController extends Core\Base
 
             //$start_last_week    = mktime(0,0,0,date('m'),date('d')-date('w')+1-7,date('Y')) - 7*24*3600;//上周一时间戳
             //$end_last_week      = mktime(23,59,59,date('m'),date('d')-date('w')+7-7,date('Y')) - 7*24*3600;//上周日时间戳
+            $start_last_week = strtotime(date('Y-m-d')) - (date('N') - 1) * 86400; //重新按照时间戳的方法整理出来的逻辑
+            $end_last_week = $start_last_week + 7*86400 - 1;
+
             $start_last_week    = strtotime('2019-04-01 00:00:00'); //上周一时间戳
             $end_last_week    = strtotime('2019-04-07 23:59:59'); //上周一时间戳
 
@@ -511,8 +514,11 @@ class StepController extends Core\Base
                 $return_data['draw_status'] = 1;//标记活动已经开始
             }
             
-            //$start_last_week    = mktime(0,0,0,date('m'),date('d')-date('w')+1-7,date('Y'))-7*24*3600; //上周一时间戳
-            //$end_last_week      = mktime(23,59,59,date('m'),date('d')-date('w')+7-7,date('Y'))-7*24*3600;//上周日时间戳
+            //$start_last_week    = mktime(0,0,0,date('m'),date('d')-date('w')+1-7,date('Y'))-7*24*3600; //上周一开始时间戳
+            //$end_last_week      = mktime(23,59,59,date('m'),date('d')-date('w')+7-7,date('Y'))-7*24*3600;//上周日结束时间戳
+
+            $start_last_week = strtotime(date('Y-m-d')) - (date('N') - 1) * 86400; //重新按照时间戳的方法整理出来的逻辑
+            $end_last_week = $start_last_week + 7*86400 - 1;
 
             $start_last_week    = strtotime('2019-04-01 00:00:00'); //上周一时间戳
             $end_last_week    = strtotime('2019-04-07 23:59:59'); //上周一时间戳
@@ -546,7 +552,6 @@ class StepController extends Core\Base
                 $return_data['user_draw_status'] = 2;//用户未达标标示
             }
 
-            //时间条件可以在修改的精确点 ？？？？ todo 
             $temp_start_last_week = $start_last_week+7*24*3600;
             $temp_end_last_week = $end_last_week + 7*24*3600;
             $sql = "select count(DISTINCT user_id) as attend_num from w_company_step_luck_draw ".
