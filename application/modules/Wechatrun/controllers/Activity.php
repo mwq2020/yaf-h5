@@ -18,7 +18,7 @@ class ActivityController extends Core\Base
     }
 
     /**
-     * 活动列表
+     * 活动列表接口
      */
     public function listAction()
     {
@@ -43,10 +43,18 @@ class ActivityController extends Core\Base
                                  'w_company_step_activity.status'       => 1,
                                  'w_company_step_activity_user.status'  => 1
                               ])->get();
+        if(!empty($activity_list)) {
+            foreach($activity_list as &$row) {
+                $temp_activity_info = DB::table('w_company_step_activity_user')->select(DB::raw('count(*) AS attend_num'))->where(['activity_id' => $row['activity_id'],'status' => 1])->first();
+                $row['attend_num'] = isset($temp_activity_info['attend_num']) ? $temp_activity_info['attend_num'] : 0;
+            }
+        }
         $this->jsonSuccess($activity_list);
     }
 
-
+    /**
+     * 活动详情接口
+     */
     public function activeActivityInfoAction()
     {
         $user_id = isset($_REQUEST['user_id']) ? intval($_REQUEST['user_id']) : 0;
@@ -70,7 +78,7 @@ class ActivityController extends Core\Base
             $activity_info = [];
             $activity_info['activity_id'] = 0;
             $activity_info['is_china_unicom'] = 0;
-        }elseif(in_array($activity_info['company_id'], [1,9,22])) {
+        } elseif(in_array($activity_info['company_id'], [1,9,22])) {
             $activity_info['is_china_unicom'] = 1;
         } else {
             $activity_info['is_china_unicom'] = 0;
@@ -484,6 +492,14 @@ class ActivityController extends Core\Base
         }
 
         $this->jsonSuccess($ranking_list);
+    }
+
+    /**
+     * 打卡
+     */
+    public function hitcardAction()
+    {
+
     }
 
 

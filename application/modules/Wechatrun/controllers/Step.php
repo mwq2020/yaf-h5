@@ -113,6 +113,8 @@ class StepController extends Core\Base
                 $return_data['ranking_list'] = $department_list;
             } elseif($ranking_type == 'attend_percent') {
                 //部门的参与率排行 【部门下的人数/有步数的人数】
+
+                /*
                 $department_list = DB::table('w_department')
                                   //->leftJoin('w_company_user','w_department.department_id','=','w_company_user.department_id')
                                     ->select(
@@ -120,7 +122,7 @@ class StepController extends Core\Base
                                     'w_department.member_num',
                                     'w_department.name as department_name',
                                     'w_department.department_id'
-                                    ) 
+                                    )
                                   ->where(['w_department.company_id' => $company_id,'w_department.status' => 1])
                                   ->groupBy('w_department.department_id')
                                   ->get();
@@ -141,21 +143,19 @@ class StepController extends Core\Base
                     ' group by a.user_id having avage_step_num >= 3000 '.
                 ') c group by c.department_id';
                 $attend_list_res = DB::select($sql);
-                                       
-                /*
-                $attend_list_res = DB::table('w_step_log')
-                                ->leftJoin('w_company_user','w_step_log.user_id','=','w_company_user.user_id')
-                                ->select(
-                                    DB::raw('count( distinct w_step_log.user_id) AS attend_num'),
-                                    'w_company_user.department_id'
-                                    )
-                                ->where(['w_company_user.company_id' => $company_id,'w_company_user.is_tested' => 0])
-                                ->where('w_step_log.data_time','>=',$activity_start_time)
-                                ->where('w_step_log.data_time','<=',$activity_end_time)
-                                ->groupBy('w_company_user.department_id')
-                                ->get();
-                */
-                
+
+                //$attend_list_res = DB::table('w_step_log')
+                //                ->leftJoin('w_company_user','w_step_log.user_id','=','w_company_user.user_id')
+                //                ->select(
+                //                    DB::raw('count( distinct w_step_log.user_id) AS attend_num'),
+                //                    'w_company_user.department_id'
+                //                    )
+                //                ->where(['w_company_user.company_id' => $company_id,'w_company_user.is_tested' => 0])
+                //                ->where('w_step_log.data_time','>=',$activity_start_time)
+                //                ->where('w_step_log.data_time','<=',$activity_end_time)
+                //                ->groupBy('w_company_user.department_id')
+                //                ->get();
+
                 $attend_list = [];
                 if(!empty($attend_list_res)) {
                     foreach($attend_list_res as $row) {
@@ -191,7 +191,10 @@ class StepController extends Core\Base
                     }
 
                 }
-                $return_data['ranking_list'] = $department_list;
+                */
+
+                $return_data['ranking_list'] = StepModel::getDepartmentAttend($activity_info);
+                //$return_data['ranking_list'] = $department_list;
 
             } elseif($ranking_type == 'department_member'){
                 $offset = $page_index > 1 ? ($page_index-1)*$page_size : 0;

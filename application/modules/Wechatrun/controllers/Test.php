@@ -17,6 +17,14 @@ class TestController extends Core\Base
         return false;
     }
 
+    public function testAction()
+    {
+        $obj = new StepModel();
+        $obj->getDepartmentAttend();
+        echo "<br>";
+        echo "test---";
+    }
+
 
     /**
      * 健步走抽奖
