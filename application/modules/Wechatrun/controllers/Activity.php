@@ -22,13 +22,30 @@ class ActivityController extends Core\Base
      */
     public function listAction()
     {
-        $company_id = isset($_REQUEST['company_id']) ? intval($_REQUEST['company_id']) : 0;
-        if(empty($company_id)){
-            $this->jsonError('企业id不能为空');
+        $user_id = isset($_REQUEST['user_id']) ? intval($_REQUEST['user_id']) : 0;
+        if(empty($user_id)){
+            $this->jsonError('参数不能为空');
         }
-        $activity_list = DB::table('w_step_activity')->where(['company_id'=>$company_id])->get();
+        $activity_list = DB::table('w_company_step_activity_user')
+                        ->leftJoin('w_company_step_activity','w_company_step_activity_user.activity_id','=','w_company_step_activity.activity_id')
+                        ->select(
+                            'w_company_step_activity.activity_id',
+                            'w_company_step_activity.company_id',
+                            'w_company_step_activity.activity_name',
+                            'w_company_step_activity.start_time',
+                            'w_company_step_activity.end_time',
+                            'w_company_step_activity.status',
+                            'w_company_step_activity_user.user_id',
+                            'w_company_step_activity_user.is_tested'
+                        )
+                        ->where([
+                                 'w_company_step_activity_user.user_id' => $user_id,
+                                 'w_company_step_activity.status'       => 1,
+                                 'w_company_step_activity_user.status'  => 1
+                              ])->get();
         $this->jsonSuccess($activity_list);
     }
+
 
     public function activeActivityInfoAction()
     {
