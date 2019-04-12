@@ -549,10 +549,10 @@ class ActivityController extends Core\Base
     public function getHitCardInfoAction()
     {
         $return_data = [];
-        $return_data['address_list'][] = ['address_id' => 1, 'latitude' => 39.72684,'longitude'=>116.34159,'address_name' => '测试地址1'];
-        $return_data['address_list'][] = ['address_id' => 2, 'latitude' => 39.72684,'longitude'=>116.34159,'address_name' => '测试地址2'];
-        $return_data['address_list'][] = ['address_id' => 3, 'latitude' => 39.72684,'longitude'=>116.34159,'address_name' => '测试地址3'];
-        $return_data['address_list'][] = ['address_id' => 4, 'latitude' => 39.72684,'longitude'=>116.34159,'address_name' => '测试地址4'];
+        $return_data['address_list'][] = ['address_id' => 1, 'latitude' => 39.793624,'longitude'=>116.336069,'address_name' => '测试地址1']; //116.336069,39.793624 二区西北叫
+        $return_data['address_list'][] = ['address_id' => 2, 'latitude' => 39.793305,'longitude'=>116.340453,'address_name' => '测试地址2'];  //116.340453,39.793305 二区东北角
+        $return_data['address_list'][] = ['address_id' => 3, 'latitude' => 39.791558,'longitude'=>116.337363,'address_name' => '测试地址3'];  //116.337363,39.791558 二区西南角
+        $return_data['address_list'][] = ['address_id' => 4, 'latitude' => 39.791184,'longitude'=>116.34022,'address_name' => '测试地址4'];  //116.34022,39.791184  二区东南角
         $this->jsonSuccess($return_data);
     }
 
