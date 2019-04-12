@@ -281,7 +281,7 @@ class IndexController extends Core\Base
             if (empty($temp_step_info)) {
                 $insertData = array();
                 $insertData['user_id']      = $user_id;
-                if($activity_id == 8){
+                if(in_array($activity_id,[8,9])){
                     $insertData['step_num']     = $row['step'] >= 25000 ? 25000 : $row['step'];
                 } else {
                     $insertData['step_num']     = $row['step'];
@@ -293,7 +293,7 @@ class IndexController extends Core\Base
                 $flag = DB::table('w_step_log')->insertGetId($insertData);
             } else {
                 $updateData = array();
-                if($activity_id == 8){
+                if(in_array($activity_id,[8,9])){
                     $updateData['step_num']     = $row['step'] >= 25000 ? 25000 : $row['step'];
                 } else {
                     $updateData['step_num']     = $row['step'];

@@ -515,6 +515,8 @@ class StepController extends Core\Base
             //8点到24点之间才能抽奖
             if(date('H') >= 8 && date('H') < 20) {
                 $return_data['draw_status'] = 1;//标记活动已经开始
+            } else {
+                $return_data['draw_status'] = 0;//除了以上时间段抽奖都是未开始
             }
             
             //$start_last_week    = mktime(0,0,0,date('m'),date('d')-date('w')+1-7,date('Y'))-7*24*3600; //上周一开始时间戳
