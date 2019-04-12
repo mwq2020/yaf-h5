@@ -495,11 +495,65 @@ class ActivityController extends Core\Base
     }
 
     /**
-     * 打卡
+     * 用户打卡
      */
     public function hitcardAction()
     {
+        $address_id     = isset($_REQUEST['address_id']) ? $_REQUEST['address_id'] : 0;
+        $user_id        = isset($_REQUEST['user_id']) ? $_REQUEST['user_id'] : 0;
+        $activity_id    = isset($_REQUEST['activity_id']) ? $_REQUEST['activity_id'] : 0;
+        $latitude       = isset($_REQUEST['latitude']) ? $_REQUEST['latitude'] : 0;
+        $longitude      = isset($_REQUEST['longitude']) ? $_REQUEST['longitude'] : 0;
 
+        $return_data = ['success' => 1];
+        try {
+            if(empty($address_id)){
+                throw new \Exception('地址id为空');
+            }
+            if(empty($user_id)){
+                throw new \Exception('用户id为空');
+            }
+            if(empty($activity_id)){
+                throw new \Exception('活动id为空');
+            }
+            if(empty($latitude) || empty($longitude)){
+                throw new \Exception('GPS信息为空');
+            }
+
+            $card_info = DB::table('w_company_activity_hitcard_log')->where(['activity_id' => $activity_id,'user_id' => $user_id,'address_id'=>$address_id])->first();
+            if(!empty($card_info)) {
+                throw new \Exception('该点已经打过卡了');
+            }
+
+            $insert_data = [];
+            $insert_data['user_id']     = $user_id;
+            $insert_data['activity_id'] = $activity_id;
+            $insert_data['address_id']  = $address_id;
+            $insert_data['gps_info']    = json_encode(['latitude' => $latitude,'longitude' => $longitude]);
+            $insert_data['add_time']    = time();
+            $insert_data['update_time'] = time();
+            $flag = DB::table('w_company_activity_hitcard_log')->insertGetId($insert_data);
+            if(empty($flag)){
+                throw new \Exception('数据入库失败');
+            }
+        } catch (\Exception $e) {
+            $return_data['success'] = 0;
+            return $this->jsonError('打卡失败',$return_data);
+        }
+        $this->jsonSuccess($return_data);
+    }
+
+    /**
+     * 获取打卡的点
+     */
+    public function getHitCardInfoAction()
+    {
+        $return_data = [];
+        $return_data['address_list'][] = ['address_id' => 1, 'latitude' => 39.72684,'longitude'=>116.34159,'address_name' => '测试地址1'];
+        $return_data['address_list'][] = ['address_id' => 2, 'latitude' => 39.72684,'longitude'=>116.34159,'address_name' => '测试地址2'];
+        $return_data['address_list'][] = ['address_id' => 3, 'latitude' => 39.72684,'longitude'=>116.34159,'address_name' => '测试地址3'];
+        $return_data['address_list'][] = ['address_id' => 4, 'latitude' => 39.72684,'longitude'=>116.34159,'address_name' => '测试地址4'];
+        $this->jsonSuccess($return_data);
     }
 
 
