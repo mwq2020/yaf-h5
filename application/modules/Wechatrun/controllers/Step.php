@@ -363,8 +363,6 @@ class StepController extends Core\Base
                 throw new \Exception('活动详情为空');
             }
 
-            $activity_start_time    = $activity_info['start_time'];
-            $activity_end_time      = $activity_info['end_time'];
             if($current_time < strtotime('2019-04-08 08:00:00')) {
                 throw new \Exception('抽奖活动暂未开始');
             }
@@ -372,27 +370,42 @@ class StepController extends Core\Base
                 throw new \Exception('抽奖活动已结束');
             }
 
-            //8点到24点之间才能抽奖
-            if(date('H') < 8) {
-                throw new \Exception('抽奖开始时间还没到');
-            } elseif(date('H') >= 20) {
-                throw new \Exception('抽奖时间已过');
+            $date_list = [
+                '一' => strtotime('2019-04-08 08:00:00'), //2019-04-08 08:00:00
+                '二' => strtotime('2019-04-15 08:00:00'),
+                '三' => strtotime('2019-04-22 08:00:00'),
+                '四' => strtotime('2019-04-29 08:00:00'),
+                '五' => strtotime('2019-05-06 08:00:00')
+            ];
+
+            //计算目标抽奖时间节点
+            $target_timestamp = 0;
+            $target_draw_num = '';
+            foreach($date_list as $key => $row){
+                if($current_time <= $row){
+                    $target_timestamp = $row;
+                    $target_draw_num = $key;
+                    break;
+                }
             }
 
-            //$start_last_week    = mktime(0,0,0,date('m'),date('d')-date('w')+1-7,date('Y')) - 7*24*3600;//上周一时间戳
-            //$end_last_week      = mktime(23,59,59,date('m'),date('d')-date('w')+7-7,date('Y')) - 7*24*3600;//上周日时间戳
-            $start_last_week = strtotime(date('Y-m-d')) - (date('N') - 1) * 86400; //重新按照时间戳的方法整理出来的逻辑
-            $end_last_week = $start_last_week + 7*86400 - 1;
+            //8点到24点之间才能抽奖 活动日的当天
+            if(date('Y-m-d') != date('Y-m-d',$target_timestamp) || date('H') < 8 || date('H') >= 20){
+                throw new \Exception('8-20点为抽奖时间');
+            }
 
-            $start_last_week    = strtotime('2019-04-01 00:00:00'); //上周一时间戳
-            $end_last_week    = strtotime('2019-04-07 23:59:59'); //上周一时间戳
+            $start_current_week = strtotime(date('Y-m-d')) - (date('N') - 1) * 86400; //重新按照时间戳的方法整理出来的逻辑
+            $end_current_week = $start_current_week + 7*86400 - 1;
+
+            $start_last_week  = $start_current_week - 7*86400; //上周一时间戳
+            $end_last_week    = $end_current_week- 7*86400; //上周一时间戳
 
             //查询到当周是否抽过的记录
             $luck_draw_info = DB::table('w_company_step_luck_draw')
                                 ->select('*')
                                 ->where(['user_id' => $user_id,'activity_id' => $activity_id])
-                                ->where('add_time','>=',$start_last_week+7*24*3600)
-                                ->where('add_time','<=',$end_last_week+7*24*3600)
+                                ->where('add_time','>=', $start_current_week)
+                                ->where('add_time','<=', $end_current_week)
                                 ->first();
             if(!empty($luck_draw_info)){
                 $return_data['has_selected'] = 1;
@@ -414,17 +427,17 @@ class StepController extends Core\Base
                 throw new \Exception('您未完成达标步数，谢谢您的参与，请继续努力！');
             }
 
-            //查询到当周是否抽过的记录 todo 时间点需要再准确点或者再考虑下是否周全
+            //查询当周已经抽到奖的人数 大于100人强制抽不中
             $count_draw_info = DB::table('w_company_step_luck_draw')
                                 ->select(DB::raw('count(id) AS attend_num'))
                                 ->where(['activity_id' => $activity_id,'is_selected' => 1])
-                                ->where('add_time','>=',$start_last_week+7*24*3600)
-                                ->where('add_time','<=',$end_last_week+7*24*3600)
+                                ->where('add_time','>=',$start_current_week)
+                                ->where('add_time','<=',$end_current_week)
                                 ->first();
             if(!empty($count_draw_info) && $count_draw_info['attend_num'] >= 100) {
                 $return_data['is_selected'] = 0;
             } else {
-                $probability = 0.3;//概率值
+                $probability = 0.04;//概率值
                 $rand_list = range(1, 100);//随机数的数组
                 shuffle($rand_list);
                 $rand_key = array_rand($rand_list,1);//随机取出随机值里面的key
@@ -447,6 +460,10 @@ class StepController extends Core\Base
                 $return_data['is_selected'] = 0;
                 throw new \Exception('插入抽奖记录失败');
             }
+
+            $return_data['current_week'] = date('Y-m-d H:i:s',$start_current_week)."---".date('Y-m-d H:i:s',$end_current_week);
+            $return_data['last_week'] = date('Y-m-d H:i:s',$start_last_week)."---".date('Y-m-d H:i:s',$end_last_week);
+
             Log::info('健步走抽奖：用户id:'.$user_id.",活动id:".$activity_id.",插入数据id:".$draw_log_id);
         } catch(\Exception $e) {
             $code = $e->getCode() == 400 ? 400 : 500;
@@ -472,8 +489,8 @@ class StepController extends Core\Base
             }
             $return_data['activity_name'] = $activity_info['activity_name'];
             $return_data['activity_id'] = $activity_info['activity_id'];
-            $activity_start_time    = $activity_info['start_time'];
-            $activity_end_time      = $activity_info['end_time'];
+            //$activity_start_time    = $activity_info['start_time'];
+            //$activity_end_time      = $activity_info['end_time'];
 
             $date_list = [
                 '一' => strtotime('2019-04-08 08:00:00'), //2019-04-08 08:00:00
@@ -513,63 +530,117 @@ class StepController extends Core\Base
             }
 
             //8点到24点之间才能抽奖
-            if(date('H') >= 8 && date('H') < 20) {
+            if(date('Y-m-d') == date('Y-m-d',$target_timestamp) && date('H') >= 8 && date('H') < 20) {
                 $return_data['draw_status'] = 1;//标记活动已经开始
             } else {
                 $return_data['draw_status'] = 0;//除了以上时间段抽奖都是未开始
             }
-            
-            //$start_last_week    = mktime(0,0,0,date('m'),date('d')-date('w')+1-7,date('Y'))-7*24*3600; //上周一开始时间戳
-            //$end_last_week      = mktime(23,59,59,date('m'),date('d')-date('w')+7-7,date('Y'))-7*24*3600;//上周日结束时间戳
 
-            $start_last_week = strtotime(date('Y-m-d')) - (date('N') - 1) * 86400; //重新按照时间戳的方法整理出来的逻辑
-            $end_last_week = $start_last_week + 7*86400 - 1;
+            $start_current_week = strtotime(date('Y-m-d')) - (date('N') - 1) * 86400; //获取当前日期减去当周已经过去的日期
+            $end_current_week = $start_current_week + 7*86400 - 1;
 
-            $start_last_week    = strtotime('2019-04-01 00:00:00'); //上周一时间戳
-            $end_last_week    = strtotime('2019-04-07 23:59:59'); //上周一时间戳
+            $start_last_week    = $start_current_week - 7*86400; //上周一时间戳
+            $end_last_week    = $end_current_week - 7*86400; //上周一时间戳
 
             //查询到当周是否抽过的记录
             $luck_draw_info = DB::table('w_company_step_luck_draw')
                                 ->select('*')
                                 ->where(['user_id' => $user_id,'activity_id' => $activity_id])
-                                ->where('add_time','>=',$start_last_week+7*24*3600)
-                                ->where('add_time','<=',$end_last_week+7*24*3600)
+                                ->where('add_time','>=',$start_current_week)
+                                ->where('add_time','<=',$end_current_week)
                                 ->first();
             if(!empty($luck_draw_info)){
                 $return_data['is_selected'] = $luck_draw_info['is_selected'];//用户的抽奖状态设置 
                 $return_data['user_draw_status'] = 1;//用户的抽奖状态设置 
+            } else {
+                //检查用户达标情况
+                $sql = "select count(step_num) as step_day_count,user_id ".
+                    "from w_step_log ".
+                    "where user_id = {$user_id} and ".
+                    "data_time >= {$start_last_week} and ".
+                    "data_time <= {$end_last_week} and ".
+                    "step_num >= 6000 ".
+                    "group by user_id ";
+                $step_count_info = DB::selectOne($sql);
+
+                if(empty($step_count_info)){
+                    $return_data['user_draw_status'] = 2;//用户未达标标示
+                    //throw new \Exception('您未完成达标步数，谢谢参与，请继续努力！');
+                } elseif($step_count_info['step_day_count'] < 5) {
+                    //throw new \Exception('您未完成达标步数，谢谢您的参与，请继续努力！');
+                    $return_data['user_draw_status'] = 2;//用户未达标标示
+                } elseif($step_count_info['step_day_count'] >= 5){
+                    $return_data['user_draw_status'] = 1; //用户未达标标示
+                }
             }
 
-            //检查用户达标情况
-            $sql = "select count(step_num) as step_day_count,user_id ".
-                   "from w_step_log ".
-                   "where user_id = {$user_id} and ".
-                   "data_time >= {$start_last_week} and ".
-                   "data_time <= {$end_last_week} and ".
-                   "step_num >= 6000 ".
-                   "group by user_id ";
-            $step_count_info = DB::selectOne($sql);
-            if(empty($step_count_info)){
-                $return_data['user_draw_status'] = 2;//用户未达标标示
-                //throw new \Exception('您未完成达标步数，谢谢参与，请继续努力！');
-            } elseif($step_count_info['step_day_count'] < 5) {
-                //throw new \Exception('您未完成达标步数，谢谢您的参与，请继续努力！');
-                $return_data['user_draw_status'] = 2;//用户未达标标示
-            }
-
-            $temp_start_last_week = $start_last_week+7*24*3600;
-            $temp_end_last_week = $end_last_week + 7*24*3600;
             $sql = "select count(DISTINCT user_id) as attend_num from w_company_step_luck_draw ".
                    "where  activity_id= {$activity_id} ".
-                   " and add_time >= {$temp_start_last_week} and add_time <= {$temp_end_last_week} ";
+                   " and add_time >= {$start_current_week} and add_time <= {$end_current_week} ";
             $res = DB::selectOne($sql);
             if(!empty($res)){
                 $return_data['attend_num'] = $res['attend_num'];
-            } 
+            }
+
+            $return_data['current_week'] = date('Y-m-d H:i:s',$start_current_week)."---".date('Y-m-d H:i:s',$end_current_week);
+            $return_data['last_week'] = date('Y-m-d H:i:s',$start_last_week)."---".date('Y-m-d H:i:s',$end_last_week);
             
         } catch(\Exception $e) {
             $code = $e->getCode() == 200 ? 200 : 500;
             return $this->jsonError($e->getMessage(),$return_data,$code);
+        }
+        return $this->jsonSuccess($return_data);
+    }
+
+
+    //中奖名单
+    public function winnerListAction()
+    {
+        $activity_id = $_REQUEST['activity_id'] ? $_REQUEST['activity_id'] : 0;
+        $user_id = $_REQUEST['user_id'] ? $_REQUEST['user_id'] : 0;
+
+        $return_data = ['winner_list' => [],'is_show' => 0];
+        try {
+            if(empty($user_id)) {
+                throw new \Exception('入参错误');
+            }
+
+            $activity_info = DB::table('w_company_step_activity')->where(['activity_id'=>$activity_id])->first();
+            if(empty($activity_info)) {
+                throw new \Exception('活动详情为空');
+            }
+            $company_id = $activity_info['company_id'];
+
+
+            $current_time = time();
+            if($current_time < strtotime('2019-04-08 08:00:00')) {
+                throw new \Exception('抽奖活动暂未开始');
+            }
+            if($current_time > strtotime('2019-05-07 20:00:00')) {
+                throw new \Exception('抽奖活动已结束');
+            }
+
+            $start_current_week = strtotime(date('Y-m-d')) - (date('N') - 1) * 86400; //重新按照时间戳的方法整理出来的逻辑
+            $end_current_week = $start_current_week + 7*86400 - 1;
+
+            $winner_list = DB::table('w_company_step_luck_draw')
+                ->leftJoin('w_company_user','w_company_user.user_id','=','w_company_step_luck_draw.user_id')
+                ->select(
+                    'w_company_user.real_name',
+                    'w_company_user.department_name',
+                    'w_company_step_luck_draw.add_time'
+                )
+                ->where(['w_company_user.user_id' => $user_id,
+                    'w_company_step_luck_draw.activity_id' => $activity_id,
+                    'w_company_step_luck_draw.is_selected' => 1,
+                    'w_company_user.company_id' => $company_id ])
+                ->where('w_company_step_luck_draw.add_time','>=',$start_current_week)
+                ->where('w_company_step_luck_draw.add_time','<=',$end_current_week)
+                ->get();
+            $return_data['winner_list'] = $winner_list;
+            $return_data['is_show']     = 1;
+        } catch (\Exception $e) {
+            return $this->jsonError($e->getMessage(),$return_data);
         }
         return $this->jsonSuccess($return_data);
     }
