@@ -630,10 +630,11 @@ class StepController extends Core\Base
                     'w_company_user.department_name',
                     'w_company_step_luck_draw.add_time'
                 )
-                ->where(['w_company_user.user_id' => $user_id,
+                ->where([
                     'w_company_step_luck_draw.activity_id' => $activity_id,
                     'w_company_step_luck_draw.is_selected' => 1,
-                    'w_company_user.company_id' => $company_id ])
+                    'w_company_user.company_id' => $company_id
+                ])
                 ->where('w_company_step_luck_draw.add_time','>=',$start_current_week)
                 ->where('w_company_step_luck_draw.add_time','<=',$end_current_week)
                 ->get();
