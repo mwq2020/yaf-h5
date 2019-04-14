@@ -620,28 +620,27 @@ class StepController extends Core\Base
                 throw new \Exception('抽奖活动已结束');
             }
 
+            $start_current_week = strtotime(date('Y-m-d')) - (date('N') - 1) * 86400; //获取当前日期减去当周已经过去的日期
+            $end_current_week = $start_current_week + 7*86400 - 1;
+
             $date_list = [
-                '一' => strtotime('2019-04-08 08:00:00'), //2019-04-08 08:00:00
+                '一' => strtotime('2019-04-08 08:00:00'),
                 '二' => strtotime('2019-04-15 08:00:00'),
                 '三' => strtotime('2019-04-22 08:00:00'),
                 '四' => strtotime('2019-04-29 08:00:00'),
                 '五' => strtotime('2019-05-06 08:00:00')
             ];
+            $date_list = array_reverse($date_list);
 
-            //计算目标抽奖时间节点
-            $target_timestamp = 0;
+            //计算当前抽奖的期限
             $target_draw_num = '';
             foreach($date_list as $key => $row){
-                if($current_time <= $row){
-                    $target_timestamp = $row;
+                if($start_current_week <= $row && $end_current_week >= $row){
                     $target_draw_num = $key;
                     break;
                 }
             }
             $return_data['draw_num']     = $target_draw_num;//第几期的文字逻辑
-
-            $start_current_week = strtotime(date('Y-m-d')) - (date('N') - 1) * 86400; //重新按照时间戳的方法整理出来的逻辑
-            $end_current_week = $start_current_week + 7*86400 - 1;
 
             $winner_list = DB::table('w_company_step_luck_draw')
                 ->leftJoin('w_company_user','w_company_user.user_id','=','w_company_step_luck_draw.user_id')
