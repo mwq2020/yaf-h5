@@ -515,7 +515,7 @@ class StepController extends Core\Base
             if($target_timestamp > 0) {
                 $return_data['target_draw_num'] = $target_draw_num;
                 $return_data['day_num'] = intval(($target_timestamp - $current_time)/86400);
-                $return_data['hour_num'] = round((($target_timestamp - $current_time)%86400)/3600,1); // 2019-04-15 上线新活动后需要修改为intval
+                $return_data['hour_num'] = ceil((($target_timestamp - $current_time)%86400)/3600); // 2019-04-15 上线新活动后需要修改为intval
                 $return_data['minute_num'] = ceil(((($target_timestamp - $current_time)%86400)%3600)/60);
             }
             //判断活动状态
