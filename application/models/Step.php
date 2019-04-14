@@ -13,7 +13,7 @@ class StepModel {
         $activity_end_time      = $activity_info['end_time'];
         
         //部门的参与率排行 【部门下的人数/有步数的人数】
-        if($company_id == 28) {
+        if($company_id == 28 && false) { //廊坊银行暂且不使用此处逻辑
             $department_list = DB::table('w_department')
                 ->leftJoin('w_company_user','w_department.department_id','=','w_company_user.department_id')
                 ->select(
@@ -85,7 +85,7 @@ class StepModel {
             foreach($department_list as $department_key => &$department_row){
                 if(isset($attend_list[$department_row['department_id']])){
                     $department_row['attend_num'] = $attend_list[$department_row['department_id']]['attend_num'];
-                    if($company_id == 28) {
+                    if($company_id == 28 && false) { //廊坊银行暂且不使用此处逻辑
                         $department_row['attend_percent'] = ($department_row['attend_num'] > $department_row['user_num'] ? 100 : round($department_row['attend_num']/$department_row['user_num'],4)*100);
                     } else {
                         $department_row['attend_percent'] = ($department_row['attend_num'] > $department_row['member_num'] ? 100 : round($department_row['attend_num']/$department_row['member_num'],4)*100);
