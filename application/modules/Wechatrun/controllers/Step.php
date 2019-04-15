@@ -379,7 +379,7 @@ class StepController extends Core\Base
             ];
 
             //计算目标抽奖时间节点
-            $target_timestamp = 0;
+            $target_timestamp = 0;//取的是当前周过后的一周的抽奖开始时间,用于计算倒计时
             $target_draw_num = '';
             foreach($date_list as $key => $row){
                 if($current_time <= $row){
@@ -390,7 +390,7 @@ class StepController extends Core\Base
             }
 
             //8点到24点之间才能抽奖 活动日的当天
-            if(date('Y-m-d') != date('Y-m-d',$target_timestamp) || date('H') < 8 || date('H') >= 20){
+            if(date('Y-m-d') != date('Y-m-d',$target_timestamp-7*24*3600) || date('H') < 8 || date('H') >= 20){
                 throw new \Exception('8-20点为抽奖时间');
             }
 
@@ -398,7 +398,7 @@ class StepController extends Core\Base
             $end_current_week = $start_current_week + 7*86400 - 1;
 
             $start_last_week  = $start_current_week - 7*86400; //上周一时间戳
-            $end_last_week    = $end_current_week- 7*86400; //上周一时间戳
+            $end_last_week    = $end_current_week - 7*86400; //上周一时间戳
 
             //查询到当周是否抽过的记录
             $luck_draw_info = DB::table('w_company_step_luck_draw')
@@ -501,7 +501,7 @@ class StepController extends Core\Base
             ];
 
             //计算目标抽奖时间节点
-            $target_timestamp = 0;
+            $target_timestamp = 0; //取的是当前周过后的一周的抽奖开始时间,用于计算倒计时
             $target_draw_num = '';
             foreach($date_list as $key => $row){
                 if($current_time <= $row){
@@ -529,10 +529,11 @@ class StepController extends Core\Base
                 $return_data['notice_txt'] = '抽奖活动已结束';
                 throw new \Exception('抽奖活动已结束',200);
             }
-
+            
             //8点到24点之间才能抽奖
-            if(date('Y-m-d') == date('Y-m-d',$target_timestamp) && date('H') >= 8 && date('H') < 20) {
+            if(date('Y-m-d') == date('Y-m-d',$target_timestamp-7*24*3600) && date('H') >= 8 && date('H') < 20) {
                 $return_data['draw_status'] = 1;//标记活动已经开始
+
             } else {
                 $return_data['draw_status'] = 0;//除了以上时间段抽奖都是未开始
             }
