@@ -231,7 +231,7 @@ class TestController extends Core\Base
                     //throw new \Exception('您未完成达标步数，谢谢您的参与，请继续努力！');
                     $return_data['user_draw_status'] = 2;//用户未达标标示
                 } elseif($step_count_info['step_day_count'] >= 5){
-                    $return_data['user_draw_status'] = 1; //用户已达标标示
+                    $return_data['user_draw_status'] = 0; //用户已达标标示
                 }
             }
 
