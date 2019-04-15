@@ -117,6 +117,102 @@ class StepModel {
         return  $department_list;
     }
 
+    /**
+     * 获取部门内人员的排行
+     */
+    public static function getDepartmentRanking($activity_info,$user_id,&$return_data)
+    {
+        $page_index     = isset($_REQUEST['page_index']) ? intval($_REQUEST['page_index']) : 1; //当前页码
+        $page_size      = isset($_REQUEST['page_size']) ? intval($_REQUEST['page_size']) : 50;    //每页返回数据的条数
+        $company_id     = $activity_info['company_id'];
+        $activity_start_time    = $activity_info['start_time'];
+        $activity_end_time      = $activity_info['end_time'];
+
+        $company_user_info  = DB::table('w_company_user')->where(['user_id'=>$user_id,'company_id'=>$activity_info['company_id']])->first();
+        if(empty($company_user_info)) {
+            throw new \Exception('服务错误，请重试');
+        }
+        $department_id = $company_user_info['department_id'];
+
+        $offset = $page_index > 1 ? ($page_index-1)*$page_size : 0;
+        //个人员工排名
+        $user_list = DB::table('w_step_log')
+            ->leftJoin('w_company_user','w_step_log.user_id','=','w_company_user.user_id')
+            ->leftJoin('w_users','w_users.user_id','=','w_company_user.user_id')
+            ->select(
+                DB::raw('sum(w_step_log.step_num) AS step_num_count'),
+                'w_company_user.real_name',
+                'w_company_user.telphone',
+                'w_company_user.department_id',
+                'w_company_user.department_name',
+                'w_company_user.user_id',
+                'w_users.avatar'
+            )
+            ->where(['w_company_user.company_id' => $company_id,'w_company_user.is_tested' => 0,'w_company_user.department_id' => $department_id])
+            ->where('w_step_log.data_time','>=',$activity_start_time)
+            ->where('w_step_log.data_time','<=',$activity_end_time)
+            ->where('w_step_log.step_num','<=',80000)
+            ->where('w_step_log.user_id','!=',4423) //排除工行的王建红
+            ->groupBy('w_step_log.user_id')
+            ->orderBy('step_num_count','desc')
+            ->offset($offset)
+            ->limit($page_size)
+            ->get();
+        $return_data['ranking_list'] = $user_list; //部门排行列表数据
+
+
+        //查询并计算当前用户的排名
+        $user_count_list_res = DB::table('w_step_log')
+            ->leftJoin('w_company_user','w_step_log.user_id','=','w_company_user.user_id')
+            ->select(
+                DB::raw('sum(w_step_log.step_num) AS step_num_count'),
+                'w_step_log.user_id'
+            )
+            ->where(['w_company_user.company_id' => $company_id,'w_company_user.is_tested' => 1,'w_company_user.department_id' => $department_id])
+            ->where('w_step_log.data_time','>=',$activity_start_time)
+            ->where('w_step_log.data_time','<=',$activity_end_time)
+            ->groupBy('w_step_log.user_id')
+            ->orderBy('step_num_count','desc')
+            ->get();
+        $user_count_list = [];
+        if(!empty($user_count_list_res)){
+            $ranking_num = 1;
+            foreach($user_count_list_res as $row) {
+                $row['ranking_num'] = $ranking_num;
+                $user_count_list[$row['user_id']] = $row;
+                $ranking_num++;
+            }
+        }
+
+        $user_info = DB::table('w_company_user')
+            ->leftJoin('w_users','w_company_user.user_id','=','w_users.user_id')
+            ->select(
+                'w_company_user.real_name',
+                'w_company_user.department_name',
+                'w_users.avatar'
+            )
+            ->where(['w_company_user.user_id' => $user_id,'w_company_user.company_id' => $company_id])->first();
+        $user_info['user_ranking_num'] = isset($user_count_list[$user_id]) ? $user_count_list[$user_id]['ranking_num'] : count($user_count_list)+1;
+        $user_info['user_step_num_count'] = isset($user_count_list[$user_id]) ? $user_count_list[$user_id]['step_num_count'] : 0;
+        $return_data['user_info'] = $user_info;
+    }
+
+    /**
+     * 获取部门平均成绩排行
+     */
+    public static function getDepartmentAverageRanking()
+    {
+
+    }
+
+    /**
+     * 获取活动全员的成绩排行
+     */
+    public static function getAllMemberRanking()
+    {
+
+    }
+
 
 
 }
