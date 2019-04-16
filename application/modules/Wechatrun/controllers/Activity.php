@@ -34,14 +34,13 @@ class ActivityController extends Core\Base
                             'w_company_step_activity.activity_name',
                             'w_company_step_activity.start_time',
                             'w_company_step_activity.end_time',
-                            'w_company_step_activity.status',
+                            'w_company_step_activity.status as activity_status',
                             'w_company_step_activity_user.user_id',
                             'w_company_step_activity_user.is_tested'
                         )
                         ->where([
                                  'w_company_step_activity_user.user_id' => $user_id,
-                                 'w_company_step_activity.status'       => 1,
-                                 'w_company_step_activity_user.status'  => 1
+                                 'w_company_step_activity.status'       => 1
                               ])->get();
         if(!empty($activity_list)) {
             foreach($activity_list as &$row) {

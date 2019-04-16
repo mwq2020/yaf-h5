@@ -390,7 +390,7 @@ class StepController extends Core\Base
                 ->where('w_company_step_luck_draw.add_time','<=',$end_current_week)
                 ->get();
             $return_data['winner_list'] = $winner_list;
-            //$return_data['is_show']     = 1;
+            $return_data['is_show']     = 1;
             //$return_data['test_time'] = date('Y-m-d H:i:s',$start_current_week) . '----'.date('Y-m-d H:i:s',$end_current_week);
         } catch (\Exception $e) {
             $return_data['is_show'] = 0;
