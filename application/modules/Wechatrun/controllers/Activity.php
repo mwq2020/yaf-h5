@@ -503,6 +503,7 @@ class ActivityController extends Core\Base
         $activity_id    = isset($_REQUEST['activity_id']) ? $_REQUEST['activity_id'] : 0;
         $latitude       = isset($_REQUEST['latitude']) ? $_REQUEST['latitude'] : 0;
         $longitude      = isset($_REQUEST['longitude']) ? $_REQUEST['longitude'] : 0;
+        $ip             = isset($_REQUEST['ip']) ? $_REQUEST['ip'] : 0;
 
         $return_data = ['success' => 1];
         try {
@@ -548,6 +549,29 @@ class ActivityController extends Core\Base
      */
     public function getHitCardInfoAction()
     {
+        $user_id        = isset($_REQUEST['user_id']) ? $_REQUEST['user_id'] : 0;
+        $activity_id    = isset($_REQUEST['activity_id']) ? $_REQUEST['activity_id'] : 0;
+        $return_data = ['current_target_id' => 0,'start_timestamp' => 0];
+
+        $hitcard_log_list = DB::table('w_company_activity_hitcard_log')
+            ->where(['activity_id' => $activity_id,'user_id' => $user_id])
+            ->orderBy('add_time','asc')
+            ->get();
+        if(!empty($hitcard_log_list)) {
+            foreach($hitcard_log_list as $key => $row) {
+                //记录第一打卡的时间用于时间统计
+                if($key == 0) {
+                    $return_data['start_timestamp'] = $row['add_time'];
+                }
+
+                //记录最后一次打卡的地址
+                if($key == count($hitcard_log_list) -1){
+                    $return_data['current_target_id'] = $row['address_id'];
+                }
+            }
+        }
+
+        /*
         $return_data = [];
         $return_data['address_list'][] = ['address_id' => 1, 'latitude' => 39.787706,'longitude'=>116.329733,'address_name' => '测试地址1']; //39.787706,116.329733 二区西北叫
         $return_data['address_list'][] = ['address_id' => 2, 'latitude' => 39.787525,'longitude'=>116.333563,'address_name' => '测试地址2'];  //39.787525,116.333563 二区东北角
@@ -555,6 +579,7 @@ class ActivityController extends Core\Base
         $return_data['address_list'][] = ['address_id' => 4, 'latitude' => 39.785546,'longitude'=>116.333756,'address_name' => '测试地址4'];  //39.785546,116.333756  二区东南角
         echo json_encode($return_data['address_list']);
         exit;
+        */
         $this->jsonSuccess($return_data);
     }
 
