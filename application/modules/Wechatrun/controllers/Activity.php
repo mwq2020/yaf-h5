@@ -521,7 +521,7 @@ class ActivityController extends Core\Base
 
             $card_info = DB::table('w_company_activity_hitcard_log')->where(['activity_id' => $activity_id,'user_id' => $user_id,'address_id'=>$address_id])->first();
             if(!empty($card_info)) {
-                throw new \Exception('该点已经打过卡了');
+                throw new \Exception('该点已经打过卡了',500);
             }
 
             $insert_data = [];
@@ -537,7 +537,8 @@ class ActivityController extends Core\Base
             }
         } catch (\Exception $e) {
             $return_data['success'] = 0;
-            return $this->jsonError('打卡失败',$return_data);
+            $error_message = $e->getCode() > 0 ? $e->getMessage() : '打卡失败';
+            return $this->jsonError($error_message,$return_data);
         }
         $this->jsonSuccess($return_data);
     }
