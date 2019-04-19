@@ -20,7 +20,7 @@
 <div class="col-sm-6">
     <form action="" method="post" id="login_form">
         <div class="form-group">
-            <input type="text" class="input-lg form-control" id="exampleInputText1" name="user_name" placeholder="用户名">
+            <input type="text" class="input-lg form-control" id="exampleInputText1" name="user_name" value="<?php echo isset($request['user_name']) ? $request['user_name'] : ''; ?>" placeholder="用户名">
              <div class="error" style="display: none">不能为空</div>
         </div>
         <div class="form-group">

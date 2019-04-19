@@ -48,7 +48,7 @@ class AdminController extends Controller_Abstract
         $telphone = isset($_POST['telphone']) ? $_POST['telphone'] : '';
         $address_id = isset($_POST['address_id']) ? $_POST['address_id'] : 0;
         try {
-
+            $this->getView()->assign('request',$_REQUEST);
             if(empty($telphone)){
                 throw new \Exception('手机号不能为空');
             }
@@ -100,6 +100,7 @@ class AdminController extends Controller_Abstract
         }
 
         try {
+            $this->getView()->assign('request',$_REQUEST);
             if(empty($_POST['user_name'])){
                 throw new \Exception('用户名字不能为空');
             }
