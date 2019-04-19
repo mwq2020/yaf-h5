@@ -67,6 +67,13 @@ class AdminController extends Controller_Abstract
                 throw new \Exception('该点已经打过卡了',500);
             }
 
+            if($address_id == 2){
+                $address_info = DB::table('w_company_activity_hitcard_log')->where(['user_id' => $user_info['user_id'],'address_id'=>1])->first();
+                if(empty($address_info)) {
+                    throw new \Exception('A点还没打卡,请先打卡A点',500);
+                }
+            }
+
             $insert_data = [];
             $insert_data['user_id']     = $user_info['user_id'];
             $insert_data['activity_id'] = 12;

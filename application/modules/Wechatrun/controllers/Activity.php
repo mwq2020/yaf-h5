@@ -564,7 +564,7 @@ class ActivityController extends Core\Base
         $hitcard_log_list = DB::table('w_company_activity_hitcard_log')
             ->select('user_id','activity_id','address_id','add_time')
             ->where(['activity_id' => $activity_id,'user_id' => $user_id])
-            ->orderBy('add_time','asc')
+            ->orderBy('address_id','asc')
             ->get();
         if(!empty($hitcard_log_list)) {
             foreach($hitcard_log_list as $key => $row) {
