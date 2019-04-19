@@ -552,7 +552,7 @@ class ActivityController extends Core\Base
     {
         $user_id        = isset($_REQUEST['user_id']) ? $_REQUEST['user_id'] : 0;
         $activity_id    = isset($_REQUEST['activity_id']) ? $_REQUEST['activity_id'] : 0;
-        $return_data = ['current_target_id' => 0,'start_timestamp' => 0,'end_timestamp' => 0 ,'card_list' => []];
+        $return_data = ['current_address_id' => 0,'start_timestamp' => 0,'end_timestamp' => 0 ,'card_list' => []];
 
         $hitcard_log_list = DB::table('w_company_activity_hitcard_log')
             ->select('user_id','activity_id','address_id','add_time')
@@ -566,8 +566,8 @@ class ActivityController extends Core\Base
                     $return_data['start_timestamp'] = $row['add_time'];
                 }
                 //记录最后一次打卡的地址
-                if($key == count($hitcard_log_list) -1) {
-                    $return_data['current_target_id'] = $row['address_id'];
+                if($key == count($hitcard_log_list) - 1) {
+                    $return_data['current_address_id'] = $row['address_id'];
                 }
 
                 if($row['address_id'] == 2) {
