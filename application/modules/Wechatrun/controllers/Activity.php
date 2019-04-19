@@ -530,6 +530,7 @@ class ActivityController extends Core\Base
             $insert_data['activity_id'] = $activity_id;
             $insert_data['address_id']  = $address_id;
             $insert_data['gps_info']    = json_encode(['latitude' => $latitude,'longitude' => $longitude]);
+            $insert_data['ip']          = $this->getUserRealIp();
             $insert_data['add_time']    = time();
             $insert_data['update_time'] = time();
             $flag = DB::table('w_company_activity_hitcard_log')->insertGetId($insert_data);
@@ -551,9 +552,10 @@ class ActivityController extends Core\Base
     {
         $user_id        = isset($_REQUEST['user_id']) ? $_REQUEST['user_id'] : 0;
         $activity_id    = isset($_REQUEST['activity_id']) ? $_REQUEST['activity_id'] : 0;
-        $return_data = ['current_target_id' => 0,'start_timestamp' => 0];
+        $return_data = ['current_target_id' => 0,'start_timestamp' => 0,'end_timestamp' => 0 ,'card_list' => []];
 
         $hitcard_log_list = DB::table('w_company_activity_hitcard_log')
+            ->select('user_id','activity_id','address_id','add_time')
             ->where(['activity_id' => $activity_id,'user_id' => $user_id])
             ->orderBy('add_time','asc')
             ->get();
@@ -563,13 +565,18 @@ class ActivityController extends Core\Base
                 if($key == 0) {
                     $return_data['start_timestamp'] = $row['add_time'];
                 }
-
                 //记录最后一次打卡的地址
-                if($key == count($hitcard_log_list) -1){
+                if($key == count($hitcard_log_list) -1) {
                     $return_data['current_target_id'] = $row['address_id'];
+                }
+
+                if($row['address_id'] == 2) {
+                    $return_data['end_timestamp'] = $row['add_time'];
                 }
             }
         }
+        $return_data['card_list'] = $hitcard_log_list;
+
 
         /*
         $return_data = [];
