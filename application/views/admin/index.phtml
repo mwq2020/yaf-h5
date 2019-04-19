@@ -21,8 +21,8 @@
     <form method="post" id="card_form">
         <div class="form-group">
             <select clss="form-control input-lg" name="address_id">
-                <option selected value="1">A点</option>
-                <option value="2">B点</option>
+                <option value="1" <?php echo !empty($request['address_id']) && $request['address_id'] == 1  ? 'selected' : ''; ?>>A点</option>
+                <option value="2" <?php echo !empty($request['address_id']) && $request['address_id'] == 2  ? 'selected' : ''; ?>>B点</option>
             </select>
             <div class="error" style="display: none">不能为空</div>
         </div>
