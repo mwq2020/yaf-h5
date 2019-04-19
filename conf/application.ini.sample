@@ -49,6 +49,9 @@ sms.OperPass=xxxxxxxxx
 wechat.APPID=aaaaa
 wechat.APPSECRET=bbbbb
 
+admin.user_name=test
+admin.password=123456
+
 [test]
 ;application.directory=APP_PATH "/application/"
 

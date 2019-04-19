@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    <link rel="stylesheet" href="/admin/bootstrap.min.css">
+    <script src="/static/js/jquery-2.0.3.min.js" type="application/javascript"></script>
+    <style>
+        *{padding: 0;margin: 0}
+        img{display: block;width: 236px;height: 236px;margin: 0 auto;margin-top: 100px;}
+        .title{font-size: 24px;text-align: center;margin-bottom: 80px;font-weight: bold;}
+        .form-group{margin-bottom: 40px;position: relative;}
+        .error{position: absolute;color: red;left: 0;top: 100%;padding-top: 6px;}
+    </style>
+</head>
+<body>
+<img src="u1.jpg" alt="">
+<h2 class="title">鑫动国际企业帮帮系统</h2>
+<div class="col-sm-3"></div>
+<div class="col-sm-6">
+    <form action="" method="post" id="login_form">
+        <div class="form-group">
+            <input type="text" class="input-lg form-control" id="exampleInputText1" name="user_name" placeholder="用户名">
+             <div class="error" style="display: none">不能为空</div>
+        </div>
+        <div class="form-group">
+            <input type="password" class="input-lg form-control" id="exampleInputPassword1" name="password" placeholder="密码">
+             <div class="error" style="display: none">不能为空</div>
+        </div>
+        <div class="col-sm-3"></div>
+        <div class="col-sm-6" style="margin-top: 20px">
+            <button type="button" id="login_button" class="btn btn-info btn-block btn-lg active">登录</button>
+        </div>
+    </form>
+</div>
+<div class="col-sm-3"></div>
+</body>
+</html>
+<script>
+    $(function(){
+        $('#login_button').click(function(){
+            if($('#exampleInputText1').val() == ''){
+                return $('#exampleInputText1').next().html('用户名不能空').show();
+            } else {
+                $('#exampleInputText1').next().html('').hide();
+            }
+
+            if($('#exampleInputPassword1').val() == '') {
+                return $('#exampleInputPassword1').next().html('密码不能为空').show();
+            } else {
+                $('#exampleInputPassword1').next().html('').hide();
+            }
+
+            $('#login_form').submit();
+        })
+    })
+</script>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>打卡</title>
+    <link rel="stylesheet" href="/admin/bootstrap.min.css">
+    <script src="/static/js/jquery-2.0.3.min.js" type="application/javascript"></script>
+    <style>
+        *{padding: 0;margin: 0}
+        img{display: block;width: 236px;height: 236px;margin: 0 auto;margin-top: 100px;}
+        .title{font-size: 24px;text-align: center;margin-bottom: 80px;font-weight: bold;}
+        .form-group{margin-bottom: 40px;position: relative;}
+        .error{position: absolute;color: red;left: 0;top: 100%;padding-top: 6px;}
+    </style>
+</head>
+<body>
+<img src="/admin/u1.jpg" alt="">
+<h2 class="title">鑫动国际企业帮帮系统</h2>
+<div class="col-sm-3"></div>
+<div class="col-sm-6">
+    <form method="post" id="card_form">
+        <div class="form-group">
+            <select clss="form-control input-lg" name="address_id">
+                <option selected value="1">A点</option>
+                <option value="2">B点</option>
+            </select>
+            <div class="error" style="display: none">不能为空</div>
+        </div>
+        <div class="form-group">
+            <input type="tel" name="telphone" class="form-control input-lg" placeholder="请输入被打卡人手机号">
+            <div class="error" style="display: none">不能为空</div>
+        </div>
+        <div class="col-sm-3"></div>
+        <div class="col-sm-6" style="margin-top: 20px">
+            <button type="button" class="btn btn-info btn-block btn-lg active" id="card_button">确认打卡</button>
+        </div>
+    </form>
+</div>
+<div class="col-sm-3"></div>
+</body>
+</html>
+<script>
+    $(function(){
+        $('#card_button').click(function(){
+            if($("select[name='address_id']").val() == ''){
+                return $('input[name=address_id]').next().html('打卡点不能为空').show();
+            } else {
+                $('input[name=address_id]').next().html('').hide();
+            }
+
+            if($('input[name=telphone]').val() == '') {
+                return $('input[name=telphone]').next().html('手机号不能为空').show();
+            } else {
+                $('input[name=telphone]').next().html('').hide();
+            }
+
+            $('#card_form').submit();
+        })
+    })
+</script>

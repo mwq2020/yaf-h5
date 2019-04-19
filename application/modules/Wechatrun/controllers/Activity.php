@@ -503,7 +503,7 @@ class ActivityController extends Core\Base
         $activity_id    = isset($_REQUEST['activity_id']) ? $_REQUEST['activity_id'] : 0;
         $latitude       = isset($_REQUEST['latitude']) ? $_REQUEST['latitude'] : 0;
         $longitude      = isset($_REQUEST['longitude']) ? $_REQUEST['longitude'] : 0;
-        $ip             = isset($_REQUEST['ip']) ? $_REQUEST['ip'] : 0;
+        //$ip             = isset($_REQUEST['ip']) ? $_REQUEST['ip'] : 0;
 
         $return_data = ['success' => 1];
         try {
@@ -521,7 +521,7 @@ class ActivityController extends Core\Base
             }
 
 
-            $card_info = DB::table('w_company_activity_hitcard_log')->where(['activity_id' => $activity_id,'user_id' => $user_id,'address_id'=>$address_id])->first();
+            $card_info = DB::table('w_company_activity_hitcard_log')->where(['user_id' => $user_id,'address_id'=>$address_id])->first();
             if(!empty($card_info)) {
                 throw new \Exception('该点已经打过卡了',500);
             }
