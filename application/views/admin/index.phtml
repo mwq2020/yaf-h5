@@ -33,6 +33,9 @@
         <div class="col-sm-3"></div>
         <div class="col-sm-6" style="margin-top: 20px">
             <button type="button" class="btn btn-info btn-block btn-lg active" id="card_button">确认打卡</button>
+            <?php if(!empty($error_msg)) : ?>
+                <div class="error"><?php echo $error_msg ; ?></div>
+            <?php endif; ?>
         </div>
     </form>
 </div>

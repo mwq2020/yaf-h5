@@ -81,12 +81,12 @@ class AdminController extends Controller_Abstract
             }
 
         } catch (\Exception $e){
-            echo $e->getMessage();
-            exit;
+            $this->getView()->assign('error_msg','打卡失败['.$e->getMessage().']');
+            return $this->getView()->display('admin/index.phtml');
         }
 
-        echo '打卡成功';exit;
-        //$this->getView()->assign('user','lvtao'); //模板文件中直接用php语法输出
+        $this->getView()->assign('error_msg','打卡成功');
+        return $this->getView()->display('admin/index.phtml');
 
     }
 
@@ -121,8 +121,8 @@ class AdminController extends Controller_Abstract
             setcookie("secret_code", base64_encode($_POST['user_name'].$_POST['password'].rand(100,999)), time()+7*24*3600,'/');
 
         } catch (\Exception $e) {
-            echo $e->getMessage();exit;
-
+            $this->getView()->assign('error_msg',$e->getMessage());
+            return $this->getView()->display('admin/login.phtml');
         }
         $this->redirect("/admin/index");
     }
