@@ -520,9 +520,16 @@ class ActivityController extends Core\Base
                 throw new \Exception('GPS信息为空');
             }
 
+
             $card_info = DB::table('w_company_activity_hitcard_log')->where(['activity_id' => $activity_id,'user_id' => $user_id,'address_id'=>$address_id])->first();
             if(!empty($card_info)) {
                 throw new \Exception('该点已经打过卡了',500);
+            }
+
+            $user_ip = $this->getUserRealIp();
+            $card_info = DB::table('w_company_activity_hitcard_log')->where(['ip' => $user_ip,'address_id'=>$address_id])->first();
+            if(!empty($card_info)) {
+                throw new \Exception('一个手机只能打卡一次',500);
             }
 
             $insert_data = [];
@@ -530,7 +537,7 @@ class ActivityController extends Core\Base
             $insert_data['activity_id'] = $activity_id;
             $insert_data['address_id']  = $address_id;
             $insert_data['gps_info']    = json_encode(['latitude' => $latitude,'longitude' => $longitude]);
-            $insert_data['ip']          = $this->getUserRealIp();
+            $insert_data['ip']          = $user_ip;
             $insert_data['add_time']    = time();
             $insert_data['update_time'] = time();
             $flag = DB::table('w_company_activity_hitcard_log')->insertGetId($insert_data);
