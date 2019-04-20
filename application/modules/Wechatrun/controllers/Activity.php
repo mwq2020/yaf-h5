@@ -622,7 +622,7 @@ class ActivityController extends Core\Base
             $end_time = $activity_info['end_time'];
 
             if(time() < $start_time){
-                throw new \Exception('活动还没开始');
+                return $this->jsonSuccess($return_data);
             }
 
             //检查用户达标情况
