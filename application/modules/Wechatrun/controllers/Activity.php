@@ -598,5 +598,63 @@ class ActivityController extends Core\Base
         $this->jsonSuccess($return_data);
     }
 
+    /**
+     * 获取上海银行的用户的个人步数详情
+     */
+    public function getShanghaiBocUserStepAction()
+    {
+        $return_data = ['current_day_num' => 0,'activity_day_num' => 0,'step_num_count' => 0,'map_flag' => 0];
+        $user_id        = isset($_REQUEST['user_id']) ? $_REQUEST['user_id'] : 0;
+        $activity_id    = isset($_REQUEST['activity_id']) ? $_REQUEST['activity_id'] : 0;
+        try {
+            if(empty($user_id)) {
+                throw new \Exception('入参错误');
+            }
+            if(empty($activity_id)) {
+                throw new \Exception('入参错误');
+            }
+            $activity_info = DB::table('w_company_step_activity')->where(['activity_id'=>$activity_id])->first();
+            if(empty($activity_info)) {
+                throw new \Exception('活动详情为空');
+            }
+
+            $start_time = $activity_info['start_time'];
+            $end_time = $activity_info['end_time'];
+
+            if(time() < $start_time){
+                throw new \Exception('活动还没开始');
+            }
+
+            //检查用户达标情况
+            $sql = "select sum(step_num) as step_num_count,user_id ".
+                "from w_step_log ".
+                "where user_id = {$user_id} and ".
+                "data_time >= {$start_time} and ".
+                "data_time <= {$end_time} ";
+            $step_count_info = DB::selectOne($sql);
+            $return_data['step_num_count'] = $step_count_info['step_num_count'];
+
+            if(time() < $start_time){
+                $day_num = 0;
+            } else if(time() > $end_time){
+                $day_num = ceil(($end_time - $start_time)/86400);
+            } else {
+                $day_num = ceil((time()-$start_time)/86400);
+            }
+            $return_data['current_day_num']     = $day_num;//活动开始到现在经过了几天,不超过活动总天数
+            $return_data['activity_day_num']    = ceil(($end_time - $start_time)/86400); //活动期间的总天数
+
+            if($step_count_info['step_num_count'] > 0){
+                $return_data['map_flag'] = intval($step_count_info['step_num_count']/9000);
+            }
+            $return_data['map_flag'] = $return_data['map_flag'] > $day_num ? $day_num : $return_data['map_flag'];//活动点亮图标个数
+
+        } catch(\Exception $e) {
+            $error_message = $e->getCode() > 0 ? $e->getMessage() : '服务错误';
+            return $this->jsonError($error_message,$return_data);
+        }
+        $this->jsonSuccess($return_data);
+    }
+
 
 }
