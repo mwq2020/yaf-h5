@@ -657,10 +657,16 @@ class ActivityController extends Core\Base
             $return_data['current_day_num']     = $day_num;//活动开始到现在经过了几天,不超过活动总天数
             $return_data['activity_day_num']    = ceil(($end_time - $start_time)/86400); //活动期间的总天数
 
+            //计算步数总的满足的条数
             if($step_count_info['step_num_count'] > 0){
                 $return_data['map_flag'] = intval($step_count_info['step_num_count']/6000);
             }
-            $return_data['map_flag'] = $return_data['map_flag'] > $day_num ? $day_num : $return_data['map_flag'];//活动点亮图标个数
+
+            if($return_data['map_flag'] >= 10){
+                $return_data['map_flag'] = 10;
+            } else {
+                $return_data['map_flag'] = $return_data['map_flag'] > $day_num ? $day_num : $return_data['map_flag'];//活动点亮图标个数
+            }
 
         } catch(\Exception $e) {
             $error_message = $e->getCode() > 0 ? $e->getMessage() : '服务错误';
