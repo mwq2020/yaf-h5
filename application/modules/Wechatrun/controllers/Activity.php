@@ -645,7 +645,7 @@ class ActivityController extends Core\Base
             $return_data['activity_day_num']    = ceil(($end_time - $start_time)/86400); //活动期间的总天数
 
             if($step_count_info['step_num_count'] > 0){
-                $return_data['map_flag'] = intval($step_count_info['step_num_count']/9000);
+                $return_data['map_flag'] = intval($step_count_info['step_num_count']/6000);
             }
             $return_data['map_flag'] = $return_data['map_flag'] > $day_num ? $day_num : $return_data['map_flag'];//活动点亮图标个数
 
