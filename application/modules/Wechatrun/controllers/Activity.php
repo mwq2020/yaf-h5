@@ -529,7 +529,8 @@ class ActivityController extends Core\Base
             $user_ip = $this->getUserRealIp();
             $card_info = DB::table('w_company_activity_hitcard_log')->where(['ip' => $user_ip,'address_id'=>$address_id])->first();
             if(!empty($card_info)) {
-                throw new \Exception('一个手机只能打卡一次',500);
+                Log::info('用户打卡ip多次打卡:'.$user_id."|".$user_ip);
+                //throw new \Exception('一个手机只能打卡一次',500);
             }
 
             $insert_data = [];
