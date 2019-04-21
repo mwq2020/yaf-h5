@@ -505,7 +505,9 @@ class ActivityController extends Core\Base
         $longitude      = isset($_REQUEST['longitude']) ? $_REQUEST['longitude'] : 0;
         //$ip             = isset($_REQUEST['ip']) ? $_REQUEST['ip'] : 0;
 
-        $return_data = ['success' => 1];
+        //$return_data = ['success' => 1];
+        $return_data = ['success' => 0];
+        return $this->jsonError('打卡已结束',$return_data);
         try {
             if(empty($address_id)){
                 throw new \Exception('地址id为空');
