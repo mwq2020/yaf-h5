@@ -507,7 +507,7 @@ class ActivityController extends Core\Base
 
         //$return_data = ['success' => 1];
         $return_data = ['success' => 0];
-        return $this->jsonError('打卡已结束',$return_data);
+        return $this->jsonError('打卡活动已结束',$return_data);
         try {
             if(empty($address_id)){
                 throw new \Exception('地址id为空');
