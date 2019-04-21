@@ -168,7 +168,7 @@ class StepController extends Core\Base
             if(!empty($count_draw_info) && $count_draw_info['attend_num'] >= 100) {
                 $return_data['is_selected'] = 0;
             } else {
-                $probability = 0.05;//概率值
+                $probability = 0.10;//概率值
                 $rand_list = range(1, 100);//随机数的数组
                 shuffle($rand_list);
                 $rand_key = array_rand($rand_list,1);//随机取出随机值里面的key
@@ -246,7 +246,7 @@ class StepController extends Core\Base
             if($target_timestamp > 0) {
                 $return_data['target_draw_num'] = $target_draw_num;
                 $return_data['day_num'] = intval(($target_timestamp - $current_time)/86400);
-                $return_data['hour_num'] = ceil((($target_timestamp - $current_time)%86400)/3600); // 2019-04-15 上线新活动后需要修改为intval
+                $return_data['hour_num'] = intval((($target_timestamp - $current_time)%86400)/3600); // 2019-04-15 上线新活动后需要修改为intval
                 $return_data['minute_num'] = ceil(((($target_timestamp - $current_time)%86400)%3600)/60);
             }
             //判断活动状态
