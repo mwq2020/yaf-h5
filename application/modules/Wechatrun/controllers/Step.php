@@ -165,7 +165,7 @@ class StepController extends Core\Base
                                 ->where('add_time','>=',$start_current_week)
                                 ->where('add_time','<=',$end_current_week)
                                 ->first();
-            if(!empty($count_draw_info) && $count_draw_info['attend_num'] >= 100) {
+            if(!empty($count_draw_info) && $count_draw_info['attend_num'] >= 125) {
                 $return_data['is_selected'] = 0;
             } else {
                 $probability = 0.01;//概率值
@@ -376,10 +376,9 @@ class StepController extends Core\Base
             $target_draw_num = '二';
             $start_current_week = strtotime('2019-04-15 08:00:00');
             $end_current_week = strtotime('2019-04-21 23:59:59');
+
+
             $return_data['draw_num']     = $target_draw_num;//第几期的文字逻辑
-
-
-
 
             $winner_list = DB::table('w_company_step_luck_draw')
                 ->leftJoin('w_company_user','w_company_user.user_id','=','w_company_step_luck_draw.user_id')
