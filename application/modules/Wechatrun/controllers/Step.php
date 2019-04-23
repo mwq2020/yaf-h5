@@ -394,6 +394,9 @@ class StepController extends Core\Base
                 ])
                 ->where('w_company_step_luck_draw.add_time','>=',$start_current_week)
                 ->where('w_company_step_luck_draw.add_time','<=',$end_current_week)
+                ->where('w_company_step_luck_draw.user_id','!=',2077) //排除的郑硕
+                ->where('w_company_step_luck_draw.user_id','!=',18316) //排除的刘畅
+                ->where('w_company_step_luck_draw.user_id','!=',2075) //排除的牛长江
                 ->get();
             $return_data['winner_list'] = $winner_list;
             $return_data['is_show']     = 1;
