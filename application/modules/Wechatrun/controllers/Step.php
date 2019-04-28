@@ -165,10 +165,10 @@ class StepController extends Core\Base
                                 ->where('add_time','>=',$start_current_week)
                                 ->where('add_time','<=',$end_current_week)
                                 ->first();
-            if(!empty($count_draw_info) && $count_draw_info['attend_num'] >= 125) {
+            if(!empty($count_draw_info) && $count_draw_info['attend_num'] >= 104) {
                 $return_data['is_selected'] = 0;
             } else {
-                $probability = 0.03;//概率值
+                $probability = 0.08;//概率值
                 $rand_list = range(1, 100);//随机数的数组
                 shuffle($rand_list);
                 $rand_key = array_rand($rand_list,1);//随机取出随机值里面的key
@@ -283,7 +283,10 @@ class StepController extends Core\Base
                                 ->first();
             if(!empty($luck_draw_info)){
                 $return_data['is_selected'] = $luck_draw_info['is_selected'];//用户的抽奖状态设置 
-                $return_data['user_draw_status'] = 1;//用户的抽奖状态设置 
+                $return_data['user_draw_status'] = 1;//用户的抽奖状态设置
+                if(time() >= strtotime('2019-05-06 20:00:00')){ //如果时间超过最后一次抽奖时间,标记抽奖状态为已结束
+                    $return_data['draw_status'] = 2;
+                }
             } else {
                 //检查用户达标情况
                 $sql = "select count(step_num) as step_day_count,user_id ".
