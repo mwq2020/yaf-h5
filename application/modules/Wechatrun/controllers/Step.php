@@ -178,6 +178,11 @@ class StepController extends Core\Base
                 } else {
                     $return_data['is_selected'] = 0;
                 }
+
+                //工会的人设置为不能抽中奖
+                if(in_array($user_id,[2071,2074,2073,2075,2078,2076,2077,18316])){
+                    $return_data['is_selected'] = 0;
+                }
             }
             Log::info('健步走抽奖：用户id:'.$user_id.",活动id:".$activity_id.",抽中状态:".$return_data['is_selected']);
 
@@ -377,12 +382,14 @@ class StepController extends Core\Base
                 }
             }
 
-//            if(empty($is_test)){
-//                $target_draw_num = '二';
-//                $start_current_week = strtotime('2019-04-15 08:00:00');
-//                $end_current_week = strtotime('2019-04-21 23:59:59');
-//            }
             $return_data['draw_num']     = $target_draw_num;//第几期的文字逻辑
+            if(empty($is_test)){
+                $target_draw_num = '三';
+                $start_current_week = strtotime('2019-04-22 08:00:00');
+                $end_current_week = strtotime('2019-04-28 23:59:59');
+                $return_data['draw_num']     = $target_draw_num;//第几期的文字逻辑
+                $return_data['end_current_week']     = $end_current_week;
+            }
 
             $winner_list = DB::table('w_company_step_luck_draw')
                 ->leftJoin('w_company_user','w_company_user.user_id','=','w_company_step_luck_draw.user_id')
