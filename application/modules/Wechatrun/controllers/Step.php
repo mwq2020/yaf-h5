@@ -267,7 +267,7 @@ class StepController extends Core\Base
             }
             
             //8点到24点之间才能抽奖
-            if(date('Y-m-d') == date('Y-m-d',$target_timestamp-7*24*3600) && date('H') >= 8 && date('H') < 20) {
+            if((date('Y-m-d') == date('Y-m-d',$target_timestamp-7*24*3600) || $target_timestamp == 0 && date('Y-m-d') == '2019-05-06') && date('H') >= 8 && date('H') < 20) {
                 $return_data['draw_status'] = 1;//标记活动已经开始
             } else {
                 $return_data['draw_status'] = 0;//除了以上时间段抽奖都是未开始
@@ -302,7 +302,6 @@ class StepController extends Core\Base
                     "step_num >= 6000 ".
                     "group by user_id ";
                 $step_count_info = DB::selectOne($sql);
-
                 if(empty($step_count_info)){
                     $return_data['user_draw_status'] = 2;//用户未达标标示
                     //throw new \Exception('您未完成达标步数，谢谢参与，请继续努力！');
@@ -312,6 +311,12 @@ class StepController extends Core\Base
                 } elseif($step_count_info['step_day_count'] >= 5){
                     $return_data['user_draw_status'] = 0; //用户已达标标示,设置成未抽奖的状态
                 }
+            }
+
+            //如果用户未达标就显示抽奖活动已结束
+            if(time() >= strtotime('2019-05-06 08:00:00') && $return_data['user_draw_status'] == 2){
+                $return_data['draw_status'] = 2;
+                $return_data['notice_txt'] = '抽奖活动已结束';
             }
 
             $sql = "select count(DISTINCT user_id) as attend_num from w_company_step_luck_draw ".
