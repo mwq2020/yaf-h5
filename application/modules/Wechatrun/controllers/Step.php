@@ -121,8 +121,8 @@ class StepController extends Core\Base
             }
 
             //8点到24点之间才能抽奖 活动日的当天
-            if(date('Y-m-d') != date('Y-m-d',$target_timestamp-7*24*3600) || date('H') < 8 || date('H') >= 20){
-                throw new \Exception('8-20点为抽奖时间');
+            if(date('Y-m-d') != '2019-05-06' || date('H') < 8 || date('H') >= 20){
+                throw new \Exception('当前时间非抽奖时间段');
             }
 
             $start_current_week = strtotime(date('Y-m-d')) - (date('N') - 1) * 86400; //重新按照时间戳的方法整理出来的逻辑
@@ -165,7 +165,7 @@ class StepController extends Core\Base
                                 ->where('add_time','>=',$start_current_week)
                                 ->where('add_time','<=',$end_current_week)
                                 ->first();
-            if(!empty($count_draw_info) && $count_draw_info['attend_num'] >= 104) {
+            if(!empty($count_draw_info) && $count_draw_info['attend_num'] >= 100) {
                 $return_data['is_selected'] = 0;
             } else {
                 $probability = 0.08;//概率值
@@ -255,22 +255,21 @@ class StepController extends Core\Base
                 $return_data['minute_num'] = ceil(((($target_timestamp - $current_time)%86400)%3600)/60);
             }
             //判断活动状态
-            if($current_time < strtotime('2019-04-08 08:00:00')) { //
+            if($current_time <= strtotime('2019-04-08 08:00:00')) { //
                 $return_data['notice_txt'] = '抽奖活动暂未开始';
                 $return_data['draw_status'] = 0;
                 throw new \Exception('抽奖活动暂未开始',200);
-            }
-            if($current_time > strtotime('2019-05-06 20:00:00')) {
+            }elseif($current_time >= strtotime('2019-05-06 20:00:00')) {
                 $return_data['draw_status'] = 2;
                 $return_data['notice_txt'] = '抽奖活动已结束';
                 throw new \Exception('抽奖活动已结束',200);
-            }
-            
-            //8点到24点之间才能抽奖
-            if((date('Y-m-d') == date('Y-m-d',$target_timestamp-7*24*3600) || $target_timestamp == 0 && date('Y-m-d') == '2019-05-06') && date('H') >= 8 && date('H') < 20) {
-                $return_data['draw_status'] = 1;//标记活动已经开始
             } else {
-                $return_data['draw_status'] = 0;//除了以上时间段抽奖都是未开始
+                //8点到24点之间才能抽奖
+                if(date('Y-m-d') == '2019-05-06' && date('H') >= 8 && date('H') < 20) {
+                    $return_data['draw_status'] = 1;//标记活动已经开始
+                } else {
+                    $return_data['draw_status'] = 0;//除了以上时间段抽奖都是未开始
+                }
             }
 
             $start_current_week = strtotime(date('Y-m-d')) - (date('N') - 1) * 86400; //获取当前日期减去当周已经过去的日期
