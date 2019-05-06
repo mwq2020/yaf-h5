@@ -168,7 +168,7 @@ class StepController extends Core\Base
             if(!empty($count_draw_info) && $count_draw_info['attend_num'] >= 104) {
                 $return_data['is_selected'] = 0;
             } else {
-                $probability = 0.08;//概率值
+                $probability = 0.10;//概率值
                 $rand_list = range(1, 100);//随机数的数组
                 shuffle($rand_list);
                 $rand_key = array_rand($rand_list,1);//随机取出随机值里面的key
