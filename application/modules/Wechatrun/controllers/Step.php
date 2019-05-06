@@ -165,7 +165,7 @@ class StepController extends Core\Base
                                 ->where('add_time','>=',$start_current_week)
                                 ->where('add_time','<=',$end_current_week)
                                 ->first();
-            if(!empty($count_draw_info) && $count_draw_info['attend_num'] >= 100) {
+            if(!empty($count_draw_info) && $count_draw_info['attend_num'] >= 104) {
                 $return_data['is_selected'] = 0;
             } else {
                 $probability = 0.08;//概率值
