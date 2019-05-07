@@ -388,9 +388,9 @@ class StepController extends Core\Base
 
             $return_data['draw_num']     = $target_draw_num;//第几期的文字逻辑
             if(empty($is_test)){
-                $target_draw_num = '四';
-                $start_current_week = strtotime('2019-04-29 08:00:00');
-                $end_current_week = strtotime('2019-05-05 23:59:59');
+                $target_draw_num = '五';
+                $start_current_week = strtotime('2019-05-06 08:00:00');
+                $end_current_week = strtotime('2019-05-06 23:59:59');
                 $return_data['draw_num']     = $target_draw_num;//第几期的文字逻辑
                 $return_data['end_current_week']     = $end_current_week;
             }
@@ -409,9 +409,6 @@ class StepController extends Core\Base
                 ])
                 ->where('w_company_step_luck_draw.add_time','>=',$start_current_week)
                 ->where('w_company_step_luck_draw.add_time','<=',$end_current_week)
-                ->where('w_company_step_luck_draw.user_id','!=',2077) //排除的郑硕
-                ->where('w_company_step_luck_draw.user_id','!=',18316) //排除的刘畅
-                ->where('w_company_step_luck_draw.user_id','!=',2075) //排除的牛长江
                 ->get();
             $return_data['winner_list'] = $winner_list;
             $return_data['is_show']     = 1;
