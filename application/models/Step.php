@@ -11,7 +11,12 @@ class StepModel {
         $company_id     = $activity_info['company_id'];
         $activity_start_time    = $activity_info['start_time'];
         $activity_end_time      = $activity_info['end_time'];
-        
+        if($activity_info['statistics_end_time'] > 0){
+            $statistics_end_time    = $activity_info['statistics_end_time'];
+        } else {
+            $statistics_end_time    = $activity_end_time + 3*24*3600;//统计步数截止时间点
+        }
+
         //部门的参与率排行 【部门下的人数/有步数的人数】
         if($company_id == 28 && false) { //廊坊银行暂且不使用此处逻辑
             $department_list = DB::table('w_department')
@@ -56,6 +61,7 @@ class StepModel {
             'from w_step_log a left join w_company_user b on a.user_id = b.user_id '.
             'where b.company_id = '.$company_id.' and b.is_tested = 0 '.
             ' and a.data_time >= '.$activity_start_time.' and a.data_time <= '.$activity_end_time.
+            ' and a.update_time <= '.$statistics_end_time.
             " group by a.user_id having avage_step_num >= {$target_avage_step_num} ".
             ') c group by c.department_id';
         $attend_list_res = DB::select($sql);
@@ -127,6 +133,11 @@ class StepModel {
         $company_id     = $activity_info['company_id'];
         $activity_start_time    = $activity_info['start_time'];
         $activity_end_time      = $activity_info['end_time'];
+        if($activity_info['statistics_end_time'] > 0){
+            $statistics_end_time    = $activity_info['statistics_end_time'];
+        } else {
+            $statistics_end_time    = $activity_end_time + 3*24*3600;//统计步数截止时间点
+        }
 
         $company_user_info  = DB::table('w_company_user')->where(['user_id'=>$user_id,'company_id'=>$activity_info['company_id']])->first();
         if(empty($company_user_info)) {
@@ -151,6 +162,7 @@ class StepModel {
             ->where(['w_company_user.company_id' => $company_id,'w_company_user.is_tested' => 0,'w_company_user.department_id' => $department_id])
             ->where('w_step_log.data_time','>=',$activity_start_time)
             ->where('w_step_log.data_time','<=',$activity_end_time)
+            ->where('w_step_log.update_time','<=',$statistics_end_time)
             ->where('w_step_log.step_num','<=',80000)
             ->where('w_step_log.user_id','!=',4423) //排除工行的王建红
             ->groupBy('w_step_log.user_id')
@@ -205,6 +217,11 @@ class StepModel {
         $company_id     = $activity_info['company_id'];
         $activity_start_time    = $activity_info['start_time'];
         $activity_end_time      = $activity_info['end_time'];
+        if($activity_info['statistics_end_time'] > 0){
+            $statistics_end_time    = $activity_info['statistics_end_time'];
+        } else {
+            $statistics_end_time    = $activity_end_time + 3*24*3600;//统计步数截止时间点
+        }
 
         $department_step_list_res = DB::table('w_step_log')
             ->leftJoin('w_company_user','w_step_log.user_id','=','w_company_user.user_id')
@@ -217,6 +234,7 @@ class StepModel {
             ->where(['w_company_user.company_id' => $company_id,'w_company_user.is_tested' => 0])
             ->where('w_step_log.data_time','>=',$activity_start_time)
             ->where('w_step_log.data_time','<=',$activity_end_time)
+            ->where('w_step_log.update_time','<=',$statistics_end_time)
             ->groupBy('w_company_user.department_id')
             ->orderBy('step_num_count','desc')
             ->get();
@@ -276,6 +294,11 @@ class StepModel {
         $company_id     = $activity_info['company_id'];
         $activity_start_time    = $activity_info['start_time'];
         $activity_end_time      = $activity_info['end_time'];
+        if($activity_info['statistics_end_time'] > 0){
+            $statistics_end_time    = $activity_info['statistics_end_time'];
+        } else {
+            $statistics_end_time    = $activity_end_time + 3*24*3600;//统计步数截止时间点
+        }
 
         $offset = $page_index > 1 ? ($page_index-1)*$page_size : 0;
         //个人员工排名
@@ -294,6 +317,7 @@ class StepModel {
             ->where(['w_company_user.company_id' => $company_id,'w_company_user.is_tested' => 0])
             ->where('w_step_log.data_time','>=',$activity_start_time)
             ->where('w_step_log.data_time','<=',$activity_end_time)
+            ->where('w_step_log.update_time','<=',$statistics_end_time)
             ->where('w_step_log.step_num','<=',80000)
             ->where('w_step_log.user_id','!=',4423) //排除工行的王建红
             ->groupBy('w_step_log.user_id')
@@ -309,7 +333,7 @@ class StepModel {
             "from w_step_log a left join w_company_user b on a.user_id = b.user_id ".
             "where b.company_id = {$company_id} and (b.is_tested = 0 or b.user_id={$user_id}) ".
             "and a.data_time >= {$activity_start_time} and a.data_time <= {$activity_end_time} ".
-            "and a.step_num <= 80000 ".
+            "and a.update_time <= '{$statistics_end_time}' and a.step_num <= 80000 ".
             "group by a.user_id order by step_num_count desc";
         //"group by a.user_id order by step_num_count desc,a.user_id desc";
         $user_count_list_res = DB::select($sql);
