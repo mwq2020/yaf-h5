@@ -224,14 +224,15 @@ class StepModel {
         }
 
         $department_step_list_res = DB::table('w_step_log')
-            ->leftJoin('w_company_user','w_step_log.user_id','=','w_company_user.user_id')
+            ->leftJoin('w_company_step_activity_user','w_step_log.user_id','=','w_company_step_activity_user.user_id')
+            ->leftJoin('w_company_user','w_company_step_activity_user.user_id','=','w_company_user.user_id')
             ->leftJoin('w_department','w_department.department_id','=','w_company_user.department_id')
             ->select(
                 DB::raw('sum(w_step_log.step_num) AS step_num_count'),
                 'w_company_user.department_id',
                 'w_department.name as department_name'
             )
-            ->where(['w_company_user.company_id' => $company_id,'w_company_user.is_tested' => 0])
+            ->where(['w_company_user.company_id' => $company_id,'w_company_user.is_tested' => 0,'w_company_step_activity_user.status'=>1,'w_company_user.status'=>1])
             ->where('w_step_log.data_time','>=',$activity_start_time)
             ->where('w_step_log.data_time','<=',$activity_end_time)
             ->where('w_step_log.update_time','<=',$statistics_end_time)
@@ -246,14 +247,15 @@ class StepModel {
         }
 
         //部门的参与率排行 【部门下的人数/有步数的人数】
-        $department_list = DB::table('w_department')
-            ->leftJoin('w_company_user','w_department.department_id','=','w_company_user.department_id')
+        $department_list = DB::table('w_company_step_activity_user')
+            ->leftJoin('w_company_user','w_company_step_activity_user.user_id','=','w_company_user.user_id')
+            ->leftJoin('w_department','w_department.department_id','=','w_company_user.department_id')
             ->select(
                 DB::raw('count( distinct w_company_user.user_id) AS user_num'),
                 'w_department.name as department_name',
                 'w_department.department_id'
             )
-            ->where(['w_company_user.company_id' => $company_id,'w_company_user.is_tested' => 0,'w_company_user.status' => 1])
+            ->where(['w_company_user.company_id' => $company_id,'w_company_user.is_tested' => 0,'w_company_user.status' => 1,'w_company_step_activity_user.status' => 1])
             ->groupBy('w_department.department_id')
             ->get();
         if(!empty($department_list)){
