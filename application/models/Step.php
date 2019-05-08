@@ -215,6 +215,7 @@ class StepModel {
     public static function getDepartmentAverageRanking($activity_info,&$return_data)
     {
         $company_id     = $activity_info['company_id'];
+        $activity_id     = $activity_info['activity_id'];
         $activity_start_time    = $activity_info['start_time'];
         $activity_end_time      = $activity_info['end_time'];
         if($activity_info['statistics_end_time'] > 0){
@@ -232,7 +233,8 @@ class StepModel {
                 'w_company_user.department_id',
                 'w_department.name as department_name'
             )
-            ->where(['w_company_user.company_id' => $company_id,'w_company_user.is_tested' => 0,'w_company_step_activity_user.status'=>1,'w_company_user.status'=>1])
+            ->where(['w_company_user.company_id' => $company_id,'w_company_step_activity_user.activity_id'=>$activity_id,'w_company_user.is_tested' => 0,'w_company_step_activity_user.status'=>1,'w_company_user.status'=>1])
+            ->where('w_step_log.data_time','>=',$activity_start_time)
             ->where('w_step_log.data_time','>=',$activity_start_time)
             ->where('w_step_log.data_time','<=',$activity_end_time)
             ->where('w_step_log.update_time','<=',$statistics_end_time)
