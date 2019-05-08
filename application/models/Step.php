@@ -257,7 +257,7 @@ class StepModel {
                 'w_department.name as department_name',
                 'w_department.department_id'
             )
-            ->where(['w_company_user.company_id' => $company_id,'w_company_user.is_tested' => 0,'w_company_user.status' => 1,'w_company_step_activity_user.status' => 1])
+            ->where(['w_company_user.company_id' => $company_id,'w_company_step_activity_user.activity_id'=>$activity_id,'w_company_user.is_tested' => 0,'w_company_user.status' => 1,'w_company_step_activity_user.status' => 1])
             ->groupBy('w_department.department_id')
             ->get();
         if(!empty($department_list)){
